@@ -1,0 +1,24 @@
+buildscript {
+    
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        jcenter()
+
+        maven { url "https://dl.bintray.com/thelasterstar/maven/" }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

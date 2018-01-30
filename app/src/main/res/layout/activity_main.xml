@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="tech.jianyue.demo.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/login_wx"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="微信登录" />
+
+        <Button
+            android:id="@+id/login_wb"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="微博登录" />
+
+        <Button
+            android:id="@+id/login_qq"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="QQ 登录" />
+
+        <Button
+            android:id="@+id/share_wx_text"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:text="微信文本分享" />
+
+        <Button
+            android:id="@+id/share_wx_image"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="微信图片分享" />
+
+        <Button
+            android:id="@+id/share_wx_link"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="微信链接分享" />
+
+        <Button
+            android:id="@+id/share_wx_video"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="微信视频分享" />
+
+        <Button
+            android:id="@+id/share_wx_music"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="微信音乐分享" />
+
+        <Button
+            android:id="@+id/share_wx_program"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="微信小程序分享" />
+
+        <Button
+            android:id="@+id/share_wb_text"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:text="微博文本分享" />
+
+        <Button
+            android:id="@+id/share_wb_image"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="微博图片分享" />
+
+        <Button
+            android:id="@+id/share_wb_link"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="微博链接分享" />
+
+        <Button
+            android:id="@+id/share_wb_video"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="微博视频分享" />
+
+        <Button
+            android:id="@+id/share_qq_image"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:text="QQ图片分享" />
+
+        <Button
+            android:id="@+id/share_qq_video"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="QQ视频分享" />
+
+        <Button
+            android:id="@+id/share_qq_music"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="QQ音乐分享" />
+
+        <Button
+            android:id="@+id/share_qq_program"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="QQ应用分享" />
+
+    </LinearLayout>
+</ScrollView>

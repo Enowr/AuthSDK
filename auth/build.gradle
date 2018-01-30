@@ -1,0 +1,36 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 26
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 21
+        versionCode 1
+        versionName "1.0"
+
+        manifestPlaceholders = [QQ_SCHEME: QQ_SCHEME]
+
+        buildConfigField "String", "QQ_APPID", QQ_APPID
+        buildConfigField "String", "WECHAT_APPID", WECHAT_APPID
+        buildConfigField "String", "WECHAT_SECRET", WECHAT_SECRET
+        buildConfigField "String", "WEIBO_SCOPE", WEIBO_SCOPE
+        buildConfigField "String", "WEIBO_APPKEY", WEIBO_APPKEY
+        buildConfigField "String", "WEIBO_REDIRECT_URL", WEIBO_REDIRECT_URL
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:26.1.0'
+
+    compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:1.4.0'       // 微信 SDK
+    compile 'com.sina.weibo.sdk:core:4.1.4:openDefaultRelease@aar'              // 微博 aar
+}
