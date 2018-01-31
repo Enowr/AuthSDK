@@ -5,6 +5,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
+
+        classpath 'com.novoda:bintray-release:0.5.0'                    // Bintray
     }
 }
 
@@ -13,7 +15,7 @@ allprojects {
         google()
         jcenter()
 
-        maven { url "https://dl.bintray.com/thelasterstar/maven/" }
+        maven { url "https://dl.bintray.com/thelasterstar/maven/" }     // 微博 aar
     }
 }
 

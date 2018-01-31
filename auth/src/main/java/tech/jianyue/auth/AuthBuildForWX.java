@@ -37,11 +37,11 @@ public class AuthBuildForWX extends Auth.Builder {
 
     @Override                           // 初始化资源
     void init() {
-        if (TextUtils.isEmpty(BuildConfig.WECHAT_APPID)) {
+        if (TextUtils.isEmpty(Auth.AuthBuilder.WECHAT_APPID)) {
             throw new IllegalArgumentException("WECHAT_APPID was empty");
         } else if (mApi == null) {
-            mApi = WXAPIFactory.createWXAPI(mContext, BuildConfig.WECHAT_APPID, true);
-            mApi.registerApp(BuildConfig.WECHAT_APPID);
+            mApi = WXAPIFactory.createWXAPI(mContext, Auth.AuthBuilder.WECHAT_APPID, true);
+            mApi.registerApp(Auth.AuthBuilder.WECHAT_APPID);
         }
     }
 
@@ -444,9 +444,9 @@ public class AuthBuildForWX extends Auth.Builder {
         // 微信登录, 2 通过 code 获取 refresh_token
         private String getToken(String code) throws Exception {
             String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="
-                    + BuildConfig.WECHAT_APPID
+                    + Auth.AuthBuilder.WECHAT_APPID
                     + "&secret="
-                    + BuildConfig.WECHAT_SECRET
+                    + Auth.AuthBuilder.WECHAT_SECRET
                     + "&code="
                     + code
                     + "&grant_type=authorization_code";
@@ -456,7 +456,7 @@ public class AuthBuildForWX extends Auth.Builder {
         // 微信登录, 3 通过 refresh_token 刷新 access_token
         private String refreshToken(String token) throws Exception {
             String url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid="
-                    + BuildConfig.WECHAT_APPID
+                    + Auth.AuthBuilder.WECHAT_APPID
                     + "&grant_type=refresh_token"
                     + "&refresh_token="
                     + token;

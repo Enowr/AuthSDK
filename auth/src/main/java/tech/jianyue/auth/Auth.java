@@ -14,6 +14,8 @@ import java.lang.annotation.RetentionPolicy;
  * 版本: 1.0
  */
 public class Auth {
+    protected static AuthBuilder AuthBuilder;
+
     public static final int LOGIN = 101;                        // 微信\微博\QQ 登录
 
     public static final int SHARE_TEXT = 102;                   // 微信/微博 分享文本
@@ -24,6 +26,10 @@ public class Auth {
     public static final int SHARE_PROGRAM = 107;                // 微信/QQ 分享小程序/应用
 
     private Auth() {
+    }
+
+    public static AuthBuilder init() {
+        return new AuthBuilder();
     }
 
     public static AuthBuildForWX withWX(Context context) {
@@ -93,6 +99,51 @@ public class Auth {
             } else {
                 throw new NullPointerException("AuthCallback is null");
             }
+        }
+    }
+
+    public static class AuthBuilder {
+        String QQ_APPID;
+
+        String WECHAT_APPID;
+        String WECHAT_SECRET;
+
+        String WEIBO_APPKEY;
+        String WEIBO_REDIRECT_URL;
+        String WEIBO_SCOPE;
+
+        public AuthBuilder setQQAppID(String appID) {
+            QQ_APPID = appID;
+            return this;
+        }
+
+        public AuthBuilder setWXAppID(String appID) {
+            WECHAT_APPID = appID;
+            return this;
+        }
+
+        public AuthBuilder setWXSecret(String secret) {
+            WECHAT_SECRET = secret;
+            return this;
+        }
+
+        public AuthBuilder setWBAppKey(String key) {
+            WEIBO_APPKEY = key;
+            return this;
+        }
+
+        public AuthBuilder setWBDedirectUrl(String url) {
+            WEIBO_REDIRECT_URL = url;
+            return this;
+        }
+
+        public AuthBuilder setWBScope(String scope) {
+            WEIBO_SCOPE = scope;
+            return this;
+        }
+
+        public void build() {
+            AuthBuilder = this;
         }
     }
 }

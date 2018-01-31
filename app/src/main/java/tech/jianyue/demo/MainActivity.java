@@ -70,6 +70,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initView();
 
+        Auth.init().setQQAppID(BuildConfig.QQ_APPID)
+                .setWXAppID(BuildConfig.WECHAT_APPID)
+                .setWXSecret(BuildConfig.WECHAT_SECRET)
+                .setWBAppKey(BuildConfig.WEIBO_APPKEY)
+                .setWBDedirectUrl(BuildConfig.WEIBO_REDIRECT_URL)
+                .setWBScope(BuildConfig.WEIBO_SCOPE)
+                .build();
         Assets2Sd(ImagePath);
     }
 

@@ -8,6 +8,15 @@ android {
         targetSdkVersion TARGET_SDK_VERSION as int
         versionCode 1
         versionName "1.0"
+
+        manifestPlaceholders = [QQ_SCHEME: QQ_SCHEME]
+
+        buildConfigField "String", "QQ_APPID", QQ_APPID
+        buildConfigField "String", "WECHAT_APPID", WECHAT_APPID
+        buildConfigField "String", "WECHAT_SECRET", WECHAT_SECRET
+        buildConfigField "String", "WEIBO_SCOPE", WEIBO_SCOPE
+        buildConfigField "String", "WEIBO_APPKEY", WEIBO_APPKEY
+        buildConfigField "String", "WEIBO_REDIRECT_URL", WEIBO_REDIRECT_URL
     }
 
     buildTypes {
