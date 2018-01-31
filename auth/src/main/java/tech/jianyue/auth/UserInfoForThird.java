@@ -88,21 +88,6 @@ public class UserInfoForThird {
 
 
 //    QQ
-//    /**
-//     * ret : 0
-//     * openid : 264BE4E665D4BA118B6CFBA35D65025E
-//     * access_token : 32A2A07969C32DBB2E4A7A8BE60DD925
-//     * pay_token : 65F89CE33365920D2F708406A22D4769
-//     * expires_in : 7776000
-//     * pf : desktop_m_qq-10000144-android-2002-
-//     * pfkey : 3756291e080646fe14c80f016c1b5843
-//     * msg :
-//     * login_cost : 72
-//     * query_authority_cost : 225
-//     * authority_cost : 2569
-//     * expires_time : 1524726401581
-//     */
-//
 //    private int ret;
 //    private String openid;
 //    private String access_token;
@@ -117,26 +102,6 @@ public class UserInfoForThird {
 //    private long expires_time;
 
 //    QQ 2次
-//    /**
-//     * ret : 0
-//     * msg :
-//     * is_lost : 0
-//     * nickname : Jagger
-//     * gender : 男
-//     * province :
-//     * city :
-//     * figureurl : http://qzapp.qlogo.cn/qzapp/100761191/264BE4E665D4BA118B6CFBA35D65025E/30
-//     * figureurl_1 : http://qzapp.qlogo.cn/qzapp/100761191/264BE4E665D4BA118B6CFBA35D65025E/50
-//     * figureurl_2 : http://qzapp.qlogo.cn/qzapp/100761191/264BE4E665D4BA118B6CFBA35D65025E/100
-//     * figureurl_qq_1 : http://q.qlogo.cn/qqapp/100761191/264BE4E665D4BA118B6CFBA35D65025E/40
-//     * figureurl_qq_2 : http://q.qlogo.cn/qqapp/100761191/264BE4E665D4BA118B6CFBA35D65025E/100
-//     * is_yellow_vip : 0
-//     * vip : 0
-//     * yellow_vip_level : 0
-//     * level : 0
-//     * is_yellow_year_vip : 0
-//     */
-//
 //    private int ret;
 //    private String msg;
 //    private int is_lost;
@@ -158,36 +123,6 @@ public class UserInfoForThird {
 
 
 //    微博
-//    /**
-//     * id : 1404376560
-//     * screen_name : zaku
-//     * name : zaku
-//     * province : 11
-//     * city : 5
-//     * location : 北京 朝阳区
-//     * description : 人生五十年，乃如梦如幻；有生斯有死，壮士复何憾。
-//     * url : http://blog.sina.com.cn/zaku
-//     * profile_image_url : http://tp1.sinaimg.cn/1404376560/50/0/1
-//     * domain : zaku
-//     * gender : m
-//     * followers_count : 1204
-//     * friends_count : 447
-//     * statuses_count : 2908
-//     * favourites_count : 0
-//     * created_at : Fri Aug 28 00:00:00 +0800 2009
-//     * following : false
-//     * allow_all_act_msg : false
-//     * geo_enabled : true
-//     * verified : false
-//     * status : {"created_at":"Tue May 24 18:04:53 +0800 2011","id":11142488790,"text":"我的相机到了。","source":"","favorited":false,"truncated":false,"in_reply_to_status_id":"","in_reply_to_user_id":"","in_reply_to_screen_name":"","geo":null,"mid":"5610221544300749636","annotations":[],"reposts_count":5,"comments_count":8}
-//     * allow_all_comment : true
-//     * avatar_large : http://tp1.sinaimg.cn/1404376560/180/0/1
-//     * verified_reason :
-//     * follow_me : false
-//     * online_status : 0
-//     * bi_followers_count : 215
-//     */
-//
 //    private int id;
 //    private String screen_name;
 //    private String name;
@@ -217,22 +152,6 @@ public class UserInfoForThird {
 //    private int bi_followers_count;
 //
 //    public static class StatusBean {
-//        /**
-//         * created_at : Tue May 24 18:04:53 +0800 2011
-//         * id : 11142488790
-//         * text : 我的相机到了。
-//         * source :
-//         * favorited : false
-//         * truncated : false
-//         * in_reply_to_status_id :
-//         * in_reply_to_user_id :
-//         * in_reply_to_screen_name :
-//         * geo : null
-//         * mid : 5610221544300749636
-//         * annotations : []
-//         * reposts_count : 5
-//         * comments_count : 8
-//         */
 //        private String created_at;
 //        private long id;
 //        private String text;
