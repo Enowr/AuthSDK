@@ -29,7 +29,7 @@
 2. 在 app module 中添加引用:  
     ```aidl
     dependencies {
-        compile 'tech.jianyue.auth:auth:1.0.1'
+        compile 'tech.jianyue.auth:auth:1.0.2'
     }
     ```
 
