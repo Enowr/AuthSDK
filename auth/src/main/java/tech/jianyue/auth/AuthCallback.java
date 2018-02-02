@@ -6,6 +6,10 @@ public abstract class AuthCallback {
 
     }
 
+    public void onSuccessForPay() {
+
+    }
+
     public void onSuccessForShare() {
 
     }

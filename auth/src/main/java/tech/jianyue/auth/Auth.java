@@ -1,5 +1,6 @@
 package tech.jianyue.auth;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.IntDef;
@@ -16,6 +17,7 @@ import java.lang.annotation.RetentionPolicy;
 public class Auth {
     protected static AuthBuilder AuthBuilder;
 
+    public static final int Pay = 100;
     public static final int LOGIN = 101;                        // 微信\微博\QQ 登录
 
     public static final int SHARE_TEXT = 102;                   // 微信/微博 分享文本
@@ -44,7 +46,11 @@ public class Auth {
         return new AuthBuildForQQ(context);
     }
 
-    @IntDef({LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO, SHARE_MUSIC, SHARE_PROGRAM})
+    public static AuthBuildForZFB withZFB(Activity activity) {
+        return new AuthBuildForZFB(activity);
+    }
+
+    @IntDef({Pay, LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO, SHARE_MUSIC, SHARE_PROGRAM})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActionWX {
     }
@@ -57,6 +63,11 @@ public class Auth {
     @IntDef({LOGIN, SHARE_IMAGE, SHARE_MUSIC, SHARE_VIDEO, SHARE_PROGRAM})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActionQQ {
+    }
+
+    @IntDef({Pay})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ActionZFB {
     }
 
     public static abstract class Builder {
@@ -88,16 +99,19 @@ public class Auth {
         public abstract Builder setAction(int action);
 
         public void build(AuthCallback callback) {
-             if (callback != null) {
-                 if (mAction == -1) {
-                    callback.onFailed("未设置Action, 请调用 setAction(action)");
-                 } else {
-                     Sign = String.valueOf(System.currentTimeMillis());
-                     mCallback = callback;
-                     AuthActivity.addBuilder(this);
-                 }
-            } else {
+            if (callback == null) {
+                destroy();
                 throw new NullPointerException("AuthCallback is null");
+            } else if (mContext == null) {
+                destroy();
+                throw new NullPointerException("Context is null");
+            } else if (mAction == -1) {
+                callback.onFailed("未设置Action, 请调用 setAction(action)");
+                destroy();
+            } else {
+                Sign = String.valueOf(System.currentTimeMillis());
+                mCallback = callback;
+                AuthActivity.addBuilder(this);
             }
         }
     }

@@ -14,6 +14,7 @@ import com.tencent.mm.opensdk.modelmsg.WXMusicObject;
 import com.tencent.mm.opensdk.modelmsg.WXTextObject;
 import com.tencent.mm.opensdk.modelmsg.WXVideoObject;
 import com.tencent.mm.opensdk.modelmsg.WXWebpageObject;
+import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
@@ -30,6 +31,13 @@ public class AuthBuildForWX extends Auth.Builder {
     private int mShareType = -100;                                      // 分享类型
     private String mID;                                                 // 小程序 ID
     private String mPath;                                               // 小程序 Path
+
+    private String mPartnerId;                                          // 微信支付 PartnerId. 微信支付分配的商户号
+    private String mPrepayId;                                           // 微信返回的支付交易会话ID
+    private String mPackageValue;                                       // 暂填写固定值Sign=WXPay, 但还是由外部传入, 避免以后变更
+    private String mNonceStr;                                           // 随机字符串，不长于32位
+    private String mTimestamp;                                          // 时间戳
+    private String mPaySign;                                            // 签名
 
     AuthBuildForWX(Context context) {
         super(context);
@@ -61,6 +69,36 @@ public class AuthBuildForWX extends Auth.Builder {
     @Override
     public AuthBuildForWX setAction(@Auth.ActionWX int action) {
         mAction = action;
+        return this;
+    }
+
+    public AuthBuildForWX payPartnerId(String partnerId) {
+        mPartnerId = partnerId;
+        return this;
+    }
+
+    public AuthBuildForWX payPrepayId(String prepayId) {
+        mPrepayId = prepayId;
+        return this;
+    }
+
+    public AuthBuildForWX payPackageValue(String value) {
+        mPackageValue = value;
+        return this;
+    }
+
+    public AuthBuildForWX payNonceStr(String str) {
+        mNonceStr = str;
+        return this;
+    }
+
+    public AuthBuildForWX payTimestamp(String time) {
+        mTimestamp = time;
+        return this;
+    }
+
+    public AuthBuildForWX paySign(String sign) {
+        mPaySign = sign;
         return this;
     }
 
@@ -212,11 +250,14 @@ public class AuthBuildForWX extends Auth.Builder {
         if (!mApi.isWXAppInstalled()) {
             mCallback.onFailed("未安装微信客户端");
             destroy();
-        } else if (mAction != Auth.LOGIN && mShareType == -100) {
+        } else if (mAction != Auth.LOGIN && mAction != Auth.Pay && mShareType == -100) {
             mCallback.onFailed("必须添加分享类型, 使用 shareToSession(),shareToTimeline(),shareToFavorite() ");
             destroy();
         } else {
             switch (mAction) {
+                case Auth.Pay:
+                    pay();
+                    break;
                 case Auth.LOGIN:
                     login();
                     break;
@@ -240,6 +281,7 @@ public class AuthBuildForWX extends Auth.Builder {
                     break;
                 default:
                     mCallback.onFailed("微信暂未支持的 Action, 或未定义 Action");
+                    destroy();
                     break;
             }
         }
@@ -249,8 +291,10 @@ public class AuthBuildForWX extends Auth.Builder {
         // 分享文本到微信, 文本描述，分享到朋友圈可以不传,聊天界面和收藏必须传
         if (TextUtils.isEmpty(mText)) {
             mCallback.onFailed("必须添加文本, 使用 shareText(str) ");
+            destroy();
         } else if (mShareType != SendMessageToWX.Req.WXSceneTimeline && TextUtils.isEmpty(mDescription)) {
             mCallback.onFailed("必须添加文本描述, 使用 shareDescription(str) ");
+            destroy();
         } else {
             WXMediaMessage msg = new WXMediaMessage();
             msg.mediaObject = new WXTextObject(mText);
@@ -264,6 +308,7 @@ public class AuthBuildForWX extends Auth.Builder {
     private void shareBitmap() {
         if (mBitmap == null) {
             mCallback.onFailed("必须添加 Bitmap, 且不为空, 使用 shareImage(bitmap) ");
+            destroy();
         } else {
             // imageData 大小限制为 10MB, 缩略图大小限制为 32K
             Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 150, 150, true);
@@ -280,10 +325,13 @@ public class AuthBuildForWX extends Auth.Builder {
     private void shareMusic() {
         if (TextUtils.isEmpty(mUrl)) {
             mCallback.onFailed("必须添加音乐链接, 且不为空, 使用 shareMusicUrl(url) ");
+            destroy();
         } else if (mBitmap == null) {
             mCallback.onFailed("必须添加音乐缩略图, 且不为空, 使用 shareMusicImage(bitmap) ");
+            destroy();
         } else if (mTitle == null) {
             mCallback.onFailed("必须添加音乐标题, 使用 shareMusicTitle(title) ");
+            destroy();
         } else {
             Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 150, 150, true);
             WXMusicObject musicObject = new WXMusicObject();
@@ -302,10 +350,13 @@ public class AuthBuildForWX extends Auth.Builder {
     private void shareLink() {
         if (TextUtils.isEmpty(mUrl)) {
             mCallback.onFailed("必须添加链接, 且不为空, 使用 shareLinkUrl(url) ");
+            destroy();
         } else if (mBitmap == null) {
             mCallback.onFailed("必须添加链接缩略图, 且不为空, 使用 shareLinkImage(bitmap) ");
+            destroy();
         } else if (mTitle == null) {
             mCallback.onFailed("必须添加链接标题, 使用 shareLinkTitle(title) ");
+            destroy();
         } else {
             Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 150, 150, true);
             WXWebpageObject webObject = new WXWebpageObject();
@@ -324,10 +375,13 @@ public class AuthBuildForWX extends Auth.Builder {
     private void shareVideo() {
         if (TextUtils.isEmpty(mUrl)) {
             mCallback.onFailed("必须添加视频链接, 且不为空, 使用 shareVideoUrl(url) ");
+            destroy();
         } else if (mBitmap == null) {
             mCallback.onFailed("必须添加视频缩略图, 且不为空, 使用 shareVideoImage(bitmap) ");
+            destroy();
         } else if (mTitle == null) {
             mCallback.onFailed("必须添加视频标题, 使用 shareVideoTitle(title) ");
+            destroy();
         } else {
             Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 150, 150, true);
             WXVideoObject videoObject = new WXVideoObject();
@@ -346,16 +400,22 @@ public class AuthBuildForWX extends Auth.Builder {
     private void shareProgram() {
         if (TextUtils.isEmpty(mUrl)) {
             mCallback.onFailed("必须添加小程序链接, 且不为空, 使用 shareProgramUrl(url) ");
+            destroy();
         } else if (TextUtils.isEmpty(mID)) {
             mCallback.onFailed("必须添加小程序ID, 使用 shareProgramId(id) ");
+            destroy();
         } else if (TextUtils.isEmpty(mPath)) {
             mCallback.onFailed("必须添加小程序Path, 使用 shareProgramPath(path) ");
+            destroy();
         } else if (mBitmap == null) {
             mCallback.onFailed("必须添加小程序缩略图, 且不为空, 使用 shareProgramImage(bitmap) ");
+            destroy();
         } else if (mTitle == null) {
             mCallback.onFailed("必须添加小程序标题, 使用 shareProgramTitle(title) ");
+            destroy();
         } else if (mShareType != SendMessageToWX.Req.WXSceneSession) {
             mCallback.onFailed("目前只支持分享到会话 ");
+            destroy();
         } else {
             Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 150, 150, true);
             WXMiniProgramObject programObject = new WXMiniProgramObject();
@@ -376,11 +436,44 @@ public class AuthBuildForWX extends Auth.Builder {
     private void share(WXMediaMessage msg) {
         if (msg == null) {
             mCallback.onFailed("分享失败, 内部错误");
+            destroy();
         } else {
             SendMessageToWX.Req req = new SendMessageToWX.Req();
             req.transaction = Sign;                                                 // 用于唯一标识一个请求
             req.scene = mShareType;
             req.message = msg;
+            mApi.sendReq(req);
+        }
+    }
+
+    private void pay() {
+        if (TextUtils.isEmpty(mPartnerId)) {
+            mCallback.onFailed("必须添加 PartnerId, 使用 payPartnerId(id) ");
+            destroy();
+        } else if (TextUtils.isEmpty(mPrepayId)) {
+            mCallback.onFailed("必须添加 PrepayId, 使用 payPrepayId(id) ");
+            destroy();
+        } else if (TextUtils.isEmpty(mPackageValue)) {
+            mCallback.onFailed("必须添加 PackageValue, 使用 payPackageValue(value) 固定值: \"Sign=WXPay\" ");
+            destroy();
+        } else if (TextUtils.isEmpty(mNonceStr)) {
+            mCallback.onFailed("必须添加 NonceStr, 使用 payNonceStr(str) ");
+            destroy();
+        } else if (TextUtils.isEmpty(mTimestamp)) {
+            mCallback.onFailed("必须添加 Timestamp, 使用 payTimestamp(time) ");
+            destroy();
+        } else if (TextUtils.isEmpty(mPaySign)) {
+            mCallback.onFailed("必须添加 Sign, 使用 paySign(sign) ");
+            destroy();
+        } else {
+            PayReq req = new PayReq();
+            req.appId = Auth.AuthBuilder.WECHAT_APPID;
+            req.partnerId = mPartnerId;
+            req.prepayId= mPrepayId;
+            req.packageValue = mPackageValue;
+            req.nonceStr= mNonceStr;
+            req.timeStamp= mTimestamp;
+            req.sign= mPaySign;
             mApi.sendReq(req);
         }
     }

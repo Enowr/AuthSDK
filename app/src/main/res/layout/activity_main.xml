@@ -11,9 +11,22 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/pay_wx"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="微信支付" />
+
+        <Button
+            android:id="@+id/pay_zfb"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="支付宝支付" />
+
+        <Button
             android:id="@+id/login_wx"
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_marginTop="20dp"
             android:text="微信登录" />
 
         <Button

@@ -12,6 +12,7 @@ import com.sina.weibo.sdk.auth.WbConnectErrorMessage;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.share.WbShareCallback;
 import com.sina.weibo.sdk.share.WbShareHandler;
+import com.tencent.mm.opensdk.constants.ConstantsAPI;
 import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
@@ -257,15 +258,19 @@ public class AuthActivity extends Activity implements WbShareCallback, IUiListen
                         builder.mCallback.onCancel();
                         break;
                     case BaseResp.ErrCode.ERR_OK:
-                        if (resp instanceof SendAuth.Resp) {                            // 微信授权登录 resp.getType() == 1
+                        if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
+                            builder.mCallback.onSuccessForPay();
+                        } else if (resp instanceof SendAuth.Resp && resp.getType() == ConstantsAPI.COMMAND_SENDAUTH) {                      // 微信授权登录 resp.getType() == 1
                             ((AuthBuildForWX) builder).getInfo(((SendAuth.Resp) resp).code);
-                        } else if (resp instanceof SendMessageToWX.Resp) {              // resp.getType() == 2
-                            ((AuthBuildForWX) builder).mCallback.onSuccessForShare();
+                        } else if (resp instanceof SendMessageToWX.Resp && resp.getType() == ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX) {      // resp.getType() == 2
+                            builder.mCallback.onSuccessForShare();
                         }
                         break;
                     default:
                         if (builder.mAction == Auth.LOGIN) {
                             builder.mCallback.onFailed(TextUtils.isEmpty(resp.errStr) ? "微信登录失败" : resp.errStr);
+                        } else if (builder.mAction == Auth.Pay) {
+                            builder.mCallback.onFailed(TextUtils.isEmpty(resp.errStr) ? "微信支付失败" : resp.errStr);
                         } else {
                             builder.mCallback.onFailed(TextUtils.isEmpty(resp.errStr) ? "微信分享失败" : resp.errStr);
                         }

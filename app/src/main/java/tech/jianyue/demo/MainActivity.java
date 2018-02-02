@@ -35,6 +35,12 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private AuthCallback mCallback = new AuthCallback() {
         @Override
+        public void onSuccessForPay() {
+            super.onSuccessForPay();
+            Toast.makeText(MainActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
         public void onSuccessForLogin(UserInfoForThird info) {
             super.onSuccessForLogin(info);
             Toast.makeText(MainActivity.this, info.userInfo, Toast.LENGTH_SHORT).show();
@@ -49,13 +55,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onCancel() {
             super.onCancel();
-            Toast.makeText(MainActivity.this, "分享取消", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "取消", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onFailed(String msg) {
             super.onFailed(msg);
-            Toast.makeText(MainActivity.this, "分享失败: " + msg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "失败: " + msg, Toast.LENGTH_SHORT).show();
         }
     };
     private String VideoUrl = "https://showimg.caixin.com/dolphinfile/caixin/2017/12/0_21.mp4";
@@ -81,6 +87,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
+        findViewById(R.id.pay_wx).setOnClickListener(this);
+        findViewById(R.id.pay_zfb).setOnClickListener(this);
+
         findViewById(R.id.login_wx).setOnClickListener(this);
         findViewById(R.id.login_wb).setOnClickListener(this);
         findViewById(R.id.login_qq).setOnClickListener(this);
@@ -106,6 +115,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.pay_wx:
+                Auth.withWX(this)
+                        .setAction(Auth.Pay)
+                        .payNonceStr("1")
+                        .payPackageValue("1")
+                        .payPartnerId("1")
+                        .payPrepayId("1")
+                        .paySign("1")
+                        .payTimestamp("1")
+                        .build(mCallback);
+                break;
+            case R.id.pay_zfb:
+                Auth.withZFB(this)
+                        .setAction(Auth.Pay)
+                        .payOrderInfo("1")
+                        .payIsShowLoading(true)                         // 是否显示加载动画
+                        .build(mCallback);
+                break;
             case R.id.login_wx:
                 Auth.withWX(this)
                         .setAction(Auth.LOGIN)

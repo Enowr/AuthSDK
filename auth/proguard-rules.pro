@@ -21,6 +21,12 @@
 #-renamesourcefileattribute SourceFile
 
 
+#Auth
+-keep class tech.jianyue.auth.** {*;}
+
+# 微博
+-keep class com.sina.weibo.sdk.** { *; }
+
 # 微信
 -keep class com.tencent.mm.opensdk.** {
    *;
@@ -32,9 +38,6 @@
    *;
 }
 
-# 微博
--keep class com.sina.weibo.sdk.** { *; }
-
 #QQ
 -keep class com.tencent.open.TDialog$*
 -keep class com.tencent.open.TDialog$* {*;}
@@ -43,5 +46,23 @@
 -keep class com.tencent.open.PKDialog$*
 -keep class com.tencent.open.PKDialog$* {*;}
 
-#Auth
--keep class tech.jianyue.auth.** {*;}
+#支付宝
+-keep class com.alipay.android.app.IAlixPay{*;}
+-keep class com.alipay.android.app.IAlixPay$Stub{*;}
+-keep class com.alipay.android.app.IRemoteServiceCallback{*;}
+-keep class com.alipay.android.app.IRemoteServiceCallback$Stub{*;}
+-keep class com.alipay.sdk.app.PayTask{ public *;}
+-keep class com.alipay.sdk.app.AuthTask{ public *;}
+-keep class com.alipay.sdk.app.H5PayCallback {
+    <fields>;
+    <methods>;
+}
+-keep class com.alipay.android.phone.mrpc.core.** { *; }
+-keep class com.alipay.apmobilesecuritysdk.** { *; }
+-keep class com.alipay.mobile.framework.service.annotation.** { *; }
+-keep class com.alipay.mobilesecuritysdk.face.** { *; }
+-keep class com.alipay.tscenter.biz.rpc.** { *; }
+-keep class org.json.alipay.** { *; }
+-keep class com.alipay.tscenter.** { *; }
+-keep class com.ta.utdid2.** { *;}
+-keep class com.ut.device.** { *;}

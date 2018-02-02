@@ -2,8 +2,15 @@
 
 [项目地址](https://github.com/Jieger/AuthSDK)
 
-用于第三方登录\分享\支付 等服务. 由于都是通用代码, 所以整合后抽取公共方法, 让使用时更加简便.
-目前支持 微信\微博\QQ 的登录和分享功能, 下一阶段将新增 微信\支付宝 支付功能.
+- 用于第三方登录\分享\支付 等服务. 由于都是通用代码, 所以整合后抽取公共方法, 让使用时更加简便.  
+
+- 目前支持 微信\微博\QQ 的登录和分享功能, 微信\支付宝 支付功能.
+
+- SDK 版本:  
+    微信 : com.tencent.mm.opensdk:wechat-sdk-android-without-mta:1.4.0  
+    微博 : com.sina.weibo.sdk:core:4.1.4:openDefaultRelease@aar  
+    QQ : open_sdk_r5990_lite  
+    支付宝 : alipaySdk-20170922  
 
 ## 1. 使用方式
 
@@ -79,6 +86,24 @@
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.pay_wx:
+                Auth.withWX(this)
+                        .setAction(Auth.Pay)
+                        .payNonceStr("1")
+                        .payPackageValue("1")
+                        .payPartnerId("1")
+                        .payPrepayId("1")
+                        .paySign("1")
+                        .payTimestamp("1")
+                        .build(mCallback);
+                break;
+            case R.id.pay_zfb:
+                Auth.withZFB(this)
+                        .setAction(Auth.Pay)
+                        .payOrderInfo("1")
+                        .payIsShowLoading(true)                         // 是否显示加载动画
+                        .build(mCallback);
+                break;
             case R.id.login_wx:
                 Auth.withWX(this)
                         .setAction(Auth.LOGIN)
@@ -244,8 +269,59 @@
     }
     ```
 
-7. 注意事项: 
-      使用中如出现异常, 可以查看项目源码, 其实有第三方 SDK 的一些使用限制;
+7. 混淆配置
+    ```aidl
+    #Auth
+    -keep class tech.jianyue.auth.** {*;}
+    
+    # 微博
+    -keep class com.sina.weibo.sdk.** { *; }
+    
+    # 微信
+    -keep class com.tencent.mm.opensdk.** {
+       *;
+    }
+    -keep class com.tencent.wxop.** {
+       *;
+    }
+    -keep class com.tencent.mm.sdk.** {
+       *;
+    }
+    
+    #QQ
+    -keep class com.tencent.open.TDialog$*
+    -keep class com.tencent.open.TDialog$* {*;}
+    -keep class com.tencent.open.PKDialog
+    -keep class com.tencent.open.PKDialog {*;}
+    -keep class com.tencent.open.PKDialog$*
+    -keep class com.tencent.open.PKDialog$* {*;}
+    
+    #支付宝
+    -keep class com.alipay.android.app.IAlixPay{*;}
+    -keep class com.alipay.android.app.IAlixPay$Stub{*;}
+    -keep class com.alipay.android.app.IRemoteServiceCallback{*;}
+    -keep class com.alipay.android.app.IRemoteServiceCallback$Stub{*;}
+    -keep class com.alipay.sdk.app.PayTask{ public *;}
+    -keep class com.alipay.sdk.app.AuthTask{ public *;}
+    -keep class com.alipay.sdk.app.H5PayCallback {
+        <fields>;
+        <methods>;
+    }
+    -keep class com.alipay.android.phone.mrpc.core.** { *; }
+    -keep class com.alipay.apmobilesecuritysdk.** { *; }
+    -keep class com.alipay.mobile.framework.service.annotation.** { *; }
+    -keep class com.alipay.mobilesecuritysdk.face.** { *; }
+    -keep class com.alipay.tscenter.biz.rpc.** { *; }
+    -keep class org.json.alipay.** { *; }
+    -keep class com.alipay.tscenter.** { *; }
+    -keep class com.ta.utdid2.** { *;}
+    -keep class com.ut.device.** { *;}
+
+    ```
+
+8. 注意事项: 
+      使用中如出现异常, 可以查看项目源码, 其中有第三方 SDK 的一些使用限制注释;  
+      支付时, 参照官方文档获取服务器返回信息.  
       项目中的 UserInfoForThird 类为第三方登录后返回的数据, 其中 userInfo 字段包含了第三方返回的原始用户信息数据 Json
    
 ## 2. 项目结构
