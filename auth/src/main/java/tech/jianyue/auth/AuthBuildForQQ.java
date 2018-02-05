@@ -263,7 +263,9 @@ public class AuthBuildForQQ extends Auth.Builder {
                 shareProgram(activity);
                 break;
             default:
-                mCallback.onFailed("QQ 暂未支持的 Action, 或未定义 Action");
+                if (mAction != -1) {
+                    mCallback.onFailed("QQ 暂未支持的 Action");
+                }
                 activity.finish();
                 break;
         }

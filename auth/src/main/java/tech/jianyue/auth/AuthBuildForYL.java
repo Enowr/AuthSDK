@@ -63,7 +63,9 @@ public class AuthBuildForYL extends Auth.Builder {
                 mContext.startActivity(intent);
                 break;
             default:
-                mCallback.onFailed("银联暂未支持的 Action, 或未定义的 Action");
+                if (mAction != -1) {
+                    mCallback.onFailed("银联暂未支持的 Action");
+                }
                 destroy();
         }
     }
@@ -71,6 +73,7 @@ public class AuthBuildForYL extends Auth.Builder {
     void pay(Activity activity) {
         if (TextUtils.isEmpty(mOrderInfo)) {
             mCallback.onFailed("必须添加 OrderInfo, 使用 payOrderInfo(info) ");
+            activity.finish();
         } else {
             int i;
             if (mTest) {                                            // 银联测试环境
@@ -82,6 +85,7 @@ public class AuthBuildForYL extends Auth.Builder {
 
             } else if (UPPayAssistEx.PLUGIN_NOT_FOUND == i) {       // 手机终端尚未安装支付控件，需要先安装支付控件
                 mCallback.onFailed("手机终端尚未安装支付控件，需要先安装支付控件 ");
+                activity.finish();
             }
         }
     }

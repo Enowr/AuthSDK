@@ -190,7 +190,9 @@ public class AuthBuildForWB extends Auth.Builder {
                     shareVideo(activity, handler);
                     break;
                 default:
-                    mCallback.onFailed("微博暂未支持的 Action, 或未定义 Action");
+                    if (mAction != -1) {
+                        mCallback.onFailed("微博暂未支持的 Action");
+                    }
                     activity.finish();
                     break;
             }

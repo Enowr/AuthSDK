@@ -280,7 +280,9 @@ public class AuthBuildForWX extends Auth.Builder {
                     shareProgram();
                     break;
                 default:
-                    mCallback.onFailed("微信暂未支持的 Action, 或未定义 Action");
+                    if (mAction != -1) {
+                        mCallback.onFailed("微信暂未支持的 Action");
+                    }
                     destroy();
                     break;
             }

@@ -70,7 +70,9 @@ public class AuthBuildForZFB extends Auth.Builder {
                 mContext.startActivity(intent);
                 break;
             default:
-                mCallback.onFailed("支付宝暂未支持的 Action, 或未定义的 Action");
+                if (mAction != -1) {
+                    mCallback.onFailed("支付宝暂未支持的 Action");
+                }
                 destroy();
         }
     }
