@@ -46,8 +46,12 @@ public class Auth {
         return new AuthBuildForQQ(context);
     }
 
-    public static AuthBuildForZFB withZFB(Activity activity) {
-        return new AuthBuildForZFB(activity);
+    public static AuthBuildForZFB withZFB(Context context) {
+        return new AuthBuildForZFB(context);
+    }
+
+    public static AuthBuildForYL withYL(Context context) {
+        return new AuthBuildForYL(context);
     }
 
     @IntDef({Pay, LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO, SHARE_MUSIC, SHARE_PROGRAM})
@@ -68,6 +72,11 @@ public class Auth {
     @IntDef({Pay})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActionZFB {
+    }
+
+    @IntDef({Pay})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ActionYL {
     }
 
     public static abstract class Builder {

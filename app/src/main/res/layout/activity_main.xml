@@ -11,6 +11,12 @@
         android:orientation="vertical">
 
         <Button
+            android:id="@+id/pay_yl"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="银联支付" />
+
+        <Button
             android:id="@+id/pay_wx"
             android:layout_width="match_parent"
             android:layout_height="50dp"

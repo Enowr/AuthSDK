@@ -35,15 +35,15 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private AuthCallback mCallback = new AuthCallback() {
         @Override
-        public void onSuccessForPay() {
-            super.onSuccessForPay();
-            Toast.makeText(MainActivity.this, "支付成功", Toast.LENGTH_SHORT).show();
+        public void onSuccessForPay(String result) {
+            super.onSuccessForPay(result);
+            Toast.makeText(MainActivity.this, "支付成功: " + result, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onSuccessForLogin(UserInfoForThird info) {
             super.onSuccessForLogin(info);
-            Toast.makeText(MainActivity.this, info.userInfo, Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "分享成功: " + info.userInfo, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
+        findViewById(R.id.pay_yl).setOnClickListener(this);
         findViewById(R.id.pay_wx).setOnClickListener(this);
         findViewById(R.id.pay_zfb).setOnClickListener(this);
 
@@ -115,6 +116,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.pay_yl:
+                Auth.withYL(this)
+                        .setAction(Auth.Pay)
+                        .payOrderInfo("123324")
+                        .build(mCallback);
+                break;
             case R.id.pay_wx:
                 Auth.withWX(this)
                         .setAction(Auth.Pay)

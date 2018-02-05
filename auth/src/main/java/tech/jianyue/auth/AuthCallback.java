@@ -6,7 +6,7 @@ public abstract class AuthCallback {
 
     }
 
-    public void onSuccessForPay() {
+    public void onSuccessForPay(String result) {
 
     }
 

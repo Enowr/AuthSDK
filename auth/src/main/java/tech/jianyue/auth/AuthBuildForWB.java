@@ -23,6 +23,7 @@ import com.sina.weibo.sdk.utils.Utility;
 import java.util.ArrayList;
 
 /**
+ * 导入文件: jniLibs/xxx(libweibosdkcore.so)
  * 描述: 微博相关授权操作
  * 作者: WJ
  * 时间: 2018/1/19

@@ -311,7 +311,7 @@ public class AuthBuildForWX extends Auth.Builder {
             destroy();
         } else {
             // imageData 大小限制为 10MB, 缩略图大小限制为 32K
-            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 150, 150, true);
+            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 120, 120, true);
 
             WXMediaMessage msg = new WXMediaMessage();
             msg.mediaObject = new WXImageObject(mBitmap);
@@ -333,7 +333,7 @@ public class AuthBuildForWX extends Auth.Builder {
             mCallback.onFailed("必须添加音乐标题, 使用 shareMusicTitle(title) ");
             destroy();
         } else {
-            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 150, 150, true);
+            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 120, 120, true);
             WXMusicObject musicObject = new WXMusicObject();
             musicObject.musicUrl = mUrl;                                            // 音乐链接
 
@@ -358,7 +358,7 @@ public class AuthBuildForWX extends Auth.Builder {
             mCallback.onFailed("必须添加链接标题, 使用 shareLinkTitle(title) ");
             destroy();
         } else {
-            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 150, 150, true);
+            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 120, 120, true);
             WXWebpageObject webObject = new WXWebpageObject();
             webObject.webpageUrl = mUrl;
 
@@ -383,7 +383,7 @@ public class AuthBuildForWX extends Auth.Builder {
             mCallback.onFailed("必须添加视频标题, 使用 shareVideoTitle(title) ");
             destroy();
         } else {
-            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 150, 150, true);
+            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 120, 120, true);
             WXVideoObject videoObject = new WXVideoObject();
             videoObject.videoUrl = mUrl;                                            // 视频链接
 
@@ -417,7 +417,7 @@ public class AuthBuildForWX extends Auth.Builder {
             mCallback.onFailed("目前只支持分享到会话 ");
             destroy();
         } else {
-            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 150, 150, true);
+            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 120, 120, true);
             WXMiniProgramObject programObject = new WXMiniProgramObject();
             programObject.webpageUrl = mUrl;                                        // 低版本微信打开该 url
             programObject.userName = mID;                                           // 跳转小程序的原始 ID

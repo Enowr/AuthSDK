@@ -42,6 +42,7 @@ public class AuthActivity extends Activity implements WbShareCallback, IUiListen
     private SsoHandler mSsoHandler;                                                 // 微博授权 API
     private WbShareHandler mShareHandler;                                           // 微博分享 API
     private AuthCallback mCallbackWB;                                               // 微博分享回调函数
+    private AuthBuildForYL mBuildYL;                                                // 银联 Build
 
     static void addBuilder(Auth.Builder builder) {
         mBuilderSet.add(builder);
@@ -64,6 +65,8 @@ public class AuthActivity extends Activity implements WbShareCallback, IUiListen
         initWX();
         initWB(sign);
         initQQ(sign);
+        initZFB(sign);
+        initYL(sign);
     }
 
     @Override
@@ -81,6 +84,7 @@ public class AuthActivity extends Activity implements WbShareCallback, IUiListen
 
         callbackSsoWB(requestCode, resultCode, data);
         callbackQQ(requestCode, resultCode, data);
+        callbackYL(requestCode, resultCode, data);
     }
 
     @Override
@@ -100,6 +104,42 @@ public class AuthActivity extends Activity implements WbShareCallback, IUiListen
         mCallbackWB = null;
     }
 
+    // 银联相关
+    private void initYL(String sign) {
+        if (!TextUtils.isEmpty(sign)) {
+            final Auth.Builder builder = getBuilder(sign);
+            if (builder != null && builder instanceof AuthBuildForYL) {
+                if (builder.mAction == Auth.Pay)
+                    mBuildYL = (AuthBuildForYL) builder;
+                    ((AuthBuildForYL) builder).pay(this);
+            }
+        }
+    }
+
+    private void callbackYL(int requestCode, int resultCode, Intent data) {
+        if (data != null && data.getExtras() != null && mBuildYL != null) {
+            String str = data.getExtras().getString("pay_result");
+            if( "success".equalsIgnoreCase(str) ){
+                mBuildYL.mCallback.onSuccessForPay("银联支付成功");
+            }  else if ("fail".equalsIgnoreCase(str)) {
+                mBuildYL.mCallback.onFailed("银联支付失败");
+            } else if ("cancel".equalsIgnoreCase(str)) {
+                mBuildYL.mCallback.onCancel();
+            }
+        }
+        finish();
+    }
+
+    // 支付宝相关
+    private void initZFB(String sign) {
+        if (!TextUtils.isEmpty(sign)) {
+            final Auth.Builder builder = getBuilder(sign);
+            if (builder != null && builder instanceof AuthBuildForZFB) {
+                if (builder.mAction == Auth.Pay)
+                ((AuthBuildForZFB) builder).pay(this);
+            }
+        }
+    }
 
     // 微博相关
     private void initWB(String sign) {
@@ -259,7 +299,7 @@ public class AuthActivity extends Activity implements WbShareCallback, IUiListen
                         break;
                     case BaseResp.ErrCode.ERR_OK:
                         if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
-                            builder.mCallback.onSuccessForPay();
+                            builder.mCallback.onSuccessForPay("微信支付成功");
                         } else if (resp instanceof SendAuth.Resp && resp.getType() == ConstantsAPI.COMMAND_SENDAUTH) {                      // 微信授权登录 resp.getType() == 1
                             ((AuthBuildForWX) builder).getInfo(((SendAuth.Resp) resp).code);
                         } else if (resp instanceof SendMessageToWX.Resp && resp.getType() == ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX) {      // resp.getType() == 2
