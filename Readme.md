@@ -126,7 +126,12 @@
                         .setAction(Auth.LOGIN)
                         .build(mCallback);
                 break;
-
+            case R.id.rouse_web:                                        // 微信唤起Web, 可用于唤起微信的自动续订服务
+                Auth.withWX(this)
+                        .setAction(Auth.RouseWeb)
+                        .rouseWeb("www.qq.com")
+                        .build(mCallback);
+                break;
             case R.id.share_wx_text:
                 Auth.withWX(this)
                         .setAction(Auth.SHARE_TEXT)
