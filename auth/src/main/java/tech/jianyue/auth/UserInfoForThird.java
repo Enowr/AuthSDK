@@ -11,6 +11,9 @@ import org.json.JSONObject;
  * 版本: 1.0
  */
 public class UserInfoForThird {
+    /**
+     *  1 新浪微博 2 腾讯QQ 3 微信账号
+     */
     public String fromId = "";                          // 第三方平台ID  1 新浪微博 2 腾讯QQ 3 微信账号
     public String aToken = "";                          // 第三方平台 access token
     public String rToken = "";                          // 第三方平台 refresh token

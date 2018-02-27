@@ -1,6 +1,5 @@
 package tech.jianyue.auth;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.IntDef;
@@ -17,15 +16,18 @@ import java.lang.annotation.RetentionPolicy;
 public class Auth {
     protected static AuthBuilder AuthBuilder;
 
-    public static final int Pay = 100;
-    public static final int LOGIN = 101;                        // 微信\微博\QQ 登录
+    public static final int Pay = 100;                          // 微信\支付宝\银联 支付
 
-    public static final int SHARE_TEXT = 102;                   // 微信/微博 分享文本
-    public static final int SHARE_IMAGE = 103;                  // 微信/微博/QQ 分享图片
-    public static final int SHARE_LINK = 104;                   // 微信/微博 分享链接
-    public static final int SHARE_VIDEO = 105;                  // 微信/微博/QQ 分享视频
-    public static final int SHARE_MUSIC = 106;                  // 微信/QQ 分享音乐
-    public static final int SHARE_PROGRAM = 107;                // 微信/QQ 分享小程序/应用
+    public static final int RouseWeb = 111;                     // 微信 唤醒WebView
+
+    public static final int LOGIN = 121;                        // 微信\微博\QQ 登录
+
+    public static final int SHARE_TEXT = 131;                   // 微信/微博 分享文本
+    public static final int SHARE_IMAGE = 132;                  // 微信/微博/QQ 分享图片
+    public static final int SHARE_LINK = 133;                   // 微信/微博 分享链接
+    public static final int SHARE_VIDEO = 134;                  // 微信/微博/QQ 分享视频
+    public static final int SHARE_MUSIC = 135;                  // 微信/QQ 分享音乐
+    public static final int SHARE_PROGRAM = 136;                // 微信/QQ 分享小程序/应用
 
     private Auth() {
     }
@@ -54,7 +56,7 @@ public class Auth {
         return new AuthBuildForYL(context);
     }
 
-    @IntDef({Pay, LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO, SHARE_MUSIC, SHARE_PROGRAM})
+    @IntDef({Pay, RouseWeb, LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO, SHARE_MUSIC, SHARE_PROGRAM})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActionWX {
     }

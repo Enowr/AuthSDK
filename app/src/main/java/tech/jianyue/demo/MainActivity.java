@@ -95,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.login_wb).setOnClickListener(this);
         findViewById(R.id.login_qq).setOnClickListener(this);
 
+        findViewById(R.id.rouse_web).setOnClickListener(this);
+
         findViewById(R.id.share_wx_text).setOnClickListener(this);
         findViewById(R.id.share_wx_image).setOnClickListener(this);
         findViewById(R.id.share_wx_link).setOnClickListener(this);
@@ -155,7 +157,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .setAction(Auth.LOGIN)
                         .build(mCallback);
                 break;
-
+            case R.id.rouse_web:
+                Auth.withWX(this)
+                        .setAction(Auth.RouseWeb)
+                        .rouseWeb("http://www.caixin.com")
+                        .build(mCallback);
+                break;
             case R.id.share_wx_text:
                 Auth.withWX(this)
                         .setAction(Auth.SHARE_TEXT)

@@ -48,6 +48,13 @@
             android:text="QQ 登录" />
 
         <Button
+            android:id="@+id/rouse_web"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:text="微信唤起Web" />
+
+        <Button
             android:id="@+id/share_wx_text"
             android:layout_width="match_parent"
             android:layout_height="50dp"

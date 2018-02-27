@@ -5,7 +5,7 @@ publish{
     userOrg = 'wenjie'                                  // bintray.com 的用户名
     groupId = 'tech.jianyue.auth'                       // jcenter 上的路径
     artifactId = 'auth'                                 // 项目名称
-    publishVersion = '1.0.4'                            // 版本号
+    publishVersion = '1.0.5'                            // 版本号
     desc = '第三方登录|分享|支付的 SDK'                    // 描述，不重要
     website = 'https://github.com/Jieger/AuthSDK'       // 项目主页
 }

@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
+import com.tencent.mm.opensdk.modelbiz.OpenWebview;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
 import com.tencent.mm.opensdk.modelmsg.WXImageObject;
@@ -69,6 +70,11 @@ public class AuthBuildForWX extends Auth.Builder {
     @Override
     public AuthBuildForWX setAction(@Auth.ActionWX int action) {
         mAction = action;
+        return this;
+    }
+
+    public AuthBuildForWX rouseWeb(String url) {
+        mUrl = url;
         return this;
     }
 
@@ -250,13 +256,16 @@ public class AuthBuildForWX extends Auth.Builder {
         if (!mApi.isWXAppInstalled()) {
             mCallback.onFailed("未安装微信客户端");
             destroy();
-        } else if (mAction != Auth.LOGIN && mAction != Auth.Pay && mShareType == -100) {
+        } else if (mAction != Auth.LOGIN && mAction != Auth.Pay && mAction != Auth.RouseWeb && mShareType == -100) {
             mCallback.onFailed("必须添加分享类型, 使用 shareToSession(),shareToTimeline(),shareToFavorite() ");
             destroy();
         } else {
             switch (mAction) {
                 case Auth.Pay:
                     pay();
+                    break;
+                case Auth.RouseWeb:
+                    rouseWeb();
                     break;
                 case Auth.LOGIN:
                     login();
@@ -476,6 +485,17 @@ public class AuthBuildForWX extends Auth.Builder {
             req.nonceStr= mNonceStr;
             req.timeStamp= mTimestamp;
             req.sign= mPaySign;
+            mApi.sendReq(req);
+        }
+    }
+
+    private void rouseWeb() {
+        if (TextUtils.isEmpty(mUrl)) {
+            mCallback.onFailed("必须添加 Url, 使用 rouseWeb(url) ");
+            destroy();
+        } else {
+            OpenWebview.Req req = new OpenWebview.Req();
+            req.url = mUrl;
             mApi.sendReq(req);
         }
     }
