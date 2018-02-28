@@ -36,32 +36,63 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private AuthCallback mCallback = new AuthCallback() {
         @Override
         public void onSuccessForPay(String result) {
-            super.onSuccessForPay(result);
             Toast.makeText(MainActivity.this, "支付成功: " + result, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onSuccessForLogin(UserInfoForThird info) {
-            super.onSuccessForLogin(info);
-            Toast.makeText(MainActivity.this, "分享成功: " + info.userInfo, Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "登录成功: " + info.userInfo, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onSuccessForShare() {
-            super.onSuccessForShare();
             Toast.makeText(MainActivity.this, "分享成功", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onCancel() {
-            super.onCancel();
             Toast.makeText(MainActivity.this, "取消", Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onFailed(String msg) {
-            super.onFailed(msg);
-            Toast.makeText(MainActivity.this, "失败: " + msg, Toast.LENGTH_SHORT).show();
+            String with = "";
+            String action;
+            switch (getWith()) {
+                case Auth.WITH_WB:
+                    with = "微博";
+                    break;
+                case Auth.WITH_QQ:
+                    with = "QQ";
+                    break;
+                case Auth.WITH_WX:
+                    with = "微信";
+                    break;
+                case Auth.WITH_ZFB:
+                    with = "支付宝";
+                    break;
+                case Auth.WITH_YL:
+                    with = "银联";
+                    break;
+            }
+            switch (getAction()) {
+                case Auth.Pay:
+                    action = "支付";
+                    break;
+                case Auth.LOGIN:
+                    action = "登录";
+                    break;
+                case Auth.RouseWeb:
+                    action = "唤起";
+                    break;
+                case Auth.UNKNOWN_TYPE:
+                    action = "未设置Action ";
+                    break;
+                default:
+                    action = "分享";
+                    break;
+            }
+            Toast.makeText(MainActivity.this, with + action + "失败: " + msg, Toast.LENGTH_SHORT).show();
         }
     };
     private String VideoUrl = "https://showimg.caixin.com/dolphinfile/caixin/2017/12/0_21.mp4";

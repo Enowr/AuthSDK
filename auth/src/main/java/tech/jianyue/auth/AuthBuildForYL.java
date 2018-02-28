@@ -19,7 +19,7 @@ public class AuthBuildForYL extends Auth.Builder {
     private boolean mTest = false;
 
     AuthBuildForYL(Context context) {
-        super(context);
+        super(context, Auth.WITH_YL);
     }
 
     @Override           // 初始化资源
@@ -63,7 +63,7 @@ public class AuthBuildForYL extends Auth.Builder {
                 mContext.startActivity(intent);
                 break;
             default:
-                if (mAction != -1) {
+                if (mAction != Auth.UNKNOWN_TYPE) {
                     mCallback.onFailed("银联暂未支持的 Action");
                 }
                 destroy();

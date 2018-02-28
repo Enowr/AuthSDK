@@ -39,7 +39,7 @@ public class AuthBuildForQQ extends Auth.Builder {
     private ArrayList<String> mImageList;   // 图片集合, 最多支持9张图片，多余的图片会被丢弃; 说说 <=9张图片为发表说说，>9张为上传图片到相册,只支持本地图片
 
     AuthBuildForQQ(Context context) {
-        super(context);
+        super(context, Auth.WITH_QQ);
     }
 
     @Override
@@ -263,7 +263,7 @@ public class AuthBuildForQQ extends Auth.Builder {
                 shareProgram(activity);
                 break;
             default:
-                if (mAction != -1) {
+                if (mAction != Auth.UNKNOWN_TYPE) {
                     mCallback.onFailed("QQ 暂未支持的 Action");
                 }
                 activity.finish();

@@ -41,7 +41,7 @@ public class AuthBuildForWX extends Auth.Builder {
     private String mPaySign;                                            // 签名
 
     AuthBuildForWX(Context context) {
-        super(context);
+        super(context, Auth.WITH_WX);
     }
 
     @Override                           // 初始化资源
@@ -289,7 +289,7 @@ public class AuthBuildForWX extends Auth.Builder {
                     shareProgram();
                     break;
                 default:
-                    if (mAction != -1) {
+                    if (mAction != Auth.UNKNOWN_TYPE) {
                         mCallback.onFailed("微信暂未支持的 Action");
                     }
                     destroy();

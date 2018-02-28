@@ -38,7 +38,7 @@ public class AuthBuildForWB extends Auth.Builder {
     private ArrayList<Uri> mImagePathList;                              // 微博 多图路径地址
 
     AuthBuildForWB(Context context) {
-        super(context);
+        super(context, Auth.WITH_WB);
     }
 
     @Override
@@ -190,7 +190,7 @@ public class AuthBuildForWB extends Auth.Builder {
                     shareVideo(activity, handler);
                     break;
                 default:
-                    if (mAction != -1) {
+                    if (mAction != Auth.UNKNOWN_TYPE) {
                         mCallback.onFailed("微博暂未支持的 Action");
                     }
                     activity.finish();

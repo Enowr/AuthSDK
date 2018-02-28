@@ -1,6 +1,21 @@
 package tech.jianyue.auth;
 
 public abstract class AuthCallback {
+    protected int mWith;
+    protected int mAction;
+
+    protected void setWith(@Auth.WithThird int with, int action) {
+        mWith = with;
+        mAction = action;
+    }
+
+    public final int getWith() {
+        return mWith;
+    }
+
+    public final int getAction() {
+        return mAction;
+    }
 
     public void onSuccessForLogin(UserInfoForThird info) {
 

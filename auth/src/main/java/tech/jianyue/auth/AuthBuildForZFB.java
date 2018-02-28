@@ -21,7 +21,7 @@ public class AuthBuildForZFB extends Auth.Builder {
     private String mOrderInfo;
 
     AuthBuildForZFB(Context context) {
-        super(context);
+        super(context, Auth.WITH_ZFB);
     }
 
     /**
@@ -70,7 +70,7 @@ public class AuthBuildForZFB extends Auth.Builder {
                 mContext.startActivity(intent);
                 break;
             default:
-                if (mAction != -1) {
+                if (mAction != Auth.UNKNOWN_TYPE) {
                     mCallback.onFailed("支付宝暂未支持的 Action");
                 }
                 destroy();

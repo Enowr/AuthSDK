@@ -16,9 +16,11 @@ import java.lang.annotation.RetentionPolicy;
 public class Auth {
     protected static AuthBuilder AuthBuilder;
 
+    public static final int UNKNOWN_TYPE = -1;                  // 未知类型
+
     public static final int Pay = 100;                          // 微信\支付宝\银联 支付
 
-    public static final int RouseWeb = 111;                     // 微信 唤醒WebView
+    public static final int RouseWeb = 111;                     // 微信 唤起WebView
 
     public static final int LOGIN = 121;                        // 微信\微博\QQ 登录
 
@@ -28,6 +30,12 @@ public class Auth {
     public static final int SHARE_VIDEO = 134;                  // 微信/微博/QQ 分享视频
     public static final int SHARE_MUSIC = 135;                  // 微信/QQ 分享音乐
     public static final int SHARE_PROGRAM = 136;                // 微信/QQ 分享小程序/应用
+
+    public static final int WITH_WX = 141;                      // 微信 第三方标记
+    public static final int WITH_WB = 142;                      // 微博 第三方标记
+    public static final int WITH_QQ = 143;                      // QQ 第三方标记
+    public static final int WITH_ZFB = 144;                     // 支付宝 第三方标记
+    public static final int WITH_YL = 145;                      // 银联 第三方标记
 
     private Auth() {
     }
@@ -56,7 +64,7 @@ public class Auth {
         return new AuthBuildForYL(context);
     }
 
-    @IntDef({Pay, RouseWeb, LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO, SHARE_MUSIC, SHARE_PROGRAM})
+    @IntDef({RouseWeb, Pay, LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO, SHARE_MUSIC, SHARE_PROGRAM})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActionWX {
     }
@@ -81,8 +89,14 @@ public class Auth {
     public @interface ActionYL {
     }
 
+    @IntDef({WITH_WX, WITH_WB, WITH_QQ, WITH_ZFB, WITH_YL})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface WithThird {
+    }
+
     public static abstract class Builder {
-        int mAction = -1;                                       // 事件
+        int mAction = UNKNOWN_TYPE;                             // 事件
+        int mWith;                                              // 第三方标记
         String Sign;                                            // 任务标记
         Context mContext;                                       // 上下文
         AuthCallback mCallback;                                 // 回调函数
@@ -93,8 +107,9 @@ public class Auth {
         Bitmap mBitmap;                                         // 分享图片
         String mUrl;                                            // 分享的 Url
 
-        Builder(Context context) {
+        Builder(Context context, @WithThird int with) {
             mContext = context;
+            mWith = with;
             init();
         }
 
@@ -116,13 +131,14 @@ public class Auth {
             } else if (mContext == null) {
                 destroy();
                 throw new NullPointerException("Context is null");
-            } else if (mAction == -1) {
+            } else if (mAction == UNKNOWN_TYPE) {
                 callback.onFailed("未设置Action, 请调用 setAction(action)");
                 destroy();
             } else {
                 Sign = String.valueOf(System.currentTimeMillis());
                 mCallback = callback;
                 AuthActivity.addBuilder(this);
+                mCallback.setWith(mWith, mAction);
             }
         }
     }
