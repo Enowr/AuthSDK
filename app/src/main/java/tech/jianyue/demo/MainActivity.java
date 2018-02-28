@@ -151,8 +151,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.pay_yl:
                 Auth.withYL(this)
-//                        .setAction(Auth.Pay)
-                        .payOrderInfo("")
+                        .setAction(Auth.Pay)
+                        .payOrderInfo("111")
                         .build(mCallback);
                 break;
             case R.id.pay_wx:

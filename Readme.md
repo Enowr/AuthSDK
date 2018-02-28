@@ -6,6 +6,8 @@
 
 - 目前支持 微信\微博\QQ 的登录和分享功能, 微信\支付宝\银联 支付功能, 微信的唤起功能.
 
+- 微信唤起服务暂无成功取消回调, 只做参数url为空时的失败回调.
+
 - SDK 版本:  
     微信 : com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.1.4  
     微博 : com.sina.weibo.sdk:core:4.1.4:openDefaultRelease@aar  
