@@ -480,7 +480,7 @@ public class AuthBuildForQQ extends Auth.Builder {
                     }
                 });
             } else {
-                callback.onFailed("微博登录失败");
+                callback.onFailed("QQ登录失败");
                 destroy();
             }
         }

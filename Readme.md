@@ -8,6 +8,8 @@
 
 - 微信唤起服务暂无成功取消回调, 只做参数url为空时的失败回调.
 
+- 当前版本不支持并发操作.
+
 - SDK 版本:  
     微信 : com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.1.4  
     微博 : com.sina.weibo.sdk:core:4.1.4:openDefaultRelease@aar  
@@ -32,7 +34,7 @@
 2. 在 app module 中添加引用:  
     ```aidl
     dependencies {
-        compile 'tech.jianyue.auth:auth:1.0.6'
+        compile 'tech.jianyue.auth:auth:1.0.7'
     }
     ```
 
