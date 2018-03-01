@@ -47,6 +47,11 @@
             android:label="@string/app_name"
             android:exported="true"/>
 
+        <activity 
+            android:name=".wxapi.WXPayEntryActivity"
+            android:label="@string/app_name"
+            android:exported="true" />
+
         <!-- QQ -->
         <activity
             android:name="com.tencent.tauth.AuthActivity"
