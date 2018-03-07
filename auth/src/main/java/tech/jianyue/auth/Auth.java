@@ -139,6 +139,7 @@ public class Auth {
                 mCallback = callback;
                 AuthActivity.addBuilder(this);
                 mCallback.setWith(mWith, mAction);
+                mCallback.onStart();
             }
         }
     }

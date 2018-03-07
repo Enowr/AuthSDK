@@ -17,6 +17,13 @@ public abstract class AuthCallback {
         return mAction;
     }
 
+    /**
+     * build 开始之前调用
+     */
+    public void onStart() {
+
+    }
+
     public void onSuccessForLogin(UserInfoForThird info) {
 
     }
