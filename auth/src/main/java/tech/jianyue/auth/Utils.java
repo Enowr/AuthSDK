@@ -69,7 +69,7 @@ public class Utils {
         return null;
     }
 
-    public static String post(String url, String content) {
+    static String post(String url, String content) {
         HttpURLConnection conn = null;
         try {
             URL mURL = new URL(url);

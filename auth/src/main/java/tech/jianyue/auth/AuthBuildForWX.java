@@ -46,11 +46,11 @@ public class AuthBuildForWX extends Auth.Builder {
 
     @Override                           // 初始化资源
     void init() {
-        if (TextUtils.isEmpty(Auth.AuthBuilder.WECHAT_APPID)) {
+        if (TextUtils.isEmpty(Auth.AuthBuilder.WXAppID)) {
             throw new IllegalArgumentException("WECHAT_APPID was empty");
         } else if (mApi == null) {
-            mApi = WXAPIFactory.createWXAPI(mContext, Auth.AuthBuilder.WECHAT_APPID, true);
-            mApi.registerApp(Auth.AuthBuilder.WECHAT_APPID);
+            mApi = WXAPIFactory.createWXAPI(mContext, Auth.AuthBuilder.WXAppID, true);
+            mApi.registerApp(Auth.AuthBuilder.WXAppID);
         }
     }
 
@@ -304,7 +304,7 @@ public class AuthBuildForWX extends Auth.Builder {
             mCallback.onFailed("必须添加文本, 使用 shareText(str) ");
             destroy();
         } else if (mShareType != SendMessageToWX.Req.WXSceneTimeline && TextUtils.isEmpty(mDescription)) {
-            mCallback.onFailed("必须添加文本描述, 使用 shareDescription(str) ");
+            mCallback.onFailed("必须添加文本描述, 使用 shareTextDescription(str) ");
             destroy();
         } else {
             WXMediaMessage msg = new WXMediaMessage();
@@ -446,7 +446,7 @@ public class AuthBuildForWX extends Auth.Builder {
 
     private void share(WXMediaMessage msg) {
         if (msg == null) {
-            mCallback.onFailed("分享失败, 内部错误");
+            mCallback.onFailed("分享失败, Auth 内部错误");
             destroy();
         } else {
             SendMessageToWX.Req req = new SendMessageToWX.Req();
@@ -478,7 +478,7 @@ public class AuthBuildForWX extends Auth.Builder {
             destroy();
         } else {
             PayReq req = new PayReq();
-            req.appId = Auth.AuthBuilder.WECHAT_APPID;
+            req.appId = Auth.AuthBuilder.WXAppID;
             req.partnerId = mPartnerId;
             req.prepayId= mPrepayId;
             req.packageValue = mPackageValue;
@@ -559,9 +559,9 @@ public class AuthBuildForWX extends Auth.Builder {
         // 微信登录, 2 通过 code 获取 refresh_token
         private String getToken(String code) throws Exception {
             String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="
-                    + Auth.AuthBuilder.WECHAT_APPID
+                    + Auth.AuthBuilder.WXAppID
                     + "&secret="
-                    + Auth.AuthBuilder.WECHAT_SECRET
+                    + Auth.AuthBuilder.WXSecret
                     + "&code="
                     + code
                     + "&grant_type=authorization_code";
@@ -571,7 +571,7 @@ public class AuthBuildForWX extends Auth.Builder {
         // 微信登录, 3 通过 refresh_token 刷新 access_token
         private String refreshToken(String token) throws Exception {
             String url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid="
-                    + Auth.AuthBuilder.WECHAT_APPID
+                    + Auth.AuthBuilder.WXAppID
                     + "&grant_type=refresh_token"
                     + "&refresh_token="
                     + token;

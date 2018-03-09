@@ -44,10 +44,10 @@ public class AuthBuildForWB extends Auth.Builder {
     @Override
     void init() {
         if (!isInit) {
-            if (TextUtils.isEmpty(Auth.AuthBuilder.WEIBO_APPKEY) || TextUtils.isEmpty(Auth.AuthBuilder.WEIBO_REDIRECT_URL) || TextUtils.isEmpty(Auth.AuthBuilder.WEIBO_SCOPE)) {
+            if (TextUtils.isEmpty(Auth.AuthBuilder.WBAppKey) || TextUtils.isEmpty(Auth.AuthBuilder.WBRedirectUrl) || TextUtils.isEmpty(Auth.AuthBuilder.WBScope)) {
                 throw new IllegalArgumentException("WEIBO_APPKEY | WEIBO_REDIRECT_URL | WEIBO_SCOPE was empty");
             } else {
-                WbSdk.install(mContext, new AuthInfo(mContext, Auth.AuthBuilder.WEIBO_APPKEY, Auth.AuthBuilder.WEIBO_REDIRECT_URL, Auth.AuthBuilder.WEIBO_SCOPE));
+                WbSdk.install(mContext, new AuthInfo(mContext, Auth.AuthBuilder.WBAppKey, Auth.AuthBuilder.WBRedirectUrl, Auth.AuthBuilder.WBScope));
                 isInit = true;
             }
         }

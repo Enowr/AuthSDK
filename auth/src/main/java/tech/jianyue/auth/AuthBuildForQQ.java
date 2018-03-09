@@ -44,10 +44,10 @@ public class AuthBuildForQQ extends Auth.Builder {
 
     @Override
     void init() {
-        if (TextUtils.isEmpty(Auth.AuthBuilder.QQ_APPID)) {
-            throw new IllegalArgumentException("QQ_APPID was empty");
+        if (TextUtils.isEmpty(Auth.AuthBuilder.QQAppID)) {
+            throw new IllegalArgumentException("QQAppID was empty");
         } else {
-            mTencent = Tencent.createInstance(Auth.AuthBuilder.QQ_APPID, mContext.getApplicationContext());
+            mTencent = Tencent.createInstance(Auth.AuthBuilder.QQAppID, mContext.getApplicationContext());
         }
     }
 

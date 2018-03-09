@@ -14,13 +14,13 @@ import java.lang.annotation.RetentionPolicy;
  * 版本: 1.0
  */
 public class Auth {
-    protected static AuthBuilder AuthBuilder;
+    static AuthBuilder AuthBuilder;
 
     public static final int UNKNOWN_TYPE = -1;                  // 未知类型
 
     public static final int Pay = 100;                          // 微信\支付宝\银联 支付
 
-    public static final int RouseWeb = 111;                     // 微信 唤起WebView
+    public static final int RouseWeb = 111;                     // 微信(无回调) 唤起WebView
 
     public static final int LOGIN = 121;                        // 微信\微博\QQ 登录
 
@@ -145,42 +145,42 @@ public class Auth {
     }
 
     public static class AuthBuilder {
-        String QQ_APPID;
+        String QQAppID;
 
-        String WECHAT_APPID;
-        String WECHAT_SECRET;
+        String WXAppID;
+        String WXSecret;
 
-        String WEIBO_APPKEY;
-        String WEIBO_REDIRECT_URL;
-        String WEIBO_SCOPE;
+        String WBAppKey;
+        String WBRedirectUrl;
+        String WBScope;
 
-        public AuthBuilder setQQAppID(String appID) {
-            QQ_APPID = appID;
+        public AuthBuilder setQQAppID(String appId) {
+            QQAppID = appId;
             return this;
         }
 
         public AuthBuilder setWXAppID(String appID) {
-            WECHAT_APPID = appID;
+            WXAppID = appID;
             return this;
         }
 
         public AuthBuilder setWXSecret(String secret) {
-            WECHAT_SECRET = secret;
+            WXSecret = secret;
             return this;
         }
 
         public AuthBuilder setWBAppKey(String key) {
-            WEIBO_APPKEY = key;
+            WBAppKey = key;
             return this;
         }
 
         public AuthBuilder setWBDedirectUrl(String url) {
-            WEIBO_REDIRECT_URL = url;
+            WBRedirectUrl = url;
             return this;
         }
 
         public AuthBuilder setWBScope(String scope) {
-            WEIBO_SCOPE = scope;
+            WBScope = scope;
             return this;
         }
 

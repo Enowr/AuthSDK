@@ -1,10 +1,10 @@
 package tech.jianyue.auth;
 
 public abstract class AuthCallback {
-    protected int mWith;
-    protected int mAction;
+    private int mWith;
+    private int mAction;
 
-    protected void setWith(@Auth.WithThird int with, int action) {
+    void setWith(@Auth.WithThird int with, int action) {
         mWith = with;
         mAction = action;
     }
@@ -18,7 +18,7 @@ public abstract class AuthCallback {
     }
 
     /**
-     * build 开始之前调用
+     * build 开始之前调用, onStart 之后可调用 getWith \ getAction 函数
      */
     public void onStart() {
 

@@ -136,7 +136,7 @@
                         .build(mCallback);
                 break;
             case R.id.rouse_web:                                        // 微信唤起Web, 可用于唤起微信的自动续订服务
-                Auth.withWX(this)
+                Auth.withWX(this)                                       // 回调只用于参数的非空检测, 微信并无回调
                         .setAction(Auth.RouseWeb)
                         .rouseWeb("www.qq.com")
                         .build(mCallback);
