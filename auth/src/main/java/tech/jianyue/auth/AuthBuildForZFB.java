@@ -3,11 +3,16 @@ package tech.jianyue.auth;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.alipay.sdk.app.PayTask;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -19,6 +24,7 @@ import java.util.Map;
 public class AuthBuildForZFB extends Auth.Builder {
     private boolean isShowLoading = true;
     private String mOrderInfo;
+    private String mUri;
 
     AuthBuildForZFB(Context context) {
         super(context, Auth.WITH_ZFB);
@@ -60,6 +66,11 @@ public class AuthBuildForZFB extends Auth.Builder {
         return this;
     }
 
+    public AuthBuildForZFB rouseWeb(String uri) {
+        mUri = uri;
+        return this;
+    }
+
     @Override
     public void build(AuthCallback callback) {
         super.build(callback);
@@ -68,6 +79,23 @@ public class AuthBuildForZFB extends Auth.Builder {
                 Intent intent = new Intent(mContext, AuthActivity.class);
                 intent.putExtra("Sign", Sign);
                 mContext.startActivity(intent);
+                break;
+            case Auth.RouseWeb:
+                // 判断是否安装支付宝客户端(因为走SDK时，如果未安装支付宝，SDK会打开一个支付宝登录界面，但是走URI的不会这样做，所以在这里判断是否安装客户端并给予用户提示)
+                if (!Utils.isAppInstalled(mContext, "com.eg.android.AlipayGphone")) {
+                    mCallback.onFailed("请安装支付宝客户端！");
+                } else if (TextUtils.isEmpty(mUri)) {
+                    mCallback.onFailed("必须添加 uri, 调用 rouseWeb(uri)");
+                } else {
+                    try {
+                        Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(mUri));
+                        mContext.startActivity(intent2);
+                        AliRouseActivity.mCallback = callback;
+                    } catch (Exception e) {
+                        mCallback.onFailed(e.getMessage());
+                    }
+                }
+                destroy();
                 break;
             default:
                 if (mAction != Auth.UNKNOWN_TYPE) {
@@ -129,6 +157,8 @@ public class AuthBuildForZFB extends Auth.Builder {
                 // 判断 resultStatus 为 9000 则代表支付成功
                 if (TextUtils.equals(resultStatus, "9000")) {               // 该笔订单是否真实支付成功，需要依赖服务端的异步通知
                     callback.onSuccessForPay(resultMap.toString());
+                } else if (TextUtils.equals(resultStatus, "6001")) {
+                    callback.onCancel();
                 } else {                                                        // 判断resultStatus 为非“9000”则代表可能支付失败, 该笔订单真实的支付结果，需要依赖服务端的异步通知
                     if (TextUtils.equals(resultStatus, "8000")) {           // “8000”代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
                         callback.onSuccessForPay(resultMap.toString());         // 默认为支付成功

@@ -1,14 +1,22 @@
 package tech.jianyue.auth;
 
 import android.accounts.NetworkErrorException;
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 描述: 第三方相关工具类
@@ -114,5 +122,35 @@ public class Utils {
         String state = os.toString();           // 把流中的数据转换成字符串,采用的编码是utf-8
         os.close();
         return state;
+    }
+
+
+    static boolean isAppInstalled(Context context, String packageName) {
+        final PackageManager packageManager = context.getPackageManager();            // 获取packagemanager
+        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);       // 获取所有已安装程序的包信息
+        List<String> pName = new ArrayList<>();                                       // 用于存储所有已安装程序的包名
+
+        if (pinfo != null) {                                                          // 从pinfo中将包名字逐一取出，压入pName list中
+            for (int i = 0; i < pinfo.size(); i++) {
+                String pn = pinfo.get(i).packageName;
+                pName.add(pn);
+            }
+        }
+        return pName.contains(packageName);                                           // 判断pName中是否有目标程序的包名，有TRUE，没有FALSE
+    }
+
+    static String decodeURL(String url, String key) {
+        String decode = null;
+        try {
+            decode = URLDecoder.decode(url, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        if (TextUtils.isEmpty(decode) || !decode.contains(key)) {
+            return "";
+        }
+        String str = decode.substring(decode.indexOf(key) + key.length());
+        String[] strings = str.split("[&]|[?]");
+        return strings[0];
     }
 }

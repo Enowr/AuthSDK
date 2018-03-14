@@ -4,7 +4,7 @@
 
 - 用于第三方登录\分享\支付\唤起 等服务. 由于都是通用代码, 所以整合后抽取公共方法, 让使用时更加简便.  
 
-- 目前支持 微信\微博\QQ 的登录和分享功能, 微信\支付宝\银联 支付功能, 微信的唤起功能.
+- 目前支持 微信\微博\QQ 的登录和分享功能, 微信\支付宝\银联 支付功能, 微信的唤起功能(签约功能), 支付宝唤起(签约支付功能).
 
 - 微信唤起服务暂无成功取消回调, 只做参数url为空时的失败回调.
 
@@ -63,6 +63,20 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="${QQ_SCHEME}" />
+            </intent-filter>
+        </activity>
+     
+        <!-- 支付宝, 签约代扣, 不使用该功能可以不配置 -->
+        <!--支付宝免密支付完成时走此 filter，必须匹配 scheme-->
+        <activity
+            android:name="tech.jianyue.auth.AliRouseActivity"
+            android:allowTaskReparenting="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+       
+                <data android:scheme="****" />
             </intent-filter>
         </activity>
     ```

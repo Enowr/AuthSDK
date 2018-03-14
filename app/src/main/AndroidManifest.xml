@@ -41,5 +41,20 @@
                 <data android:scheme="${QQ_SCHEME}" />
             </intent-filter>
         </activity>
+
+        <!-- 支付宝签约 -->
+        <activity
+            android:name="tech.jianyue.auth.AliRouseActivity"
+            android:allowTaskReparenting="true">
+            <!--支付宝免密支付完成时走此filter，必须匹配scheme-->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="jianyue123" />
+            </intent-filter>
+        </activity>
+
     </application>
 </manifest>

@@ -79,7 +79,7 @@ public class Auth {
     public @interface ActionQQ {
     }
 
-    @IntDef({Pay})
+    @IntDef({RouseWeb, Pay})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActionZFB {
     }

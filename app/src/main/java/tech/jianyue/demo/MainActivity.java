@@ -195,6 +195,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .rouseWeb("http://www.caixin.com")
                         .build(mCallback);
                 break;
+//            case R.id.rouse_web:
+//                Auth.withZFB(this)
+//                        .setAction(Auth.RouseWeb)
+//                        .rouseWeb("")
+//                        .build(mCallback);
+//                break;
             case R.id.share_wx_text:
                 Auth.withWX(this)
                         .setAction(Auth.SHARE_TEXT)
