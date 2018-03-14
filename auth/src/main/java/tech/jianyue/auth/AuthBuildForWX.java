@@ -478,13 +478,14 @@ public class AuthBuildForWX extends Auth.Builder {
             destroy();
         } else {
             PayReq req = new PayReq();
+            req.transaction = Sign;
             req.appId = Auth.AuthBuilder.WXAppID;
             req.partnerId = mPartnerId;
-            req.prepayId= mPrepayId;
+            req.prepayId = mPrepayId;
             req.packageValue = mPackageValue;
-            req.nonceStr= mNonceStr;
-            req.timeStamp= mTimestamp;
-            req.sign= mPaySign;
+            req.nonceStr = mNonceStr;
+            req.timeStamp = mTimestamp;
+            req.sign = mPaySign;
             mApi.sendReq(req);
         }
     }

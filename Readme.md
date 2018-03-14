@@ -34,7 +34,7 @@
 2. 在 app module 中添加引用:  
     ```aidl
     dependencies {
-        compile 'tech.jianyue.auth:auth:1.0.8'
+        compile 'tech.jianyue.auth:auth:1.0.9'
     }
     ```
 
@@ -374,6 +374,9 @@
       使用中如出现异常, 可以查看项目源码, 其中有第三方 SDK 的一些使用限制注释;  
       支付时, 参照官方文档获取服务器返回信息.  
       项目中的 UserInfoForThird 类为第三方登录后返回的数据, 其中 userInfo 字段包含了第三方返回的原始用户信息数据 Json
+      
+      QQ 回调只回调取消函数, 检查 QQ AuthActivity 的 scheme 配置是否正确, 分享到会话, 留在 QQ, 用切换应用方式回到应用无回调, 切回 QQ 部分机型会重复分享.  
+      微信分享到对话, 留在微信后会回调调用 Activity 的 onStart 方法, 不会走定义的回调.
    
 ## 2. 项目结构
 1. Auth 类是对外开放, 用于实际使用的类, 包含了 Action 类型, 和不同第三方功能的调用.
