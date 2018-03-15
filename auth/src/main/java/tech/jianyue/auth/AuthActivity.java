@@ -17,6 +17,8 @@ import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
+import com.tencent.mm.opensdk.modelpay.PayReq;
+import com.tencent.mm.opensdk.modelpay.PayResp;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
 import com.tencent.tauth.IUiListener;
@@ -290,7 +292,12 @@ public class AuthActivity extends Activity implements WbShareCallback, IUiListen
     @Override
     public void onResp(BaseResp resp) {
         if (resp != null) {
-            Auth.Builder builder = getBuilder(resp.transaction);
+            Auth.Builder builder;
+            if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
+                builder = getBuilder(((PayResp)resp).prepayId);
+            } else {
+                builder = getBuilder(resp.transaction);
+            }
             if (builder != null && builder instanceof AuthBuildForWX) {
                 switch (resp.errCode) {
                     case BaseResp.ErrCode.ERR_USER_CANCEL:

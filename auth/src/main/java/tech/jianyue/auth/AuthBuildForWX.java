@@ -477,8 +477,10 @@ public class AuthBuildForWX extends Auth.Builder {
             mCallback.onFailed("必须添加 Sign, 使用 paySign(sign) ");
             destroy();
         } else {
+            Sign = mPrepayId;
             PayReq req = new PayReq();
-            req.transaction = Sign;
+            req.transaction = Sign;         // 回调时这个标记为 null, 只有 prePayId 可用, 所以使用 prePayId 作为标记
+
             req.appId = Auth.AuthBuilder.WXAppID;
             req.partnerId = mPartnerId;
             req.prepayId = mPrepayId;
