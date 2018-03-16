@@ -17,7 +17,6 @@ import com.tencent.mm.opensdk.modelbase.BaseReq;
 import com.tencent.mm.opensdk.modelbase.BaseResp;
 import com.tencent.mm.opensdk.modelmsg.SendAuth;
 import com.tencent.mm.opensdk.modelmsg.SendMessageToWX;
-import com.tencent.mm.opensdk.modelpay.PayReq;
 import com.tencent.mm.opensdk.modelpay.PayResp;
 import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.IWXAPIEventHandler;
@@ -132,6 +131,7 @@ public class AuthActivity extends Activity implements WbShareCallback, IUiListen
         finish();
     }
 
+
     // 支付宝相关
     private void initZFB(String sign) {
         if (!TextUtils.isEmpty(sign)) {
@@ -142,6 +142,7 @@ public class AuthActivity extends Activity implements WbShareCallback, IUiListen
             }
         }
     }
+
 
     // 微博相关
     private void initWB(String sign) {
@@ -286,7 +287,12 @@ public class AuthActivity extends Activity implements WbShareCallback, IUiListen
 
     @Override
     public void onReq(BaseReq baseReq) {
-
+        for (Auth.Builder builder : mBuilderSet) {
+            if (builder != null && builder instanceof AuthBuildForWX && builder.mAction == Auth.RouseWeb) {
+                builder.mCallback.onSuccessForRouse("微信签约成功");
+            }
+        }
+        finish();
     }
 
     @Override
@@ -318,7 +324,7 @@ public class AuthActivity extends Activity implements WbShareCallback, IUiListen
                             builder.mCallback.onFailed(TextUtils.isEmpty(resp.errStr) ? "微信登录失败" : resp.errStr);
                         } else if (builder.mAction == Auth.Pay) {
                             builder.mCallback.onFailed(TextUtils.isEmpty(resp.errStr) ? "微信支付失败" : resp.errStr);
-                        } else {
+                        } else if (builder.mAction != Auth.RouseWeb) {
                             builder.mCallback.onFailed(TextUtils.isEmpty(resp.errStr) ? "微信分享失败" : resp.errStr);
                         }
                 }

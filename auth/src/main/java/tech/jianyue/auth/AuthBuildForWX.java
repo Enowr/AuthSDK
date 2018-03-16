@@ -498,6 +498,7 @@ public class AuthBuildForWX extends Auth.Builder {
             destroy();
         } else {
             OpenWebview.Req req = new OpenWebview.Req();
+            req.transaction = Sign;         // 回调时这个标记和设置的不一样, 无法作为判断依据
             req.url = mUrl;
             mApi.sendReq(req);
         }

@@ -6,7 +6,7 @@
 
 - 目前支持 微信\微博\QQ 的登录和分享功能, 微信\支付宝\银联 支付功能, 微信的唤起功能(签约功能), 支付宝唤起(签约支付功能).
 
-- 微信唤起服务暂无成功取消回调, 只做参数url为空时的失败回调.
+- 微信唤起服务暂无取消\失败回调, 参数url为空时失败回调. 支付宝唤起签约支付功能, 暂无取消回调.
 
 - 当前版本不支持并发操作.
 
@@ -150,7 +150,7 @@
                         .build(mCallback);
                 break;
             case R.id.rouse_web:                                        // 微信唤起Web, 可用于唤起微信的自动续订服务
-                Auth.withWX(this)                                       // 回调只用于参数的非空检测, 微信并无回调
+                Auth.withWX(this)                                       // 回调只有成功时会回调
                         .setAction(Auth.RouseWeb)
                         .rouseWeb("www.qq.com")
                         .build(mCallback);
