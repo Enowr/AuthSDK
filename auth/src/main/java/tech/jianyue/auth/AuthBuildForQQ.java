@@ -241,6 +241,7 @@ public class AuthBuildForQQ extends Auth.Builder {
         if (mTencent.isQQInstalled(mContext)) {
             Intent intent = new Intent(mContext, AuthActivity.class);
             intent.putExtra("Sign", Sign);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
         } else {
             mCallback.onFailed("未安装QQ客户端");

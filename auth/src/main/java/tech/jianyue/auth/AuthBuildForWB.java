@@ -168,6 +168,7 @@ public class AuthBuildForWB extends Auth.Builder {
 
         Intent intent = new Intent(mContext, AuthActivity.class);
         intent.putExtra("Sign", Sign);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
 

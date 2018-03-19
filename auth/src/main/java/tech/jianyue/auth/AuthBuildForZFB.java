@@ -78,6 +78,7 @@ public class AuthBuildForZFB extends Auth.Builder {
             case Auth.Pay:
                 Intent intent = new Intent(mContext, AuthActivity.class);
                 intent.putExtra("Sign", Sign);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
                 break;
             case Auth.RouseWeb:
@@ -89,6 +90,7 @@ public class AuthBuildForZFB extends Auth.Builder {
                 } else {
                     try {
                         Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(mUri));
+                        intent2.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(intent2);
                         AliRouseActivity.mCallback = callback;
                     } catch (Exception e) {

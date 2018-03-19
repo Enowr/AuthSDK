@@ -60,6 +60,7 @@ public class AuthBuildForYL extends Auth.Builder {
             case Auth.Pay:
                 Intent intent = new Intent(mContext, AuthActivity.class);
                 intent.putExtra("Sign", Sign);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
                 break;
             default:
