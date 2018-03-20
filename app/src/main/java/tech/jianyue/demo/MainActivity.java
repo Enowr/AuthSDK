@@ -34,10 +34,21 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    private String VideoUrl = "https://showimg.caixin.com/dolphinfile/caixin/2017/12/0_21.mp4";
+    private String MusicUrl = "http://sc1.111ttt.cn/2017/1/11/11/304112002493.mp3";
+    private String LinkUrl = "http://www.baidu.com";
+    private String ImagePath = Environment.getExternalStorageDirectory().getPath() + "/assets";
+
+
     private AuthCallback mCallback = new AuthCallback() {
         @Override
         public void onSuccessForPay(String result) {
             Toast.makeText(MainActivity.this, "支付成功: " + result, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onSuccessForRouse(String result) {
+            Toast.makeText(MainActivity.this, "唤起签约成功: " + result, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -96,10 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(MainActivity.this, with + action + "失败: " + msg, Toast.LENGTH_SHORT).show();
         }
     };
-    private String VideoUrl = "https://showimg.caixin.com/dolphinfile/caixin/2017/12/0_21.mp4";
-    private String MusicUrl = "http://sc1.111ttt.cn/2017/1/11/11/304112002493.mp3";
-    private String LinkUrl = "http://www.baidu.com";
-    private String ImagePath = Environment.getExternalStorageDirectory().getPath() + "/assets";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,12 +116,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initView();
 
-        Auth.init().setQQAppID(BuildConfig.QQ_APPID)
-                .setWXAppID(BuildConfig.WECHAT_APPID)
-                .setWXSecret(BuildConfig.WECHAT_SECRET)
-                .setWBAppKey(BuildConfig.WEIBO_APPKEY)
-                .setWBDedirectUrl(BuildConfig.WEIBO_REDIRECT_URL)
-                .setWBScope(BuildConfig.WEIBO_SCOPE)
+        Auth.init().setQQAppID("QQ_APPID")
+                .setWXAppID("WECHAT_APPID")
+                .setWXSecret("WECHAT_SECRET")
+                .setWBAppKey("WEIBO_APPKEY")
+                .setWBDedirectUrl("WEIBO_REDIRECT_URL")
+                .setWBScope("WEIBO_SCOPE")
                 .build();
         Assets2Sd(ImagePath);
     }
