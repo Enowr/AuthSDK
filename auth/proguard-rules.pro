@@ -21,7 +21,7 @@
 #-renamesourcefileattribute SourceFile
 
 
-#Auth
+# Auth
 -keep class tech.jianyue.auth.** {*;}
 
 # 微博
@@ -38,7 +38,7 @@
    *;
 }
 
-#QQ
+# QQ
 -keep class com.tencent.open.TDialog$*
 -keep class com.tencent.open.TDialog$* {*;}
 -keep class com.tencent.open.PKDialog
@@ -46,7 +46,7 @@
 -keep class com.tencent.open.PKDialog$*
 -keep class com.tencent.open.PKDialog$* {*;}
 
-#支付宝
+# 支付宝
 -keep class com.alipay.android.app.IAlixPay{*;}
 -keep class com.alipay.android.app.IAlixPay$Stub{*;}
 -keep class com.alipay.android.app.IRemoteServiceCallback{*;}
@@ -67,7 +67,7 @@
 -keep class com.ta.utdid2.** { *;}
 -keep class com.ut.device.** { *;}
 
-#银联
+# 银联
 -keep  public class com.unionpay.uppay.net.HttpConnection {
 	public <methods>;
 }
