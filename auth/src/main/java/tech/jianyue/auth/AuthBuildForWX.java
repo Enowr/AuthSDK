@@ -1,6 +1,8 @@
 package tech.jianyue.auth;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.text.TextUtils;
@@ -20,6 +22,8 @@ import com.tencent.mm.opensdk.openapi.IWXAPI;
 import com.tencent.mm.opensdk.openapi.WXAPIFactory;
 
 import org.json.JSONObject;
+
+import java.util.List;
 
 /**
  * 描述: 微信相关授权操作
@@ -253,8 +257,7 @@ public class AuthBuildForWX extends Auth.Builder {
     @Override
     public void build(AuthCallback callback) {
         super.build(callback);
-        if (!mApi.isWXAppInstalled()) {
-            mCallback.onFailed("未安装微信客户端");
+        if (!isWXAppInstalled()) {
             destroy();
         } else if (mAction != Auth.LOGIN && mAction != Auth.Pay && mAction != Auth.RouseWeb && mShareType == -100) {
             mCallback.onFailed("必须添加分享类型, 使用 shareToSession(),shareToTimeline(),shareToFavorite() ");
@@ -295,6 +298,28 @@ public class AuthBuildForWX extends Auth.Builder {
                     destroy();
                     break;
             }
+        }
+    }
+
+    private boolean isWXAppInstalled() {
+        if (!mApi.isWXAppInstalled()) {
+            final PackageManager packageManager = mContext.getPackageManager();         // 获取 packagemanager
+            List<PackageInfo> pInfo = packageManager.getInstalledPackages(0);   // 获取所有已安装程序的包信息
+            if (pInfo != null) {
+                for (int i = 0; i < pInfo.size(); i++) {
+                    String pn = pInfo.get(i).packageName;
+                    if (pn.equalsIgnoreCase("com.tencent.mm")) {
+                        return true;
+                    }
+                }
+            }
+            mCallback.onFailed("未安装微信客户端");
+            return false;
+        } else if (!mApi.isWXAppSupportAPI()) {
+            mCallback.onFailed("微信客户端版本过低");
+            return false;
+        } else {
+            return true;
         }
     }
 
