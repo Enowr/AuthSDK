@@ -1,1 +1,1 @@
-include ':app', ':auth'
+include ':app', ':auth', ':auth_huawei', ':auth_weixin', ':auth_weibo', ':auth_qq'

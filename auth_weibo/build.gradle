@@ -1,0 +1,29 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion CompileSdkVersion as int
+
+    defaultConfig {
+        minSdkVersion MinSdkVersion as int
+        targetSdkVersion TargetSdkVersion as int
+
+        versionCode VersionCode as int
+        versionName VersionName
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api 'com.sina.weibo.sdk:core:4.2.7:openDefaultRelease@aar'                  // 微博 aar
+
+
+    implementation project(':auth')
+    implementation "com.android.support:appcompat-v7:${SupportVersion}"
+}

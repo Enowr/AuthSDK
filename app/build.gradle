@@ -1,15 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion COMPILE_SDK_VERSION as int
+    compileSdkVersion CompileSdkVersion as int
 
     defaultConfig {
         applicationId "tech.jianyue.demo"
-        minSdkVersion MIN_SDK_VERSION as int
-        targetSdkVersion TARGET_SDK_VERSION as int
-        versionCode 1
-        versionName "1.0"
 
+        minSdkVersion MinSdkVersion as int
+        targetSdkVersion TargetSdkVersion as int
+
+        versionCode VersionCode as int
+        versionName VersionName
     }
 
     buildTypes {
@@ -22,6 +23,11 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.support:appcompat-v7:${SupportVersion}"
 
-    compile project(':auth')
+    api project(':auth')
+    api project(':auth_huawei')
+    api project(':auth_weixin')
+    api project(':auth_weibo')
+    api project(':auth_qq')
 }

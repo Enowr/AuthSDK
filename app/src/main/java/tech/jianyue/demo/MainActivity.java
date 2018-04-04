@@ -24,7 +24,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
+import tech.jianyue.auth.AbsAuthBuildForQQ;
 import tech.jianyue.auth.Auth;
+import tech.jianyue.auth.AuthBuildForHW;
+import tech.jianyue.auth.AuthBuildForQQ;
+import tech.jianyue.auth.AuthBuildForWB;
+import tech.jianyue.auth.AuthBuildForWX;
 import tech.jianyue.auth.AuthCallback;
 import tech.jianyue.auth.UserInfoForThird;
 
@@ -122,8 +127,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setWBAppKey("WEIBO_APPKEY")
                 .setWBDedirectUrl("WEIBO_REDIRECT_URL")
                 .setWBScope("WEIBO_SCOPE")
+                .addHWFactory(AuthBuildForHW.getFactory())
+                .addWXFactory(AuthBuildForWX.getFactory())
+                .addWBFactory(AuthBuildForWB.getFactory())
+                .addQQFactory(AuthBuildForQQ.getFactory())
                 .build();
         Assets2Sd(ImagePath);
+
+//        Auth.withHW(this)
+//                .setAction(Auth.Pay)
+//                .payAmount("")
+//                .build(mCallback);
     }
 
     private void initView() {

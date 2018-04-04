@@ -16,6 +16,7 @@ allprojects {
         jcenter()
 
         maven { url "https://dl.bintray.com/thelasterstar/maven/" }     // 微博 aar
+        maven { url 'http://developer.huawei.com/repo/' }               // 华为仓库
     }
 }
 

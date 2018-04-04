@@ -24,6 +24,8 @@ public abstract class AuthCallback {
 
     public void onSuccessForPay(String result) {}
 
+    public void onUnconfirmedForPay() {}
+
     public void onSuccessForShare() {}
 
     public void onSuccessForLogin(UserInfoForThird info) {}

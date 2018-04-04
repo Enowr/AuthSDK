@@ -14,7 +14,7 @@ import com.unionpay.UPPayAssistEx;
  * 时间: 2018/1/19
  * 版本: 1.0
  */
-public class AuthBuildForYL extends Auth.Builder {
+public class AuthBuildForYL extends AbsAuthBuild {
     private String mOrderInfo;
     private boolean mTest = false;
 

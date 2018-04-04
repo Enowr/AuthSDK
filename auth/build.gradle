@@ -1,14 +1,14 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion COMPILE_SDK_VERSION as int
+    compileSdkVersion CompileSdkVersion as int
 
     defaultConfig {
-        minSdkVersion MIN_SDK_VERSION as int
-        targetSdkVersion TARGET_SDK_VERSION as int
+        minSdkVersion MinSdkVersion as int
+        targetSdkVersion TargetSdkVersion as int
 
-        versionCode 2
-        versionName "1.0.2"
+        versionCode VersionCode as int
+        versionName VersionName
     }
 
     buildTypes {
@@ -20,11 +20,8 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile "com.android.support:appcompat-v7:${ANDROID_SUPPORT_VERSION}"
-
-    compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.1.4'       // 微信 SDK
-    compile 'com.sina.weibo.sdk:core:4.1.4:openDefaultRelease@aar'              // 微博 aar
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "com.android.support:appcompat-v7:${SupportVersion}"
 }
 
 apply from: 'bintray.gradle'

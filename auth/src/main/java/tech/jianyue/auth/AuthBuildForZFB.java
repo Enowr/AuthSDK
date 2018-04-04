@@ -21,7 +21,7 @@ import java.util.Map;
  * 时间: 2018/1/19
  * 版本: 1.0
  */
-public class AuthBuildForZFB extends Auth.Builder {
+public class AuthBuildForZFB extends AbsAuthBuild {
     private boolean isShowLoading = true;
     private String mOrderInfo;
     private String mUri;

@@ -1,7 +1,5 @@
 package tech.jianyue.auth;
 
-import com.sina.weibo.sdk.auth.Oauth2AccessToken;
-
 import org.json.JSONObject;
 
 /**
@@ -44,15 +42,15 @@ public class UserInfoForThird {
         return null;
     }
 
-    public UserInfoForThird initForWB(String json, Oauth2AccessToken oauth) throws Exception {
+    public UserInfoForThird initForWB(String json, String aToken, String rToken, String expiresTime) throws Exception {
         JSONObject object = new JSONObject(json);
         if (object.optInt("error_code", -1) == -1) {
             this.fromId = "1";                                                         // 来自微博
             this.nickname = object.optString("screen_name");                    // 用户昵称
             this.userId = object.optString("idstr");                            // 用户 id
-            this.aToken = oauth.getToken();
-            this.rToken = oauth.getRefreshToken();
-            this.expireTime = String.valueOf(oauth.getExpiresTime());
+            this.aToken = aToken;
+            this.rToken = rToken;
+            this.expireTime = expiresTime;
             this.portrait = object.optString("avatar_large");
             this.userLink = object.optString("url");
             this.userInfo = json;

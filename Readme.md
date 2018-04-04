@@ -8,7 +8,7 @@
 
 ### 当前 SDK 集成为最新的第三方SDK：  
   - 微信 : com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.1.4  
-  - 微博 : com.sina.weibo.sdk:core:4.1.4:openDefaultRelease@aar  
+  - 微博 : com.sina.weibo.sdk:core:4.2.7:openDefaultRelease@aar  
   - QQ : open_sdk_r5990_lite  
   - 支付宝 : alipaySdk-20170922  
   - 银联: 手机支付控件接入指南: 3.4.1

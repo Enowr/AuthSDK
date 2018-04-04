@@ -1,11 +1,12 @@
 package tech.jianyue.auth;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.annotation.IntDef;
+import android.util.SparseArray;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.HashMap;
 
 /**
  * 描述: 分发
@@ -14,8 +15,6 @@ import java.lang.annotation.RetentionPolicy;
  * 版本: 1.0
  */
 public class Auth {
-    static AuthBuilder AuthBuilder;
-
     public static final int UNKNOWN_TYPE = -1;                  // 未知类型
 
     public static final int Pay = 100;                          // 微信\支付宝\银联 支付
@@ -36,6 +35,10 @@ public class Auth {
     public static final int WITH_QQ = 143;                      // QQ 第三方标记
     public static final int WITH_ZFB = 144;                     // 支付宝 第三方标记
     public static final int WITH_YL = 145;                      // 银联 第三方标记
+    public static final int WITH_HW = 146;                      // 华为 第三方标记
+
+    static AuthBuilder AuthBuilder;
+    static HashMap<String, AbsAuthBuild> BuilderMap = new HashMap<>();
 
     private Auth() {
     }
@@ -44,16 +47,36 @@ public class Auth {
         return new AuthBuilder();
     }
 
-    public static AuthBuildForWX withWX(Context context) {
-        return new AuthBuildForWX(context);
+    public static AbsAuthBuildForHW withHW(Context context) {
+        if (AuthBuilder.FactoryArray == null || AuthBuilder.FactoryArray.get(WITH_HW) == null) {
+            throw new NullPointerException("添加华为依赖, 并配置初始化");
+        } else {
+            return AuthBuilder.FactoryArray.get(WITH_HW).getHWBuild(context);
+        }
     }
 
-    public static AuthBuildForWB withWB(Context context) {
-        return new AuthBuildForWB(context);
+    public static AbsAuthBuildForQQ withQQ(Context context) {
+        if (AuthBuilder.FactoryArray == null || AuthBuilder.FactoryArray.get(WITH_QQ) == null) {
+            throw new NullPointerException("添加QQ依赖, 并配置初始化");
+        } else {
+            return AuthBuilder.FactoryArray.get(WITH_QQ).getQQBuild(context);
+        }
     }
 
-    public static AuthBuildForQQ withQQ(Context context) {
-        return new AuthBuildForQQ(context);
+    public static AbsAuthBuildForWB withWB(Context context) {
+        if (AuthBuilder.FactoryArray == null || AuthBuilder.FactoryArray.get(WITH_WB) == null) {
+            throw new NullPointerException("添加微博依赖, 并配置初始化");
+        } else {
+            return AuthBuilder.FactoryArray.get(WITH_WB).getWBBuild(context);
+        }
+    }
+
+    public static AbsAuthBuildForWX withWX(Context context) {
+        if (AuthBuilder.FactoryArray == null || AuthBuilder.FactoryArray.get(WITH_WX) == null) {
+            throw new NullPointerException("添加微信依赖, 并配置初始化");
+        } else {
+            return AuthBuilder.FactoryArray.get(WITH_WX).getWXBuild(context);
+        }
     }
 
     public static AuthBuildForZFB withZFB(Context context) {
@@ -89,59 +112,14 @@ public class Auth {
     public @interface ActionYL {
     }
 
-    @IntDef({WITH_WX, WITH_WB, WITH_QQ, WITH_ZFB, WITH_YL})
+    @IntDef({Pay})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface WithThird {
+    public @interface ActionHW {
     }
 
-    public static abstract class Builder {
-        int mAction = UNKNOWN_TYPE;                             // 事件
-        int mWith;                                              // 第三方标记
-        String Sign;                                            // 任务标记
-        Context mContext;                                       // 上下文
-        AuthCallback mCallback;                                 // 回调函数
-
-        String mTitle;                                          // 分享标题
-        String mText;                                           // 分享文本
-        String mDescription;                                    // 文本描述, 分享到朋友圈可以不传,聊天界面和收藏必须传
-        Bitmap mBitmap;                                         // 分享图片
-        String mUrl;                                            // 分享的 Url
-
-        Builder(Context context, @WithThird int with) {
-            mContext = context;
-            mWith = with;
-            init();
-        }
-
-        abstract void init();
-
-        void destroy() {
-            Sign = "";
-            mContext = null;
-            mCallback = null;
-            mBitmap = null;
-        }
-
-        public abstract Builder setAction(int action);
-
-        public void build(AuthCallback callback) {
-            if (callback == null) {
-                destroy();
-                throw new NullPointerException("AuthCallback is null");
-            } else if (mContext == null) {
-                destroy();
-                throw new NullPointerException("Context is null");
-            } else if (mAction == UNKNOWN_TYPE) {
-                callback.onFailed("未设置Action, 请调用 setAction(action)");
-                destroy();
-            } else {
-                Sign = String.valueOf(System.currentTimeMillis());
-                mCallback = callback;
-                AuthActivity.addBuilder(this);
-                mCallback.setWith(mWith, mAction);
-                mCallback.onStart();
-            }
-        }
+    @IntDef({WITH_WX, WITH_WB, WITH_QQ, WITH_ZFB, WITH_YL, WITH_HW})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface WithThird {
     }
 
     public static class AuthBuilder {
@@ -153,6 +131,12 @@ public class Auth {
         String WBAppKey;
         String WBRedirectUrl;
         String WBScope;
+
+        String HWMerchantID;
+        String HWAppID;
+        String HWKey;
+
+        SparseArray<AuthBuildFactory> FactoryArray = new SparseArray<>();
 
         public AuthBuilder setQQAppID(String appId) {
             QQAppID = appId;
@@ -181,6 +165,41 @@ public class Auth {
 
         public AuthBuilder setWBScope(String scope) {
             WBScope = scope;
+            return this;
+        }
+
+        public AuthBuilder setHWAppID(String id) {
+            HWAppID = id;
+            return this;
+        }
+
+        public AuthBuilder setHWMerchantID(String id) {
+            HWMerchantID = id;
+            return this;
+        }
+
+        public AuthBuilder setHWKey(String key) {
+            HWKey = key;
+            return this;
+        }
+
+        public AuthBuilder addHWFactory(AuthBuildFactory factory) {
+            FactoryArray.put(Auth.WITH_HW, factory);
+            return this;
+        }
+
+        public AuthBuilder addWXFactory(AuthBuildFactory factory) {
+            FactoryArray.put(Auth.WITH_WX, factory);
+            return this;
+        }
+
+        public AuthBuilder addWBFactory(AuthBuildFactory factory) {
+            FactoryArray.put(Auth.WITH_WB, factory);
+            return this;
+        }
+
+        public AuthBuilder addQQFactory(AuthBuildFactory factory) {
+            FactoryArray.put(Auth.WITH_QQ, factory);
             return this;
         }
 
