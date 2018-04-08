@@ -13,17 +13,10 @@ import android.text.TextUtils;
  * 版本: 1.0
  */
 public class AuthActivity extends Activity {
-    private AbsAuthBuildForWX.Controller mControllerWX;                             // 微信管理器
-    private AbsAuthBuildForWB.Controller mControllerWB;                             // 微博管理器
     private AbsAuthBuildForQQ.Controller mControllerQQ;                             // QQ 管理器
-
-
-    private AuthBuildForYL mBuildYL;                                                // 银联 Build
-
-
-    static AbsAuthBuild getBuilder(String key) {
-        return Auth.BuilderMap.get(key);
-    }
+    private AbsAuthBuildForWB.Controller mControllerWB;                             // 微博管理器
+    private AbsAuthBuildForWX.Controller mControllerWX;                             // 微信管理器
+    private AbsAuthBuildForYL.Controller mControllerYL;                             // 银联管理器
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,8 +26,8 @@ public class AuthActivity extends Activity {
         initQQ(sign);
         initWB(sign);
         initWX();
-        initZFB(sign);
         initYL(sign);
+        initZFB(sign);
     }
 
     @Override
@@ -42,11 +35,11 @@ public class AuthActivity extends Activity {
         super.onNewIntent(intent);
         setIntent(intent);
 
-        if (mControllerWX != null) {
-            mControllerWX.callback();
-        }
         if (mControllerWB != null) {
             mControllerWB.callbackShare();
+        }
+        if (mControllerWX != null) {
+            mControllerWX.callback();
         }
     }
 
@@ -54,14 +47,15 @@ public class AuthActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (mControllerWB != null) {
-            mControllerWB.callbackSso(requestCode, resultCode, data);
-        }
         if (mControllerQQ != null) {
             mControllerQQ.callback(requestCode, resultCode, data);
         }
-
-        callbackYL(requestCode, resultCode, data);
+        if (mControllerWB != null) {
+            mControllerWB.callbackSso(requestCode, resultCode, data);
+        }
+        if (mControllerYL != null) {
+            mControllerYL.callback(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -74,75 +68,40 @@ public class AuthActivity extends Activity {
         }
         Auth.BuilderMap.clear();
 
-        if (mControllerWX != null) {
-            mControllerWX.destroy();
-            mControllerWX = null;
+        if (mControllerQQ != null) {
+            mControllerQQ.destroy();
+            mControllerQQ = null;
         }
         if (mControllerWB != null) {
             mControllerWB.destroy();
             mControllerWB = null;
         }
-        if (mControllerQQ != null) {
-            mControllerQQ.destroy();
-            mControllerQQ = null;
+        if (mControllerWX != null) {
+            mControllerWX.destroy();
+            mControllerWX = null;
         }
-    }
-
-    // 银联相关
-    private void initYL(String sign) {
-        if (!TextUtils.isEmpty(sign)) {
-            final AbsAuthBuild builder = getBuilder(sign);
-            if (builder != null && builder instanceof AuthBuildForYL) {
-                if (builder.mAction == Auth.Pay)
-                    mBuildYL = (AuthBuildForYL) builder;
-                    ((AuthBuildForYL) builder).pay(this);
-            }
-        }
-    }
-
-    private void callbackYL(int requestCode, int resultCode, Intent data) {
-        if (data != null && data.getExtras() != null && mBuildYL != null) {
-            String str = data.getExtras().getString("pay_result");
-            if( "success".equalsIgnoreCase(str) ){
-                mBuildYL.mCallback.onSuccessForPay("银联支付成功");
-            }  else if ("fail".equalsIgnoreCase(str)) {
-                mBuildYL.mCallback.onFailed("银联支付失败");
-            } else if ("cancel".equalsIgnoreCase(str)) {
-                mBuildYL.mCallback.onCancel();
-            }
-        }
-        finish();
-    }
-
-
-    // 支付宝相关
-    private void initZFB(String sign) {
-        if (!TextUtils.isEmpty(sign)) {
-            final AbsAuthBuild builder = getBuilder(sign);
-            if (builder != null && builder instanceof AuthBuildForZFB) {
-                if (builder.mAction == Auth.Pay)
-                ((AuthBuildForZFB) builder).pay(this);
-            }
-        }
-    }
-
-
-    // 微博相关
-    private void initWB(String sign) {
-        if (!TextUtils.isEmpty(sign)) {
-            final AbsAuthBuild builder = getBuilder(sign);
-            if (builder != null && builder instanceof AbsAuthBuildForWB) {
-                mControllerWB = ((AbsAuthBuildForWB) builder).getController(this);
-            }
+        if (mControllerYL != null) {
+            mControllerYL.destroy();
+            mControllerYL = null;
         }
     }
 
     // QQ 相关
     private void initQQ(String sign) {
         if (!TextUtils.isEmpty(sign)) {
-            final AbsAuthBuild builder = getBuilder(sign);
+            final AbsAuthBuild builder = Auth.getBuilder(sign);
             if (builder != null && builder instanceof AbsAuthBuildForQQ) {
                 mControllerQQ = ((AbsAuthBuildForQQ) builder).getController(this);
+            }
+        }
+    }
+
+    // 微博相关
+    private void initWB(String sign) {
+        if (!TextUtils.isEmpty(sign)) {
+            final AbsAuthBuild builder = Auth.getBuilder(sign);
+            if (builder != null && builder instanceof AbsAuthBuildForWB) {
+                mControllerWB = ((AbsAuthBuildForWB) builder).getController(this);
             }
         }
     }
@@ -154,6 +113,27 @@ public class AuthActivity extends Activity {
                 mControllerWX = ((AbsAuthBuildForWX) builder).getController(this);
                 mControllerWX.callback();
                 break;
+            }
+        }
+    }
+
+    // 银联相关
+    private void initYL(String sign) {
+        if (!TextUtils.isEmpty(sign)) {
+            final AbsAuthBuild builder = Auth.getBuilder(sign);
+            if (builder != null && builder instanceof AbsAuthBuildForYL && builder.mAction == Auth.Pay) {
+                mControllerYL = ((AbsAuthBuildForYL) builder).getController(this);
+                mControllerYL.pay();
+            }
+        }
+    }
+
+    // 支付宝相关
+    private void initZFB(String sign) {
+        if (!TextUtils.isEmpty(sign)) {
+            final AbsAuthBuild builder = Auth.getBuilder(sign);
+            if (builder != null && builder instanceof AbsAuthBuildForZFB && builder.mAction == Auth.Pay) {
+                ((AbsAuthBuildForZFB) builder).pay(this);
             }
         }
     }

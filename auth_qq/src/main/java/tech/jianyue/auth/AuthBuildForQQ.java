@@ -33,7 +33,7 @@ public class AuthBuildForQQ extends AbsAuthBuildForQQ {
     public static AuthBuildFactory getFactory() {
         return new AuthBuildFactory() {
             @Override
-            public AbsAuthBuildForQQ getQQBuild(Context context) {
+            public AbsAuthBuildForQQ getBuildByQQ(Context context) {
                 return new AuthBuildForQQ(context);
             }
         };

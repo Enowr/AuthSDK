@@ -9,20 +9,27 @@ import android.content.Context;
  * 版本: 1.0
  */
 public abstract class AuthBuildFactory {
-
-    public AbsAuthBuildForHW getHWBuild(Context context) {
+    public AbsAuthBuildForHW getBuildByHW(Context context) {
         return null;
     }
 
-    public AbsAuthBuildForQQ getQQBuild(Context context) {
+    public AbsAuthBuildForQQ getBuildByQQ(Context context) {
         return null;
     }
 
-    public AbsAuthBuildForWB getWBBuild(Context context) {
+    public AbsAuthBuildForWB getBuildByWB(Context context) {
         return null;
     }
 
-    public AbsAuthBuildForWX getWXBuild(Context context) {
+    public AbsAuthBuildForWX getBuildByWX(Context context) {
+        return null;
+    }
+
+    public AbsAuthBuildForYL getBuildByYL(Context context) {
+        return null;
+    }
+
+    public AbsAuthBuildForZFB getBuildByZFB(Context context) {
         return null;
     }
 }

@@ -27,7 +27,9 @@ dependencies {
 
     api project(':auth')
     api project(':auth_huawei')
-    api project(':auth_weixin')
-    api project(':auth_weibo')
     api project(':auth_qq')
+    api project(':auth_weibo')
+    api project(':auth_weixin')
+    api project(':auth_yinlian')
+    api project(':auth_zhifubao')
 }

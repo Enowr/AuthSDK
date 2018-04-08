@@ -30,6 +30,8 @@ import tech.jianyue.auth.AuthBuildForHW;
 import tech.jianyue.auth.AuthBuildForQQ;
 import tech.jianyue.auth.AuthBuildForWB;
 import tech.jianyue.auth.AuthBuildForWX;
+import tech.jianyue.auth.AuthBuildForYL;
+import tech.jianyue.auth.AuthBuildForZFB;
 import tech.jianyue.auth.AuthCallback;
 import tech.jianyue.auth.UserInfoForThird;
 
@@ -43,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String MusicUrl = "http://sc1.111ttt.cn/2017/1/11/11/304112002493.mp3";
     private String LinkUrl = "http://www.baidu.com";
     private String ImagePath = Environment.getExternalStorageDirectory().getPath() + "/assets";
-
 
     private AuthCallback mCallback = new AuthCallback() {
         @Override
@@ -113,13 +114,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initView();
+        Assets2Sd(ImagePath);
 
         Auth.init().setQQAppID("QQ_APPID")
                 .setWXAppID("WECHAT_APPID")
@@ -127,12 +128,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setWBAppKey("WEIBO_APPKEY")
                 .setWBDedirectUrl("WEIBO_REDIRECT_URL")
                 .setWBScope("WEIBO_SCOPE")
-                .addHWFactory(AuthBuildForHW.getFactory())
-                .addWXFactory(AuthBuildForWX.getFactory())
-                .addWBFactory(AuthBuildForWB.getFactory())
-                .addQQFactory(AuthBuildForQQ.getFactory())
+                .addFactoryByHW(AuthBuildForHW.getFactory())
+                .addFactoryByQQ(AuthBuildForQQ.getFactory())
+                .addFactoryByWB(AuthBuildForWB.getFactory())
+                .addFactoryByWX(AuthBuildForWX.getFactory())
+                .addFactoryByYL(AuthBuildForYL.getFactory())
+                .addFactoryByYL(AuthBuildForZFB.getFactory())
                 .build();
-        Assets2Sd(ImagePath);
 
 //        Auth.withHW(this)
 //                .setAction(Auth.Pay)

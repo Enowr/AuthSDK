@@ -41,7 +41,7 @@ public class AuthBuildForWB extends AbsAuthBuildForWB {
     public static AuthBuildFactory getFactory() {
         return new AuthBuildFactory() {
             @Override
-            public AbsAuthBuildForWB getWBBuild(Context context) {
+            public AbsAuthBuildForWB getBuildByWB(Context context) {
                 return new AuthBuildForWB(context);
             }
         };

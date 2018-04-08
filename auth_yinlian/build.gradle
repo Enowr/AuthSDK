@@ -22,7 +22,6 @@ android {
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
 
-
     implementation project(':auth')
     implementation "com.android.support:appcompat-v7:${SupportVersion}"
 }

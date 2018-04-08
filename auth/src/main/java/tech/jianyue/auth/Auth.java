@@ -43,48 +43,36 @@ public class Auth {
     private Auth() {
     }
 
+    static AbsAuthBuild getBuilder(String key) {
+        return Auth.BuilderMap.get(key);
+    }
+
     public static AuthBuilder init() {
         return new AuthBuilder();
     }
 
     public static AbsAuthBuildForHW withHW(Context context) {
-        if (AuthBuilder.FactoryArray == null || AuthBuilder.FactoryArray.get(WITH_HW) == null) {
-            throw new NullPointerException("添加华为依赖, 并配置初始化");
-        } else {
-            return AuthBuilder.FactoryArray.get(WITH_HW).getHWBuild(context);
-        }
+        return AuthBuilder.getFactory(WITH_HW).getBuildByHW(context);
     }
 
     public static AbsAuthBuildForQQ withQQ(Context context) {
-        if (AuthBuilder.FactoryArray == null || AuthBuilder.FactoryArray.get(WITH_QQ) == null) {
-            throw new NullPointerException("添加QQ依赖, 并配置初始化");
-        } else {
-            return AuthBuilder.FactoryArray.get(WITH_QQ).getQQBuild(context);
-        }
+        return AuthBuilder.getFactory(WITH_QQ).getBuildByQQ(context);
     }
 
     public static AbsAuthBuildForWB withWB(Context context) {
-        if (AuthBuilder.FactoryArray == null || AuthBuilder.FactoryArray.get(WITH_WB) == null) {
-            throw new NullPointerException("添加微博依赖, 并配置初始化");
-        } else {
-            return AuthBuilder.FactoryArray.get(WITH_WB).getWBBuild(context);
-        }
+        return AuthBuilder.getFactory(WITH_WB).getBuildByWB(context);
     }
 
     public static AbsAuthBuildForWX withWX(Context context) {
-        if (AuthBuilder.FactoryArray == null || AuthBuilder.FactoryArray.get(WITH_WX) == null) {
-            throw new NullPointerException("添加微信依赖, 并配置初始化");
-        } else {
-            return AuthBuilder.FactoryArray.get(WITH_WX).getWXBuild(context);
-        }
+        return AuthBuilder.getFactory(WITH_WX).getBuildByWX(context);
     }
 
-    public static AuthBuildForZFB withZFB(Context context) {
-        return new AuthBuildForZFB(context);
+    public static AbsAuthBuildForYL withYL(Context context) {
+        return AuthBuilder.getFactory(WITH_YL).getBuildByYL(context);
     }
 
-    public static AuthBuildForYL withYL(Context context) {
-        return new AuthBuildForYL(context);
+    public static AbsAuthBuildForZFB withZFB(Context context) {
+        return AuthBuilder.getFactory(WITH_ZFB).getBuildByZFB(context);
     }
 
     @IntDef({RouseWeb, Pay, LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO, SHARE_MUSIC, SHARE_PROGRAM})
@@ -117,7 +105,7 @@ public class Auth {
     public @interface ActionHW {
     }
 
-    @IntDef({WITH_WX, WITH_WB, WITH_QQ, WITH_ZFB, WITH_YL, WITH_HW})
+    @IntDef({WITH_HW, WITH_QQ, WITH_WB, WITH_WX, WITH_YL, WITH_ZFB})
     @Retention(RetentionPolicy.SOURCE)
     public @interface WithThird {
     }
@@ -136,7 +124,15 @@ public class Auth {
         String HWAppID;
         String HWKey;
 
-        SparseArray<AuthBuildFactory> FactoryArray = new SparseArray<>();
+        private SparseArray<AuthBuildFactory> mFactoryArray = new SparseArray<>();
+
+        private AuthBuildFactory getFactory(@WithThird int with) {
+            if (mFactoryArray.get(with) == null) {
+                throw new NullPointerException("添加依赖, 并配置初始化");
+            } else {
+                return mFactoryArray.get(with);
+            }
+        }
 
         public AuthBuilder setQQAppID(String appId) {
             QQAppID = appId;
@@ -183,23 +179,33 @@ public class Auth {
             return this;
         }
 
-        public AuthBuilder addHWFactory(AuthBuildFactory factory) {
-            FactoryArray.put(Auth.WITH_HW, factory);
+        public AuthBuilder addFactoryByHW(AuthBuildFactory factory) {
+            mFactoryArray.put(Auth.WITH_HW, factory);
             return this;
         }
 
-        public AuthBuilder addWXFactory(AuthBuildFactory factory) {
-            FactoryArray.put(Auth.WITH_WX, factory);
+        public AuthBuilder addFactoryByQQ(AuthBuildFactory factory) {
+            mFactoryArray.put(Auth.WITH_QQ, factory);
             return this;
         }
 
-        public AuthBuilder addWBFactory(AuthBuildFactory factory) {
-            FactoryArray.put(Auth.WITH_WB, factory);
+        public AuthBuilder addFactoryByWB(AuthBuildFactory factory) {
+            mFactoryArray.put(Auth.WITH_WB, factory);
             return this;
         }
 
-        public AuthBuilder addQQFactory(AuthBuildFactory factory) {
-            FactoryArray.put(Auth.WITH_QQ, factory);
+        public AuthBuilder addFactoryByWX(AuthBuildFactory factory) {
+            mFactoryArray.put(Auth.WITH_WX, factory);
+            return this;
+        }
+
+        public AuthBuilder addFactoryByYL(AuthBuildFactory factory) {
+            mFactoryArray.put(Auth.WITH_YL, factory);
+            return this;
+        }
+
+        public AuthBuilder addFactoryByZFB(AuthBuildFactory factory) {
+            mFactoryArray.put(Auth.WITH_ZFB, factory);
             return this;
         }
 

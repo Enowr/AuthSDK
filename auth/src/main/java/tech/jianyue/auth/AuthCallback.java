@@ -20,18 +20,24 @@ public abstract class AuthCallback {
     /**
      * build 开始之前调用, onStart 之后可调用 getWith \ getAction 函数
      */
-    public void onStart() {}
+    public void onStart() {
+    }
 
-    public void onSuccessForPay(String result) {}
+    public void onSuccessForPay(String result) {
+    }
 
-    public void onUnconfirmedForPay() {}
+    public void onSuccessForShare() {
+    }
 
-    public void onSuccessForShare() {}
+    public void onSuccessForLogin(UserInfoForThird info) {
+    }
 
-    public void onSuccessForLogin(UserInfoForThird info) {}
+    public void onSuccessForRouse(String result) {
+    }
 
-    public void onSuccessForRouse(String result) {}
+    public void onCancel() {
+    }
 
-    public void onCancel() {}
-    public void onFailed(String msg) {}
+    public void onFailed(String msg) {
+    }
 }

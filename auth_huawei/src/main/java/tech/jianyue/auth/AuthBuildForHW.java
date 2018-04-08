@@ -51,7 +51,7 @@ public class AuthBuildForHW extends AbsAuthBuildForHW {
     public static AuthBuildFactory getFactory() {
         return new AuthBuildFactory() {
             @Override
-            public AbsAuthBuildForHW getHWBuild(Context context) {
+            public AbsAuthBuildForHW getBuildByHW(Context context) {
                 return new AuthBuildForHW(context);
             }
         };
@@ -108,16 +108,16 @@ public class AuthBuildForHW extends AbsAuthBuildForHW {
                 if (retCode == HMSAgent.AgentResultCode.HMSAGENT_SUCCESS && payInfo != null) {
                     boolean checkRst = PaySignUtil.checkSign(payInfo, Auth.AuthBuilder.HWKey);
                     if (checkRst) {
-                        mCallback.onSuccessForPay("华为支付成功");        // 支付成功并且验签成功，发放商品
+                        mCallback.onSuccessForPay("华为支付成功");                // 支付成功并且验签成功，发放商品
                     } else {
-                        mCallback.onUnconfirmedForPay();                       // 签名失败，需要查询订单状态：对于没有服务器的单机应用，调用查询订单接口查询；其他应用到开发者服务器查询订单状态。
+                        mCallback.onSuccessForPay("华为支付成功状态待查询");       // 签名失败，需要查询订单状态：对于没有服务器的单机应用，调用查询订单接口查询；其他应用到开发者服务器查询订单状态。
                     }
                 } else if (retCode == HMSAgent.AgentResultCode.ON_ACTIVITY_RESULT_ERROR
                         || retCode == PayStatusCodes.PAY_STATE_TIME_OUT
                         || retCode == PayStatusCodes.PAY_STATE_NET_ERROR) {
-                    mCallback.onUnconfirmedForPay();                           // 需要查询订单状态：对于没有服务器的单机应用，调用查询订单接口查询；其他应用到开发者服务器查询订单状态。
+                    mCallback.onSuccessForPay("华为支付成功状态待查询");           // 需要查询订单状态：对于没有服务器的单机应用，调用查询订单接口查询；其他应用到开发者服务器查询订单状态。
                 } else {
-                    mCallback.onFailed("华为支付失败");                    // 其他错误码意义参照支付api参考
+                    mCallback.onFailed("华为支付失败");                           // 其他错误码意义参照支付api参考
                 }
                 destroy();
             }

@@ -14,12 +14,23 @@ import com.unionpay.UPPayAssistEx;
  * 时间: 2018/1/19
  * 版本: 1.0
  */
-public class AuthBuildForYL extends AbsAuthBuild {
-    private String mOrderInfo;
-    private boolean mTest = false;
-
+public class AuthBuildForYL extends AbsAuthBuildForYL {
     AuthBuildForYL(Context context) {
-        super(context, Auth.WITH_YL);
+        super(context);
+    }
+
+    public static AuthBuildFactory getFactory() {
+        return new AuthBuildFactory() {
+            @Override
+            public AbsAuthBuildForYL getBuildByYL(Context context) {
+                return new AuthBuildForYL(context);
+            }
+        };
+    }
+
+    @Override
+    AbsAuthBuildForYL.Controller getController(Activity activity) {
+        return new Controller(this, activity);
     }
 
     @Override           // 初始化资源
@@ -29,28 +40,6 @@ public class AuthBuildForYL extends AbsAuthBuild {
     @Override           // 清理资源
     void destroy() {
         super.destroy();
-    }
-
-    @Override
-    public AuthBuildForYL setAction(@Auth.ActionYL int action) {
-        mAction = action;
-        return this;
-    }
-
-    /**
-     * 订单信息为交易流水号，即TN
-     */
-    public AuthBuildForYL payOrderInfo(String orderInfo) {
-        mOrderInfo = orderInfo;
-        return this;
-    }
-
-    /**
-     * 是否是测试环境, 默认false; true: 银联测试环境，该环境中不发生真实交易; false: 银联正式环境
-     */
-    public AuthBuildForYL payIsTest(boolean test) {
-        mTest = test;
-        return this;
     }
 
     @Override
@@ -71,7 +60,7 @@ public class AuthBuildForYL extends AbsAuthBuild {
         }
     }
 
-    void pay(Activity activity) {
+    private void pay(Activity activity) {
         if (TextUtils.isEmpty(mOrderInfo)) {
             mCallback.onFailed("必须添加 OrderInfo, 使用 payOrderInfo(info) ");
             activity.finish();
@@ -88,6 +77,44 @@ public class AuthBuildForYL extends AbsAuthBuild {
                 mCallback.onFailed("手机终端尚未安装支付控件，需要先安装支付控件 ");
                 activity.finish();
             }
+        }
+    }
+
+    static class Controller implements AbsAuthBuildForYL.Controller {
+        private AuthBuildForYL mBuild;
+        private Activity mActivity;
+
+        Controller(AuthBuildForYL build, Activity activity) {
+            mBuild = build;
+            mActivity = activity;
+        }
+
+        @Override
+        public void pay() {
+            mBuild.pay(mActivity);
+        }
+
+        @Override
+        public void destroy() {
+            mBuild.destroy();
+            mBuild = null;
+            mActivity = null;
+        }
+
+        @Override
+        public void callback(int requestCode, int resultCode, Intent data) {
+            if (data != null && data.getExtras() != null) {
+                String str = data.getExtras().getString("pay_result");
+                if( "success".equalsIgnoreCase(str) ){
+                    mBuild.mCallback.onSuccessForPay("银联支付成功");
+                }  else if ("fail".equalsIgnoreCase(str)) {
+                    mBuild.mCallback.onFailed("银联支付失败");
+                } else if ("cancel".equalsIgnoreCase(str)) {
+                    mBuild.mCallback.onCancel();
+                }
+            }
+            mBuild.destroy();
+            mActivity.finish();
         }
     }
 }

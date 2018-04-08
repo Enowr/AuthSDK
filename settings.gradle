@@ -1,1 +1,1 @@
-include ':app', ':auth', ':auth_huawei', ':auth_weixin', ':auth_weibo', ':auth_qq'
+include ':app', ':auth', ':auth_huawei', ':auth_weixin', ':auth_weibo', ':auth_qq', ':auth_zhifubao', ':auth_yinlian'

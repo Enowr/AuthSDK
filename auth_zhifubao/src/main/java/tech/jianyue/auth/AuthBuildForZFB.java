@@ -3,16 +3,12 @@ package tech.jianyue.auth;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.alipay.sdk.app.PayTask;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,13 +17,18 @@ import java.util.Map;
  * 时间: 2018/1/19
  * 版本: 1.0
  */
-public class AuthBuildForZFB extends AbsAuthBuild {
-    private boolean isShowLoading = true;
-    private String mOrderInfo;
-    private String mUri;
-
+public class AuthBuildForZFB extends AbsAuthBuildForZFB {
     AuthBuildForZFB(Context context) {
-        super(context, Auth.WITH_ZFB);
+        super(context);
+    }
+
+    public static AuthBuildFactory getFactory() {
+        return new AuthBuildFactory() {
+            @Override
+            public AbsAuthBuildForZFB getBuildByZFB(Context context) {
+                return new AuthBuildForZFB(context);
+            }
+        };
     }
 
     /**
@@ -45,30 +46,6 @@ public class AuthBuildForZFB extends AbsAuthBuild {
     @Override           // 清理资源
     void destroy() {
         super.destroy();
-    }
-
-    @Override
-    public AuthBuildForZFB setAction(@Auth.ActionZFB int action) {
-        mAction = action;
-        return this;
-    }
-
-    public AuthBuildForZFB payOrderInfo(String orderInfo) {
-        mOrderInfo = orderInfo;
-        return this;
-    }
-
-    /**
-     * 默认为显示
-     */
-    public AuthBuildForZFB payIsShowLoading(boolean isShow) {
-        isShowLoading = isShow;
-        return this;
-    }
-
-    public AuthBuildForZFB rouseWeb(String uri) {
-        mUri = uri;
-        return this;
     }
 
     @Override
@@ -107,6 +84,7 @@ public class AuthBuildForZFB extends AbsAuthBuild {
         }
     }
 
+    @Override
     void pay(Activity activity) {
         if (TextUtils.isEmpty(mOrderInfo)) {
             mCallback.onFailed("必须添加 OrderInfo, 使用 payOrderInfo(info) ");
@@ -161,10 +139,10 @@ public class AuthBuildForZFB extends AbsAuthBuild {
                     callback.onSuccessForPay(resultMap.toString());
                 } else if (TextUtils.equals(resultStatus, "6001")) {
                     callback.onCancel();
-                } else {                                                        // 判断resultStatus 为非“9000”则代表可能支付失败, 该笔订单真实的支付结果，需要依赖服务端的异步通知
+                } else {                                                       // 判断resultStatus 为非“9000”则代表可能支付失败, 该笔订单真实的支付结果，需要依赖服务端的异步通知
                     if (TextUtils.equals(resultStatus, "8000")) {           // “8000”代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
-                        callback.onSuccessForPay(resultMap.toString());         // 默认为支付成功
-                    } else {                                                    // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
+                        callback.onSuccessForPay(resultMap.toString());        // 默认为支付成功
+                    } else {                                                   // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
                         callback.onFailed("支付宝支付失败");
                     }
                 }

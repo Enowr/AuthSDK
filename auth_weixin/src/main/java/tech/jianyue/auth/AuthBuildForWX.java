@@ -46,7 +46,7 @@ public class AuthBuildForWX extends AbsAuthBuildForWX {
     public static AuthBuildFactory getFactory() {
         return new AuthBuildFactory() {
             @Override
-            public AbsAuthBuildForWX getWXBuild(Context context) {
+            public AbsAuthBuildForWX getBuildByWX(Context context) {
                 return new AuthBuildForWX(context);
             }
         };
