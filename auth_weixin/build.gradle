@@ -20,8 +20,8 @@ android {
 }
 
 dependencies {
-    api fileTree(dir: 'libs', include: ['*.jar'])
-    api 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.1.4'           // 微信 SDK
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.1.4'           // 微信 SDK
 
 
     implementation project(':auth')
