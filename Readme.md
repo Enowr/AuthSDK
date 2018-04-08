@@ -1,10 +1,10 @@
 # Android 第三方登录、分享、支付、签约集成方案
 
-  目前很多 APP 都添加了第三方功能，包括登录、分享、支付、签约等功能。其中集成较多的平台是微信、QQ、支付宝、微博、银联。这里主要介绍这几个平台的集成方案。
+  目前很多 APP 都添加了第三方功能，包括登录、分享、支付、签约等功能。其中集成较多的平台是微信、QQ、支付宝、微博、银联、华为支付。这里主要介绍这几个平台的集成方案。
 
   由于这些代码都是固定写法，所以最后抽取成了一个第三方集成库 [AuthSDK](https://github.com/Jieger/AuthSDK)。
 
-  目前支持 微信、微博、QQ 的登录和分享功能，微信、支付宝、银联的支付功能，微信、支付宝的签约功能。SDK 不支持并发操作， 也就是说不能同时做多个请求，只能串行请求。
+  目前支持 微信、微博、QQ 的登录和分享功能，微信、支付宝、银联、华为的支付功能，微信、支付宝的签约功能。SDK 不支持并发操作，也就是说不能同时做多个请求，只能串行请求。
 
 ### 当前 SDK 集成为最新的第三方SDK：  
   - 微信 : com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.1.4  
@@ -12,10 +12,10 @@
   - QQ : open_sdk_r5990_lite  
   - 支付宝 : alipaySdk-20170922  
   - 银联: 手机支付控件接入指南: 3.4.1
+  - 华为: 2.6.0.301
 
 # 集成方法
-1. 在 project 目录下的 build.gradle 文件中添加微博的 maven 地址：
-    使用微博功能的需要添加
+1. 根据需求选择是否添加, 在 project 目录下的 build.gradle 文件中添加微博和华为的 maven 地址：  
     ```aidl
     allprojects {
         repositories {
@@ -23,18 +23,25 @@
             jcenter()
     
             maven { url "https://dl.bintray.com/thelasterstar/maven/" }     // 微博 aar
+            maven { url 'http://developer.huawei.com/repo/' }               // 华为仓库
         }
     }
     ```
     
-2. 在 app module 的 build.gradle 中添加引用:  
+2. 根据需求选择是否添加, 在 app module 的 build.gradle 中添加引用:  
     ```aidl
     dependencies {
-        compile 'tech.jianyue.auth:auth:1.1.4'
+        compile 'tech.jianyue.auth:auth:1.2.2'
+        compile 'tech.jianyue.auth:auth_huawei:1.2.2'
+        compile 'tech.jianyue.auth:auth_qq:1.2.2'
+        compile 'tech.jianyue.auth:auth_weibo:1.2.2'
+        compile 'tech.jianyue.auth:auth_weixin:1.2.2'
+        compile 'tech.jianyue.auth:auth_yinlian:1.2.2'
+        compile 'tech.jianyue.auth:auth_zhifubao:1.2.2'
     }
     ```
 
-3. 在 app module 的清单文件中添加 QQ 和微信的配置:  
+3. 在 app module 的清单文件中添加 QQ、微信、支付宝、华为 的配置:  
     其中 QQ_SCHEME 为配置项，值为: tencent 加 QQ 的 AppID；  
     支付宝的 scheme 为签约回调的标记，需要与支付宝确定；  
     用到哪个第三方就配置对应的项目就可以，其他第三方不需配置；
@@ -77,6 +84,28 @@
                 <data android:scheme="123" />
             </intent-filter>
         </activity>
+
+        <!--华为-->
+        <!--在application节点下增加APPID value的值“xxx”用实际申请的应用ID替换，来源于开发者联盟网站应用的服务详情。-->
+        <meta-data 
+            android:name="com.huawei.hms.client.appid"
+            android:value="appid=xxx">
+        </meta-data>
+             
+        <!--在application节点下增加provider，UpdateProvider用于HMS-SDK引导升级HMS，提供给系统安装器读取升级文件。UpdateSdkFileProvider用于应用自升级。-->
+        <!--“xxx.xxx.xxx”用实际的应用包名替换-->
+        <provider 
+            android:name="com.huawei.hms.update.provider.UpdateProvider"
+            android:authorities="xxx.xxx.xxx.hms.update.provider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+        </provider>
+        <provider 
+            android:name="com.huawei.updatesdk.fileprovider.UpdateSdkFileProvider" 
+            android:authorities="xxx.xxx.xxx.updateSdk.fileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+        </provider>
     ```
 
 4. 在 app module 的包名下添加 wxapi 包, 并创建 WXEntryActivity 类和 WXPayEntryActivity 类, 继承自库内 AuthActivity 类；
@@ -90,13 +119,23 @@
 
 5. 初始化 Auth 库，其中的 ID、KYE 等需要通过第三方网站进行注册申请  
     ```aidl
-    Auth.init().setQQAppID(QQAPPID)
-            .setWXAppID(WECHAT_APPID)
-            .setWXSecret(WECHAT_SECRET)
-            .setWBAppKey(WEIBO_APPKEY)
-            .setWBDedirectUrl(WEIBO_REDIRECT_URL)
-            .setWBScope(WEIBO_SCOPE)
+    Auth.init().setQQAppID("QQ_APPID")
+            .setWXAppID("WECHAT_APPID")
+            .setWXSecret("WECHAT_SECRET")
+            .setWBAppKey("WEIBO_APPKEY")
+            .setWBDedirectUrl("WEIBO_REDIRECT_URL")
+            .setWBScope("WEIBO_SCOPE")
+            .setHWAppID("")
+            .setHWKey("")
+            .setHWMerchantID("")
+            .addFactoryByHW(AuthBuildForHW.getFactory())
+            .addFactoryByQQ(AuthBuildForQQ.getFactory())
+            .addFactoryByWB(AuthBuildForWB.getFactory())
+            .addFactoryByWX(AuthBuildForWX.getFactory())
+            .addFactoryByYL(AuthBuildForYL.getFactory())
+            .addFactoryByYL(AuthBuildForZFB.getFactory())
             .build();
+      
     ```
 
 6. 添加权限
@@ -111,14 +150,17 @@
     <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="org.simalliance.openmobileapi.SMARTCARD" />
     <uses-feature android:name="android.hardware.nfc.hce" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     ```
 
 7. 添加混淆:
     ```aidl
     # Auth
     -keep class tech.jianyue.auth.** {*;}
+ 
     # 微博
     -keep class com.sina.weibo.sdk.** { *; }
+ 
     # 微信
     -keep class com.tencent.mm.opensdk.** {
        *;
@@ -129,6 +171,7 @@
     -keep class com.tencent.mm.sdk.** {
        *;
     }
+ 
     # QQ
     -keep class com.tencent.open.TDialog$*
     -keep class com.tencent.open.TDialog$* {*;}
@@ -136,6 +179,7 @@
     -keep class com.tencent.open.PKDialog {*;}
     -keep class com.tencent.open.PKDialog$*
     -keep class com.tencent.open.PKDialog$* {*;}
+ 
     # 支付宝
     -keep class com.alipay.android.app.IAlixPay{*;}
     -keep class com.alipay.android.app.IAlixPay$Stub{*;}
@@ -156,6 +200,7 @@
     -keep class com.alipay.tscenter.** { *; }
     -keep class com.ta.utdid2.** { *;}
     -keep class com.ut.device.** { *;}
+ 
     # 银联
     -keep  public class com.unionpay.uppay.net.HttpConnection {
 	    public <methods>;
@@ -185,6 +230,21 @@
     -keep  public class com.unionpay.utils.UPUtils {
 	    native <methods>;
     }
+ 
+    # 华为
+    -ignorewarning
+    -keepattributes *Annotation*
+    -keepattributes Exceptions
+    -keepattributes InnerClasses
+    -keepattributes Signature
+    -keepattributes SourceFile,LineNumberTable
+    -keep class com.hianalytics.android.**{*;}
+    -keep class com.huawei.updatesdk.**{*;}
+    -keep class com.huawei.hms.**{*;}
+    -keep class com.huawei.gamebox.plugin.gameservice.**{*;}
+    -keep public class com.huawei.android.hms.agent.** extends android.app.Activity { public *; protected *; }
+    -keep interface com.huawei.android.hms.agent.common.INoProguard {*;}
+    -keep class * extends com.huawei.android.hms.agent.common.INoProguard {*;}
     ```
 
 8. 调用方式:  
@@ -238,6 +298,12 @@
     Auth.withYL(context)
             .setAction(Auth.Pay)
             .payOrderInfo("111")
+            .build(mCallback);
+         
+    Auth.withHW(this)
+            .setAction(Auth.Pay)
+            .payAmount("")
+            ......
             .build(mCallback);
     ```
 
