@@ -22,6 +22,7 @@ public abstract class AbsAuthBuildForHW extends AbsAuthBuild {
     String mServiceCatalog;                     // 分类，必填，不参与签名。该字段会影响风控策略; 应用设置为"X5"，游戏设置为"X6"
     String mExtReserved;                        // 商户保留信息，选填不参与签名，支付成功后会华为支付平台会原样 回调CP服务端
     String mSign;                               // 签名, 非单机应用一定要在服务器端储存签名私钥，并在服务器端进行签名操作
+    String mUrl;                                // URL
 
     AbsAuthBuildForHW(Context context) {
         super(context, Auth.WITH_HW);
@@ -92,6 +93,11 @@ public abstract class AbsAuthBuildForHW extends AbsAuthBuild {
 
     public AbsAuthBuildForHW paySign(String sign) {
         mSign = sign;
+        return this;
+    }
+
+    public AbsAuthBuildForHW payUrl(String url) {
+        mUrl = url;
         return this;
     }
 }

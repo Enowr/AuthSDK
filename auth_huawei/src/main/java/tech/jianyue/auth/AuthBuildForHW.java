@@ -118,6 +118,7 @@ public class AuthBuildForHW extends AbsAuthBuildForHW {
         payReq.serviceCatalog = mServiceCatalog;                // 应用设置为"X5"，游戏设置为"X6"
         payReq.extReserved = mExtReserved;                      // 商户保留信息，选填不参与签名，支付成功后会华为支付平台会原样 回调CP服务端
         payReq.sign = mSign;                                    // 签名
+        payReq.url = mUrl;                                      // URL
 
         HMSAgent.Pay.pay(payReq, new PayHandler() {
             @Override
