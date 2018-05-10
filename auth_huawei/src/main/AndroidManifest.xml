@@ -2,6 +2,7 @@
     package="tech.jianyue.auth_huawei">
 
     <application>
+        <!--BridgeActivity定义了HMS-SDK中一些跳转所需要的透明页面-->
         <activity
             android:name="com.huawei.hms.activity.BridgeActivity"
             android:configChanges="orientation|locale|screenSize|layoutDirection|fontScale"
@@ -14,12 +15,12 @@
                 android:value="androidhwext:style/Theme.Emui.Translucent" />
         </activity>
 
+        <!--AppUpdateActivity和PackageInstallActivity是应用自升级接口所需要使用的页面-->
         <activity
             android:name="com.huawei.updatesdk.service.otaupdate.AppUpdateActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false"
             android:theme="@style/upsdkDlDialog" >
-
             <meta-data
                 android:name="hwc-theme"
                 android:value="androidhwext:style/Theme.Emui.Translucent.NoTitleBar" />
@@ -35,7 +36,7 @@
                 android:value="androidhwext:style/Theme.Emui.Translucent" />
         </activity>
 
-        <!-- 应用下载服务 -->
+        <!--在application节点下增加Service，用于应用自升级-->
         <service android:name="com.huawei.updatesdk.service.deamon.download.DownloadService"
             android:exported="false"/>
 

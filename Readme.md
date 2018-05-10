@@ -133,8 +133,12 @@
             .addFactoryByWB(AuthBuildForWB.getFactory())
             .addFactoryByWX(AuthBuildForWX.getFactory())
             .addFactoryByYL(AuthBuildForYL.getFactory())
-            .addFactoryByYL(AuthBuildForZFB.getFactory())
+            .addFactoryByZFB(AuthBuildForZFB.getFactory())
             .build();
+         
+    如果使用华为支付功能, 还需要在 MainActivity 里初始化华为相关控件(华为接口做的真是没有其他第三方友好, 有待提升啊)
+    Auth.withHW(context)
+           .initHW(activity);
       
     ```
 

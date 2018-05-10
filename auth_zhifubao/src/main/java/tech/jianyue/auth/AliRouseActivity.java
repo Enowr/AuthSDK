@@ -17,6 +17,7 @@ public class AliRouseActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         checkPayResult();
     }
 
@@ -24,20 +25,27 @@ public class AliRouseActivity extends Activity {
      * 判断是否完成支付，并发出通知
      */
     private void checkPayResult() {
-        if (mCallback != null) {
-            Intent intent = getIntent();
-            String data = intent.getDataString();
-            String trade_status = Utils.decodeURL(data, "trade_status=");              // 根据支付宝返回的字符串中的trade_status字段来判断支付结果
-            String status_agreement = Utils.decodeURL(data, "status=");                // 如果只是签订续订协议，则根据status字段来判断协议的状态
+        try {                                                                               // 应用程序对 Intent.getXXXExtra()获取的异常或者畸形数据处理时进行异常捕获
+            if (mCallback != null) {
+                Intent intent = getIntent();
+                String data = intent.getDataString();
+                String trade_status = Utils.decodeURL(data, "trade_status=");           // 根据支付宝返回的字符串中的trade_status字段来判断支付结果
+                String status_agreement = Utils.decodeURL(data, "status=");             // 如果只是签订续订协议，则根据status字段来判断协议的状态
 
-            if ("TRADE_FINISHED".equals(trade_status) || "TRADE_SUCCESS".equals(trade_status) || "NORMAL".equals(status_agreement)) { // 支付成功或签约成功
-                mCallback.onSuccessForRouse("支付宝签约支付成功");
-            } else if ("TRADE_PENDING".equals(trade_status)) {                              // 等待卖家收款
-                mCallback.onSuccessForRouse("正在确认签约支付结果...");
-            } else {                                                                        // 其他都认为支付失败
+                if ("TRADE_FINISHED".equals(trade_status) || "TRADE_SUCCESS".equals(trade_status) || "NORMAL".equals(status_agreement)) { // 支付成功或签约成功
+                    mCallback.onSuccessForRouse("支付宝签约支付成功");
+                } else if ("TRADE_PENDING".equals(trade_status)) {                          // 等待卖家收款
+                    mCallback.onSuccessForRouse("正在确认签约支付结果...");
+                } else {                                                                    // 其他都认为支付失败
+                    mCallback.onFailed("支付宝支付失败");
+                }
+                mCallback = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (mCallback != null) {
                 mCallback.onFailed("支付宝支付失败");
             }
-            mCallback = null;
         }
         finish();                                                                           // 关闭此activity
     }

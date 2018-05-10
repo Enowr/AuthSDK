@@ -1,40 +1,44 @@
 package tech.jianyue.auth;
 
+import android.app.Activity;
 import android.content.Context;
 import android.text.TextUtils;
 
 import com.huawei.android.hms.agent.HMSAgent;
+import com.huawei.android.hms.agent.common.handler.ConnectHandler;
 import com.huawei.android.hms.agent.pay.PaySignUtil;
 import com.huawei.android.hms.agent.pay.handler.PayHandler;
 import com.huawei.hms.support.api.entity.pay.PayReq;
 import com.huawei.hms.support.api.entity.pay.PayStatusCodes;
 import com.huawei.hms.support.api.pay.PayResultInfo;
 
-/**
- * 在 allprojects->repositories 里面配置 HMSSDK 的 maven 仓库: maven {url 'http://developer.huawei.com/repo/'}
- * <p>
- * 在application节点下增加APPID
- * <meta-data
- * android:name="com.huawei.hms.client.appid"
- * <!-- value的值“xxx”用实际申请的应用ID替换，来源于开发者联盟网站应用的服务详情。-->
- * android:value="appid=xxx">
- * </meta-data>
- * <p>
- * 在application节点下增加provider，UpdateProvider用于HMS-SDK引导升级HMS，提供给系统安装器读取升级文件。UpdateSdkFileProvider用于应用自升级。
- * <provider
- * android:name="com.huawei.hms.update.provider.UpdateProvider"
- * <!--“xxx.xxx.xxx”用实际的应用包名替换-->
- * android:authorities="xxx.xxx.xxx.hms.update.provider"
- * android:exported="false"
- * android:grantUriPermissions="true" >
- * </provider>
- * <provider
- * android:name="com.huawei.updatesdk.fileprovider.UpdateSdkFileProvider"
- * <!--“xxx.xxx.xxx”用实际的应用包名替换-->
- * android:authorities="xxx.xxx.xxx.updateSdk.fileProvider"
- * android:exported="false"
- * android:grantUriPermissions="true">
- * </provider>
+import static com.huawei.android.hms.agent.HMSAgent.AgentResultCode.HMSAGENT_SUCCESS;
+
+/*
+ 在 allprojects->repositories 里面配置 HMSSDK 的 maven 仓库: maven {url 'http://developer.huawei.com/repo/'}
+
+ 在application节点下增加APPID
+ <meta-data
+    android:name="com.huawei.hms.client.appid"
+    <!-- value的值“xxx”用实际申请的应用ID替换，来源于开发者联盟网站应用的服务详情。-->
+    android:value="appid=xxx">
+ </meta-data>
+
+ 在application节点下增加provider，UpdateProvider用于HMS-SDK引导升级HMS，提供给系统安装器读取升级文件。UpdateSdkFileProvider用于应用自升级。
+ <provider
+    android:name="com.huawei.hms.update.provider.UpdateProvider"
+    <!--“xxx.xxx.xxx”用实际的应用包名替换-->
+    android:authorities="xxx.xxx.xxx.hms.update.provider"
+    android:exported="false"
+    android:grantUriPermissions="true" >
+ </provider>
+ <provider
+    android:name="com.huawei.updatesdk.fileprovider.UpdateSdkFileProvider"
+    <!--“xxx.xxx.xxx”用实际的应用包名替换-->
+    android:authorities="xxx.xxx.xxx.updateSdk.fileProvider"
+    android:exported="false"
+    android:grantUriPermissions="true">
+ </provider>
  */
 
 /**
@@ -55,6 +59,19 @@ public class AuthBuildForHW extends AbsAuthBuildForHW {
                 return new AuthBuildForHW(context);
             }
         };
+    }
+
+    @Override
+    public void initHW(final Activity activity) {
+        HMSAgent.init(activity);
+        HMSAgent.connect(activity, new ConnectHandler() {
+            @Override
+            public void onConnect(int rst) {
+                if (HMSAGENT_SUCCESS == rst) {
+                    HMSAgent.checkUpdate(activity);
+                }
+            }
+        });
     }
 
     @Override
@@ -105,7 +122,7 @@ public class AuthBuildForHW extends AbsAuthBuildForHW {
         HMSAgent.Pay.pay(payReq, new PayHandler() {
             @Override
             public void onResult(int retCode, PayResultInfo payInfo) {
-                if (retCode == HMSAgent.AgentResultCode.HMSAGENT_SUCCESS && payInfo != null) {
+                if (retCode == HMSAGENT_SUCCESS && payInfo != null) {
                     boolean checkRst = PaySignUtil.checkSign(payInfo, Auth.AuthBuilder.HWKey);
                     if (checkRst) {
                         mCallback.onSuccessForPay("华为支付成功");                // 支付成功并且验签成功，发放商品
