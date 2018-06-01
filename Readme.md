@@ -206,34 +206,10 @@
     -keep class com.ut.device.** { *;}
  
     # 银联
-    -keep  public class com.unionpay.uppay.net.HttpConnection {
-	    public <methods>;
-    }
-    -keep  public class com.unionpay.uppay.net.HttpParameters {
-	    public <methods>;
-    }
-    -keep  public class com.unionpay.uppay.model.BankCardInfo {
-	    public <methods>;
-    }
-    -keep  public class com.unionpay.uppay.model.PAAInfo {
-	    public <methods>;
-    }
-    -keep  public class com.unionpay.uppay.model.ResponseInfo {
-	    public <methods>;
-    }
-    -keep  public class com.unionpay.uppay.model.PurchaseInfo {
-	    public <methods>;
-    }
-    -keep  public class com.unionpay.uppay.util.DeviceInfo {
-	    public <methods>;
-    }
-    -keep  public class com.unionpay.uppay.util.PayEngine {
-	    public <methods>;
-	    native <methods>;
-    }
-    -keep  public class com.unionpay.utils.UPUtils {
-	    native <methods>;
-    }
+    -keep class cn.gov.pbc.** { *;}
+    -keep class com.UCMobile.PayPlugin.** { *;}
+    -keep class com.UCMobile.unionpay.** { *;}
+    -keep class com.unionpay.** { *;}
  
     # 华为
     -ignorewarning
