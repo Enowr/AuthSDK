@@ -8,9 +8,12 @@ import com.huawei.hms.support.api.entity.pay.HwPayConstant;
 import com.huawei.hms.support.api.entity.pay.OrderRequest;
 import com.huawei.hms.support.api.entity.pay.PayReq;
 import com.huawei.hms.support.api.entity.pay.ProductPayRequest;
+import com.huawei.hms.support.api.entity.pay.PurchaseInfo;
+import com.huawei.hms.support.api.entity.pay.PurchaseInfoRequest;
 import com.huawei.hms.support.api.pay.OrderResult;
 import com.huawei.hms.support.api.pay.PayResultInfo;
 import com.huawei.hms.support.api.pay.ProductPayResultInfo;
+import com.huawei.hms.support.api.pay.PurchaseInfoResult;
 
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -83,6 +86,19 @@ public final class PaySignUtil {
     }
 
     /**
+     * 对于私钥是非常保密的信息，强烈建议将私钥存储在服务端。
+     * 开发者首先调用getStringForSign获取待签名字符串，然后将待签名字符串发送到服务器，由开发者服务端对待签名字符串进行签名。
+     * 签名方法可以参考rsaSign方法的实现。
+     * @deprecated
+     * @param request 要计算签名的请求
+     * @param privKey 私钥
+     * @return 生成的签名字符串
+     */
+    public static String calculateSignString(PurchaseInfoRequest request, String privKey) {
+        return rsaSign(getStringForSign(request), privKey);
+    }
+
+    /**
      * 计算支付请求的待签名字符串
      * 在服务端进行签名的cp，可以将此方法返回的字符串传给自己发服务端进行签名
      * @param request 支付请求
@@ -146,6 +162,27 @@ public final class PaySignUtil {
         // 可选参数
         params.put(HwPayConstant.KEY_URL, request.getUrl());
         params.put(HwPayConstant.KEY_URLVER, request.getUrlVer());
+
+        return getNoSign(params, false);
+    }
+
+    /**
+     * 计算查询非消耗商品订单请求的待签名字符串
+     * 在服务端进行签名的cp，可以将此方法返回的字符串传给自己发服务端进行签名
+     * @param request 查询非消耗商品订单请求
+     */
+    public static String getStringForSign(PurchaseInfoRequest request) {
+        Map<String, Object>  params = new HashMap<String, Object>();
+
+        // 必选参数
+        params.put("merchantId", request.getMerchantId());
+        params.put("appId", request.getAppId());
+        params.put("priceType", request.getPriceType());
+        params.put("ts", request.getTs());
+
+        // 可选参数
+        params.put("productId", request.getProductId());
+        params.put("pageNo", request.getPageNo());
 
         return getNoSign(params, false);
     }
@@ -238,6 +275,49 @@ public final class PaySignUtil {
 
         String noSignStr = getNoSign(paramsa, false);
         return doCheck(noSignStr, result.getSign(), pubKey);
+    }
+
+    /**
+     * 对查询非消耗商品结果的每一个订单签名进行校验
+     * @param result 查询订单结果
+     * @param pubKey 公钥
+     * @return 是否校验通过
+     */
+    public static boolean checkSign(PurchaseInfoResult result, String pubKey) {
+
+        if (result == null || pubKey == null) {
+            return false;
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        Map<String, Object> paramsa = new HashMap<String, Object>();
+        paramsa.put("pageCount", result.getPageCount());
+        paramsa.put("rtnCode", result.getRtnCode());
+        sb.append(getNoSign(paramsa, false)).append('&');
+
+        List<PurchaseInfo> purchaseInfos = result.getPurchaseInfoList();
+        if (purchaseInfos != null) {
+            for (PurchaseInfo info : purchaseInfos) {
+                if (info != null) {
+                    Map<String, Object> paramsaSub = new HashMap<String, Object>();
+                    //必选参数
+                    paramsaSub.put("requestId", info.getRequestId());
+                    paramsaSub.put("merchantId", info.getMerchantId());
+                    paramsaSub.put("appId", info.getAppId());
+                    paramsaSub.put("productId", info.getProductId());
+                    paramsaSub.put("tradeTime", info.getTradeTime());
+
+                    sb.append(getNoSign(paramsaSub, false)).append('&');
+                }
+            }
+        }
+
+        if (sb.charAt(sb.length()-1) == '&') {
+            sb.deleteCharAt(sb.length()-1);
+        }
+
+        return doCheck(sb.toString(), result.getSign(), pubKey);
     }
 
     /**

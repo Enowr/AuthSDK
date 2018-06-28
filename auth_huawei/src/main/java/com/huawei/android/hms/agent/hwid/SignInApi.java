@@ -104,7 +104,7 @@ public final class SignInApi extends BaseApiAgent {
         }
 
         int rstCode = status.getStatusCode();
-        HMSAgentLog.d("rstCode=" + rstCode);
+        HMSAgentLog.d("status=" + status);
         // 需要重试的错误码，并且可以重试
         if ((rstCode == CommonCode.ErrorCode.SESSION_INVALID
                 || rstCode == CommonCode.ErrorCode.CLIENT_API_INVALID) && retryTimes > 0) {

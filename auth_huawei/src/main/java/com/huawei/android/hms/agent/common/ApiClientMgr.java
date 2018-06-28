@@ -12,7 +12,6 @@ import com.huawei.hms.activity.BridgeActivity;
 import com.huawei.hms.api.ConnectionResult;
 import com.huawei.hms.api.HuaweiApiAvailability;
 import com.huawei.hms.api.HuaweiApiClient;
-//import com.huawei.hms.support.api.game.HuaweiGame;
 import com.huawei.hms.support.api.hwid.HuaweiId;
 import com.huawei.hms.support.api.hwid.HuaweiIdSignInOptions;
 import com.huawei.hms.support.api.pay.HuaweiPay;
@@ -30,117 +29,122 @@ import java.util.List;
 public final class ApiClientMgr implements HuaweiApiClient.ConnectionCallbacks, HuaweiApiClient.OnConnectionFailedListener, IActivityResumeCallback, IActivityPauseCallback, IActivityDestroyedCallback {
 
     /**
-     * 单实例
+     * 单实例 | Single Instance
      */
     public static final ApiClientMgr INST = new ApiClientMgr();
 
     /**
-     * 应用市场包名
+     * 应用市场包名 | HiApp's package name
      */
     private static final String PACKAGE_NAME_HIAPP = "com.huawei.appmarket";
 
     /**
-     * 回调锁，避免连接回调紊乱
+     * 回调锁，避免连接回调紊乱 | Callback lock to avoid connection callback disorder
      */
     private static final Object CALLBACK_LOCK = new Object();
 
     /**
-     * 静态注册回调锁，避免注册和回调紊乱
+     * 静态注册回调锁，避免注册和回调紊乱 | Static registration callback lock to avoid registration and callback disturbances
      */
     private static final Object STATIC_CALLBACK_LOCK = new Object();
 
     /**
-     * client操作锁，避免连接使用紊乱
+     * client操作锁，避免连接使用紊乱 | Client operation lock, avoid connection use disorder
      */
     private static final Object APICLIENT_LOCK = new Object();
 
     /**
-     * api client 连接超时
+     * api client 连接超时 | API Client Connection Timeout
      */
     private static final int APICLIENT_CONNECT_TIMEOUT = 30000;
 
     /**
      * 解决升级错误时activity onResume 稳定在3秒时间判断BridgeActivity上面有没有其他activity
+     * To resolve an upgrade error, activity Onresume stable at 3 seconds to determine if there are any other activity on bridgeactivity.
      */
     private static final int UPDATE_OVER_ACTIVITY_CHECK_TIMEOUT = 3000;
 
     /**
-     * api client 解决错误拉起界面超时
+     * api client 解决错误拉起界面超时 | API client Resolution error Pull interface timeout
      */
     private static final int APICLIENT_STARTACTIVITY_TIMEOUT = 3000;
 
     /**
-     * client 连接超时消息
+     * client 连接超时消息 | Client Connection Timeout Message
      */
     private static final int APICLIENT_TIMEOUT_HANDLE_MSG = 3;
 
     /**
-     * client 拉起activity超时消息
+     * client 拉起activity超时消息 | Client starts Activity Timeout message
      */
     private static final int APICLIENT_STARTACTIVITY_TIMEOUT_HANDLE_MSG = 4;
 
     /**
      * 解决升级错误时activity onResume 稳定在3秒时间判断BridgeActivity上面有没有其他activity
+     * To resolve an upgrade error, activity Onresume stable at 3 seconds to determine if there are any other activity on bridgeactivity.
      */
     private static final int UPDATE_OVER_ACTIVITY_CHECK_TIMEOUT_HANDLE_MSG = 5;
 
     /**
-     * 最大尝试连接次数
+     * 最大尝试连接次数 | Maximum number of attempts to connect
      */
     private static final int MAX_RESOLVE_TIMES = 3;
 
     /**
-     * 上下文，用来处理连接失败
+     * 上下文，用来处理连接失败 | Context to handle connection failures
      */
     private Context context;
 
     /**
-     * 当前应用包名
+     * 当前应用包名 | Current Application Package Name
      */
     private String curAppPackageName;
 
     /**
-     * HuaweiApiClient 实例
+     * HuaweiApiClient 实例 | Huaweiapiclient instance
      */
     private HuaweiApiClient apiClient;
 
     /**
      * 是否允许解决connect错误（解决connect错误需要拉起activity）
+     * Whether to allow the connect error to be resolved (resolve connect error need to pull activity)
      */
     private boolean allowResolveConnectError = false;
 
     /**
-     * 是否正在解决连接错误
+     * 是否正在解决连接错误 | Whether a connection error is being resolved
      */
     private boolean isResolving;
 
     /**
-     * HMSSDK 解决错误的activity
+     * HMSSDK 解决错误的activity | HMSSDK to solve the wrong activity
      */
     private BridgeActivity resolveActivity;
 
     /**
      * 是否存在其他activity覆盖在升级activity之上
+     * Is there any other activity covering the escalation activity
      */
     private boolean hasOverActivity = false;
 
     /**
-     * 当前剩余尝试次数
+     * 当前剩余尝试次数 | Current number of remaining attempts
      */
     private int curLeftResolveTimes = MAX_RESOLVE_TIMES;
 
     /**
-     * 连接回调
+     * 连接回调 | Connection callback
      */
     private List<IClientConnectCallback> connCallbacks = new ArrayList<IClientConnectCallback>();
 
     /**
-     * 注册的静态回调
+     * 注册的静态回调 | Registered Static callback
      */
     private List<IClientConnectCallback> staticCallbacks = new ArrayList<IClientConnectCallback>();
 
     /**
      * 超时handler用来处理client connect 超时
+     * Timeout handler to handle client connect timeout
      */
     private Handler timeoutHandler = new Handler(new Handler.Callback() {
         @Override
@@ -172,7 +176,7 @@ public final class ApiClientMgr implements HuaweiApiClient.ConnectionCallbacks, 
     });
 
     /**
-     * 私有构造方法
+     * 私有构造方法 | Private construction methods
      */
     private ApiClientMgr () {
     }
@@ -217,9 +221,10 @@ public final class ApiClientMgr implements HuaweiApiClient.ConnectionCallbacks, 
         HuaweiApiClient client =  getApiClient();
         if (client != null) {
             client.disconnect();
-            synchronized (APICLIENT_LOCK) {
-                apiClient = null;
-            }
+        }
+
+        synchronized (APICLIENT_LOCK) {
+            apiClient = null;
         }
 
         synchronized (STATIC_CALLBACK_LOCK) {
@@ -237,7 +242,7 @@ public final class ApiClientMgr implements HuaweiApiClient.ConnectionCallbacks, 
      */
     public HuaweiApiClient getApiClient() {
         synchronized (APICLIENT_LOCK) {
-            return apiClient;
+            return apiClient != null ? apiClient : resetApiClient();
         }
     }
 
@@ -276,6 +281,11 @@ public final class ApiClientMgr implements HuaweiApiClient.ConnectionCallbacks, 
      * @return 新创建的client
      */
     private HuaweiApiClient resetApiClient(){
+        if (context == null) {
+            HMSAgentLog.e("HMSAgent not init");
+            return null;
+        }
+
         synchronized (APICLIENT_LOCK) {
             if (apiClient != null) {
                 // 对于老的apiClient，1分钟后才丢弃，防止外面正在使用过程中这边disConnect了
@@ -287,10 +297,9 @@ public final class ApiClientMgr implements HuaweiApiClient.ConnectionCallbacks, 
             // 这种重置client，极端情况可能会出现2个client都回调结果的情况。此时可能出现rstCode=0，但是client无效。
             // 因为业务调用封装中都进行了一次重试。所以不会有问题
             HuaweiIdSignInOptions signInOptions = new
-                    HuaweiIdSignInOptions.Builder(HuaweiIdSignInOptions.DEFAULT_SIGN_IN).build();
+                    HuaweiIdSignInOptions.Builder(HuaweiIdSignInOptions.DEFAULT_SIGN_IN).requestAccessToken().requestOpenId().requestUnionId().build();
             apiClient = new HuaweiApiClient.Builder(context)
                     .addApi(HuaweiPay.PAY_API)
-//                    .addApi(HuaweiGame.GAME_API)
                     .addApi(HuaweiSns.API)
                     .addApi(HuaweiId.SIGN_IN_API, signInOptions)
                     .addApi(HuaweiPush.PUSH_API)
@@ -351,17 +360,18 @@ public final class ApiClientMgr implements HuaweiApiClient.ConnectionCallbacks, 
             @Override
             public void run() {
                 HuaweiApiClient client =  getApiClient();
-                if (client == null) {
-                    HMSAgentLog.d("create client");
-                    client = resetApiClient();
+
+                if (client != null) {
+                    HMSAgentLog.d("connect");
+                    Activity curActivity = ActivityMgr.INST.getLastActivity();
+
+                    // 考虑到有cp后台需要调用接口，HMSSDK去掉了activity不能为空的判断。这里只是取当前activity，可能为空
+                    timeoutHandler.sendEmptyMessageDelayed(APICLIENT_TIMEOUT_HANDLE_MSG, APICLIENT_CONNECT_TIMEOUT);
+                    client.connect(curActivity);
+                } else {
+                    HMSAgentLog.d("client is generate error");
+                    onConnectEnd(HMSAgent.AgentResultCode.RESULT_IS_NULL);
                 }
-
-                HMSAgentLog.d("connect");
-                Activity curActivity = ActivityMgr.INST.getLastActivity();
-
-                // 考虑到有cp后台需要调用接口，HMSSDK去掉了activity不能为空的判断。这里只是取当前activity，可能为空
-                timeoutHandler.sendEmptyMessageDelayed(APICLIENT_TIMEOUT_HANDLE_MSG, APICLIENT_CONNECT_TIMEOUT);
-                client.connect(curActivity);
             }
         });
     }
@@ -417,9 +427,10 @@ public final class ApiClientMgr implements HuaweiApiClient.ConnectionCallbacks, 
     @Override
     public void onActivityResume(Activity activity) {
         // 通知hmssdk activity onResume了
-        if (apiClient != null) {
+        HuaweiApiClient client = getApiClient();
+        if (client != null) {
             HMSAgentLog.d("tell hmssdk: onResume");
-            apiClient.onResume(activity);
+            client.onResume(activity);
         }
 
         // 如果正在解决错误，则处理被覆盖的场景
@@ -446,8 +457,9 @@ public final class ApiClientMgr implements HuaweiApiClient.ConnectionCallbacks, 
     @Override
     public void onActivityPause(Activity activity) {
         // 通知hmssdk，activity onPause了
-        if (apiClient != null) {
-            apiClient.onPause(activity);
+        HuaweiApiClient client = getApiClient();
+        if (client != null) {
+            client.onPause(activity);
         }
     }
 
@@ -477,7 +489,7 @@ public final class ApiClientMgr implements HuaweiApiClient.ConnectionCallbacks, 
 
         if(result == ConnectionResult.SUCCESS) {
             HuaweiApiClient client =  getApiClient();
-            if (!client.isConnecting() && !client.isConnected() && curLeftResolveTimes > 0) {
+            if (client != null && !client.isConnecting() && !client.isConnected() && curLeftResolveTimes > 0) {
                 startConnect();
                 return;
             }
@@ -544,6 +556,7 @@ public final class ApiClientMgr implements HuaweiApiClient.ConnectionCallbacks, 
                     timeoutHandler.sendEmptyMessageDelayed(APICLIENT_STARTACTIVITY_TIMEOUT_HANDLE_MSG, APICLIENT_STARTACTIVITY_TIMEOUT);
                     Intent intent = new Intent(activity, HMSAgentActivity.class);
                     intent.putExtra(HMSAgentActivity.CONN_ERR_CODE_TAG, errCode);
+                    intent.putExtra(BaseAgentActivity.EXTRA_IS_FULLSCREEN, UIUtils.isActivityFullscreen(activity));
                     activity.startActivity(intent);
                     return;
                 } catch (Exception e) {

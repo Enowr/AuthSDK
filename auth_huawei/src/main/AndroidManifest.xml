@@ -2,6 +2,11 @@
     package="tech.jianyue.auth_huawei">
 
     <application>
+        <meta-data
+            android:name="com.huawei.hms.version"
+            android:value="2.6.1">
+        </meta-data>
+
         <!--BridgeActivity定义了HMS-SDK中一些跳转所需要的透明页面-->
         <activity
             android:name="com.huawei.hms.activity.BridgeActivity"
@@ -47,7 +52,7 @@
             android:excludeFromRecents="true"
             android:exported="false"
             android:hardwareAccelerated="true"
-            android:theme="@android:style/Theme.Translucent">
+            android:theme="@android:style/Theme.Translucent" >
             <meta-data
                 android:name="hwc-theme"
                 android:value="androidhwext:style/Theme.Emui.Translucent" />
@@ -59,7 +64,7 @@
             android:excludeFromRecents="true"
             android:exported="false"
             android:hardwareAccelerated="true"
-            android:theme="@android:style/Theme.Translucent">
+            android:theme="@android:style/Theme.Translucent" >
             <meta-data
                 android:name="hwc-theme"
                 android:value="androidhwext:style/Theme.Emui.Translucent" />
@@ -71,7 +76,7 @@
             android:excludeFromRecents="true"
             android:exported="false"
             android:hardwareAccelerated="true"
-            android:theme="@android:style/Theme.Translucent">
+            android:theme="@android:style/Theme.Translucent" >
             <meta-data
                 android:name="hwc-theme"
                 android:value="androidhwext:style/Theme.Emui.Translucent" />
@@ -83,7 +88,7 @@
             android:excludeFromRecents="true"
             android:exported="false"
             android:hardwareAccelerated="true"
-            android:theme="@android:style/Theme.Translucent">
+            android:theme="@android:style/Theme.Translucent" >
             <meta-data
                 android:name="hwc-theme"
                 android:value="androidhwext:style/Theme.Emui.Translucent" />

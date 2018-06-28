@@ -100,7 +100,7 @@ public class Auth {
     public @interface ActionYL {
     }
 
-    @IntDef({Pay})
+    @IntDef({LOGIN, Pay})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActionHW {
     }

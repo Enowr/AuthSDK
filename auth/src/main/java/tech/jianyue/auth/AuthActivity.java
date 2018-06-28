@@ -17,6 +17,7 @@ public class AuthActivity extends Activity {
     private AbsAuthBuildForWB.Controller mControllerWB;                             // 微博管理器
     private AbsAuthBuildForWX.Controller mControllerWX;                             // 微信管理器
     private AbsAuthBuildForYL.Controller mControllerYL;                             // 银联管理器
+    private AbsAuthBuildForHW.Controller mControllerHW;                             // 华为管理器
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,6 +29,7 @@ public class AuthActivity extends Activity {
         initWX();
         initYL(sign);
         initZFB(sign);
+        initHW(sign);
     }
 
     @Override
@@ -56,6 +58,9 @@ public class AuthActivity extends Activity {
         if (mControllerYL != null) {
             mControllerYL.callback(requestCode, resultCode, data);
         }
+        if (mControllerHW != null) {
+            mControllerHW.callback(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -83,6 +88,10 @@ public class AuthActivity extends Activity {
         if (mControllerYL != null) {
             mControllerYL.destroy();
             mControllerYL = null;
+        }
+        if (mControllerHW != null) {
+            mControllerHW.destroy();
+            mControllerHW = null;
         }
     }
 
@@ -134,6 +143,16 @@ public class AuthActivity extends Activity {
             final AbsAuthBuild builder = Auth.getBuilder(sign);
             if (builder != null && builder instanceof AbsAuthBuildForZFB && builder.mAction == Auth.Pay) {
                 ((AbsAuthBuildForZFB) builder).pay(this);
+            }
+        }
+    }
+
+    // 华为相关
+    private void initHW(String sign) {
+        if (!TextUtils.isEmpty(sign)) {
+            final AbsAuthBuild builder = Auth.getBuilder(sign);
+            if (builder != null && builder instanceof AbsAuthBuildForHW && builder.mAction == Auth.LOGIN) {
+                mControllerHW = ((AbsAuthBuildForHW) builder).getController(this);
             }
         }
     }

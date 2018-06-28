@@ -49,7 +49,6 @@ public class HMSAgentActivity extends BaseAgentActivity {
 
         if(requestCode == REQUEST_HMS_RESOLVE_ERROR) {
             if(resultCode == Activity.RESULT_OK) {
-
                 int result = data.getIntExtra(EXTRA_RESULT, -1);
                 HMSAgentLog.d("dispose result:" + result);
                 ApiClientMgr.INST.onResolveErrorRst(result);

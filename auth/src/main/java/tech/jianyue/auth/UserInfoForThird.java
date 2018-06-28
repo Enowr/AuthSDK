@@ -10,9 +10,9 @@ import org.json.JSONObject;
  */
 public class UserInfoForThird {
     /**
-     *  1 新浪微博 2 腾讯QQ 3 微信账号
+     *  1 新浪微博 2 腾讯QQ 3 微信账号 4 华为账号
      */
-    public String fromId = "";                          // 第三方平台ID  1 新浪微博 2 腾讯QQ 3 微信账号
+    public String fromId = "";                          // 第三方平台ID  1 新浪微博 2 腾讯QQ 3 微信账号 4 华为账号
     public String aToken = "";                          // 第三方平台 access token
     public String rToken = "";                          // 第三方平台 refresh token
     public String userId = "";                          // 第三方平台 用户 ID
@@ -73,6 +73,17 @@ public class UserInfoForThird {
             return this;
         }
         return null;
+    }
+
+    public UserInfoForThird initForHW(String json, String uid, String openid, String displayName, String aToken, String photoUrl) {
+        this.fromId = "4";                          // 来自华为
+        this.nickname = displayName;                // 用户昵称
+        this.userId = uid;                          // 用户 id
+        this.openid = openid;
+        this.aToken = aToken;
+        this.portrait = photoUrl;
+        this.userInfo = json;
+        return this;
     }
 
 //    微信

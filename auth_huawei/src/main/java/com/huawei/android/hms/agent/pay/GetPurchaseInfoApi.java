@@ -9,20 +9,20 @@ import com.huawei.android.hms.agent.common.BaseApiAgent;
 import com.huawei.android.hms.agent.common.CallbackResultRunnable;
 import com.huawei.android.hms.agent.common.HMSAgentLog;
 import com.huawei.android.hms.agent.common.StrUtils;
-import com.huawei.android.hms.agent.pay.handler.GetOrderHandler;
+import com.huawei.android.hms.agent.pay.handler.GetPurchaseInfoHandler;
 import com.huawei.hms.api.HuaweiApiClient;
 import com.huawei.hms.support.api.client.PendingResult;
 import com.huawei.hms.support.api.client.ResultCallback;
 import com.huawei.hms.support.api.client.Status;
 import com.huawei.hms.support.api.entity.core.CommonCode;
-import com.huawei.hms.support.api.entity.pay.OrderRequest;
+import com.huawei.hms.support.api.entity.pay.PurchaseInfoRequest;
 import com.huawei.hms.support.api.pay.HuaweiPay;
-import com.huawei.hms.support.api.pay.OrderResult;
+import com.huawei.hms.support.api.pay.PurchaseInfoResult;
 
 /**
- * 查询订单请求
+ * 查询非消耗商品订单列表请求
  */
-public class GetPayOrderApi extends BaseApiAgent {
+public class GetPurchaseInfoApi extends BaseApiAgent {
 
     /**
      * client 无效最大重试次数
@@ -30,14 +30,14 @@ public class GetPayOrderApi extends BaseApiAgent {
     private static final int MAX_RETRY_TIMES = 1;
 
     /**
-     * 查询订单请求，请求体
+     * 查询非消耗商品订单列表请求，请求体
      */
-    private OrderRequest checkPayReq;
+    private PurchaseInfoRequest purchaseInfoReq;
 
     /**
-     * 查询订单请求回调接口
+     * 查询请求回调接口
      */
-    private GetOrderHandler handler;
+    private GetPurchaseInfoHandler handler;
 
     /**
      * 剩余重试次数
@@ -56,26 +56,26 @@ public class GetPayOrderApi extends BaseApiAgent {
 
         if (client == null || !ApiClientMgr.INST.isConnect(client)) {
             HMSAgentLog.e("client not connted");
-            onCheckOrderResult(rst, null);
+            onPurchaseInfoResult(rst, null);
             return;
         }
 
         // 调用HMS-SDK getOrderDetail 接口
-        PendingResult<OrderResult> checkPayResult = HuaweiPay.HuaweiPayApi.getOrderDetail(client, checkPayReq);
-        checkPayResult.setResultCallback(new ResultCallback<OrderResult>() {
+        PendingResult<PurchaseInfoResult> purchaseInfoPenddingResult = HuaweiPay.HuaweiPayApi.getPurchaseInfo(client, purchaseInfoReq);
+        purchaseInfoPenddingResult.setResultCallback(new ResultCallback<PurchaseInfoResult>() {
             @Override
-            public void onResult(OrderResult result) {
+            public void onResult(PurchaseInfoResult result) {
 
                 if (result == null) {
                     HMSAgentLog.e("result is null");
-                    onCheckOrderResult(HMSAgent.AgentResultCode.RESULT_IS_NULL, null);
+                    onPurchaseInfoResult(HMSAgent.AgentResultCode.RESULT_IS_NULL, null);
                     return;
                 }
 
                 Status status = result.getStatus();
                 if (status == null) {
                     HMSAgentLog.e("status is null");
-                    onCheckOrderResult(HMSAgent.AgentResultCode.STATUS_IS_NULL, null);
+                    onPurchaseInfoResult(HMSAgent.AgentResultCode.STATUS_IS_NULL, null);
                     return;
                 }
 
@@ -87,31 +87,31 @@ public class GetPayOrderApi extends BaseApiAgent {
                     retryTimes--;
                     connect();
                 } else {
-                    onCheckOrderResult(rstCode, result);
+                    onPurchaseInfoResult(rstCode, result);
                 }
             }
         });
     }
 
-    private void onCheckOrderResult(int retCode, OrderResult checkPayResult){
-        HMSAgentLog.i("getOrderDetail:callback=" + StrUtils.objDesc(handler) +" retCode=" + retCode + "  checkPayResult=" + StrUtils.objDesc(checkPayResult));
+    private void onPurchaseInfoResult(int retCode, PurchaseInfoResult purchaseInfoResult){
+        HMSAgentLog.i("getPurchaseInfo:callback=" + StrUtils.objDesc(handler) +" retCode=" + retCode + "  checkPayResult=" + StrUtils.objDesc(purchaseInfoResult));
         if (handler != null) {
-            new Handler(Looper.getMainLooper()).post(new CallbackResultRunnable<OrderResult>(handler, retCode, checkPayResult));
+            new Handler(Looper.getMainLooper()).post(new CallbackResultRunnable<PurchaseInfoResult>(handler, retCode, purchaseInfoResult));
             handler = null;
         }
 
-        checkPayReq = null;
+        purchaseInfoReq = null;
         retryTimes = MAX_RETRY_TIMES;
     }
 
     /**
-     * 查询订单接口
-     * @param request 查询订单请求体
-     * @param handler 查询订单结果回调
+     * 查询非消耗商品订单列表接口
+     * @param request 查询请求体
+     * @param handler 查询结果回调
      */
-    public void getOrderDetail(OrderRequest request, GetOrderHandler handler) {
-        HMSAgentLog.i("getOrderDetail:request=" + StrUtils.objDesc(request) + "  handler=" + StrUtils.objDesc(handler));
-        this.checkPayReq = request;
+    public void getPurchaseInfo(PurchaseInfoRequest request, GetPurchaseInfoHandler handler) {
+        HMSAgentLog.i("getPurchaseInfo:request=" + StrUtils.objDesc(request) + "  handler=" + StrUtils.objDesc(handler));
+        this.purchaseInfoReq = request;
         this.handler = handler;
         this.retryTimes = MAX_RETRY_TIMES;
         connect();

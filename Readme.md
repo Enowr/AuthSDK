@@ -4,7 +4,7 @@
 
   由于这些代码都是固定写法，所以最后抽取成了一个第三方集成库 [AuthSDK](https://github.com/Jieger/AuthSDK)。
 
-  目前支持 微信、微博、QQ 的登录和分享功能，微信、支付宝、银联、华为的支付功能，微信、支付宝的签约功能。SDK 不支持并发操作，也就是说不能同时做多个请求，只能串行请求。
+  目前支持 微信、微博、QQ、华为的登录和分享功能，微信、支付宝、银联、华为的支付功能，微信、支付宝的签约功能。SDK 不支持并发操作，也就是说不能同时做多个请求，只能串行请求。
 
 ### 当前 SDK 集成为最新的第三方SDK：  
   - 微信 : com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.1.4  
@@ -12,7 +12,7 @@
   - QQ : open_sdk_r5990_lite  
   - 支付宝 : alipaySdk-20170922  
   - 银联: 手机支付控件接入指南: 3.4.1
-  - 华为: 2.6.0.301
+  - 华为: 2.6.1.301
 
 # 集成方法
 1. 根据需求选择是否添加, 在 project 目录下的 build.gradle 文件中添加微博和华为的 maven 地址：  
@@ -221,10 +221,8 @@
     -keep class com.hianalytics.android.**{*;}
     -keep class com.huawei.updatesdk.**{*;}
     -keep class com.huawei.hms.**{*;}
-    -keep class com.huawei.gamebox.plugin.gameservice.**{*;}
-    -keep public class com.huawei.android.hms.agent.** extends android.app.Activity { public *; protected *; }
-    -keep interface com.huawei.android.hms.agent.common.INoProguard {*;}
-    -keep class * extends com.huawei.android.hms.agent.common.INoProguard {*;}
+ 
+    -keep class com.huawei.gamebox.plugin.gameservice.**{*;}    
     ```
 
 8. 调用方式:  
@@ -240,6 +238,10 @@
              .build(mCallback);
 
     Auth.withQQ(context)
+             .setAction(Auth.LOGIN)
+             .build(mCallback);
+          
+    Auth.withHW(context)
              .setAction(Auth.LOGIN)
              .build(mCallback);
     ```

@@ -2,6 +2,7 @@ package tech.jianyue.auth;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 
 /**
  * 描述: 华为相关授权操作
@@ -29,6 +30,8 @@ public abstract class AbsAuthBuildForHW extends AbsAuthBuild {
     }
 
     abstract public void initHW(Activity activity);
+
+    abstract AbsAuthBuildForHW.Controller getController(Activity activity);
 
     @Override
     public AbsAuthBuildForHW setAction(@Auth.ActionHW int action) {
@@ -99,5 +102,11 @@ public abstract class AbsAuthBuildForHW extends AbsAuthBuild {
     public AbsAuthBuildForHW payUrl(String url) {
         mUrl = url;
         return this;
+    }
+
+    interface Controller {
+        void destroy();
+
+        void callback(int requestCode, int resultCode, Intent data);
     }
 }

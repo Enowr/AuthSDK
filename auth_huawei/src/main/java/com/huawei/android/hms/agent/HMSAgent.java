@@ -10,15 +10,12 @@ import android.widget.Toast;
 
 import com.huawei.android.hms.agent.common.ActivityMgr;
 import com.huawei.android.hms.agent.common.ApiClientMgr;
+import com.huawei.android.hms.agent.common.CheckUpdateApi;
 import com.huawei.android.hms.agent.common.HMSAgentLog;
-import com.huawei.android.hms.agent.common.INoProguard;
 import com.huawei.android.hms.agent.common.IClientConnectCallback;
+import com.huawei.android.hms.agent.common.INoProguard;
+import com.huawei.android.hms.agent.common.handler.CheckUpdateHandler;
 import com.huawei.android.hms.agent.common.handler.ConnectHandler;
-//import com.huawei.android.hms.agent.game.FloatWindowApi;
-//import com.huawei.android.hms.agent.game.LoginApi;
-//import com.huawei.android.hms.agent.game.SavePlayerInfoApi;
-//import com.huawei.android.hms.agent.game.handler.LoginHandler;
-//import com.huawei.android.hms.agent.game.handler.SaveInfoHandler;
 import com.huawei.android.hms.agent.hwid.CheckSignInApi;
 import com.huawei.android.hms.agent.hwid.SignInApi;
 import com.huawei.android.hms.agent.hwid.SignOutApi;
@@ -26,10 +23,12 @@ import com.huawei.android.hms.agent.hwid.handler.SignInHandler;
 import com.huawei.android.hms.agent.hwid.handler.SignOutHandler;
 import com.huawei.android.hms.agent.pay.GetPayOrderApi;
 import com.huawei.android.hms.agent.pay.GetProductDetailsApi;
+import com.huawei.android.hms.agent.pay.GetPurchaseInfoApi;
 import com.huawei.android.hms.agent.pay.PayApi;
 import com.huawei.android.hms.agent.pay.ProductPayApi;
 import com.huawei.android.hms.agent.pay.handler.GetOrderHandler;
 import com.huawei.android.hms.agent.pay.handler.GetProductDetailsHandler;
+import com.huawei.android.hms.agent.pay.handler.GetPurchaseInfoHandler;
 import com.huawei.android.hms.agent.pay.handler.PayHandler;
 import com.huawei.android.hms.agent.pay.handler.ProductPayHandler;
 import com.huawei.android.hms.agent.push.DeleteTokenApi;
@@ -50,11 +49,11 @@ import com.huawei.android.hms.agent.sns.Handler.GetMsgSendIntentHandler;
 import com.huawei.android.hms.agent.sns.Handler.GetUiIntentHandler;
 import com.huawei.hms.api.HuaweiApiAvailability;
 import com.huawei.hms.api.HuaweiApiClient;
-//import com.huawei.hms.support.api.entity.game.GamePlayerInfo;
 import com.huawei.hms.support.api.entity.pay.OrderRequest;
 import com.huawei.hms.support.api.entity.pay.PayReq;
 import com.huawei.hms.support.api.entity.pay.ProductDetailRequest;
 import com.huawei.hms.support.api.entity.pay.ProductPayRequest;
+import com.huawei.hms.support.api.entity.pay.PurchaseInfoRequest;
 import com.huawei.hms.support.api.entity.sns.SnsMsg;
 
 /**
@@ -91,18 +90,14 @@ public final class HMSAgent implements INoProguard {
      */
     private static final String VER_020600200 = "020600200";
 
-    /**
-     * 2.6.0.302                                         | 2.6.0.302
-     * 修改manifest，删除hms版本号配置；增加直接传入请求和私钥的签名方法封装
-     */
-    private static final String VER_020600302 = "020600302";
+    private static final String VER_020601002 = "020601002";
+
+    private static final String VER_020601302 = "020601302";
 
     /**
      * 当前版本号 | Current version number
      */
-    public static final String CURVER = VER_020600302;
-
-
+    public static final String CURVER = VER_020601302;
 
     public static final class AgentResultCode {
 
@@ -279,66 +274,11 @@ public final class HMSAgent implements INoProguard {
     /**
      * 检查本应用的升级 | Check for upgrades to this application
      * @param activity 上下文 | context
+     * @param callback 升级结果回调 | check update Callback
      */
-    public static void checkUpdate (final Activity activity) {
-        HMSAgentLog.i("start checkUpdate");
-        ApiClientMgr.INST.connect(new IClientConnectCallback() {
-            @Override
-            public void onConnect(int rst, HuaweiApiClient client) {
-                Activity activityCur = ActivityMgr.INST.getLastActivity();
-
-                if (activityCur != null && client != null) {
-                    client.checkUpdate(activityCur);
-                } else if (activity != null && client != null){
-                    client.checkUpdate(activity);
-                } else {
-                    // 跟SE确认：activity 为 null ， 不处理 | Activity is null and does not need to be processed
-                    HMSAgentLog.e("no activity to checkUpdate");
-                }
-            }
-        }, true);
+    public static void checkUpdate (Activity activity, CheckUpdateHandler callback) {
+        new CheckUpdateApi().checkUpdate(activity, callback);
     }
-
-//    /**
-//     * 游戏接口封装 | Game methods Encapsulation
-//     */
-//    public static final class Game {
-//        /**
-//         * 游戏登录接口 | Game Login method
-//         * @param handler 游戏登录结果回调（结果会在主线程回调） | Game Login Result Callback (result will be callback in main thread)
-//         * @param forceLogin 登录类型 | Logon type：
-//         *                     0表示如果玩家未登录华为帐号或鉴权失败，SDK不会主动拉起帐号登录页面 | 0 indicates that if the player does not log in to Huawei account or authentication failure, the SDK will not actively pull up the account login page；</br>
-//         *                     1表示如果玩家未登录华为帐号或鉴权失败，SDK会主动拉起帐号登录页面。| 1 indicates that if the player does not log in to Huawei account or authentication failure, the SDK will actively pull up the account login page.</br>
-//         */
-//        public static void login(LoginHandler handler, int forceLogin) {
-//            new LoginApi().login(handler, forceLogin);
-//        }
-//
-//        /**
-//         * 显示游戏浮标，可以在应用程序任何地方调用 | Show the game buoy that can be invoked anywhere in the application
-//         * @param activity 当前界面的activity | Activity of the current interface
-//         */
-//        public static void  showFloatWindow (Activity activity){
-//            FloatWindowApi.INST.showFloatWindow(activity);
-//        }
-//
-//        /**
-//         * 隐藏游戏浮标 | Hide Game Buoy
-//         * @param activity 当前界面的activity | Activity of the current page
-//         */
-//        public static void  hideFloatWindow (Activity activity){
-//            FloatWindowApi.INST.hideFloatWindow(activity);
-//        }
-//
-//        /**
-//         * 保存玩家信息 | Save player Information
-//         * @param playerInfo 玩家的信息数据 | Player Information data
-//         * @param handler 保存结果回调（结果会在主线程回调） | Save result Callback (result will be callback in main thread)
-//         */
-//        public static void savePlayerInfo(GamePlayerInfo playerInfo, SaveInfoHandler handler) {
-//            new SavePlayerInfoApi().savePlayerInfo(playerInfo, handler);
-//        }
-//    }
 
     /**
      * 支付接口封装 | Pay method Encapsulation
@@ -378,6 +318,15 @@ public final class HMSAgent implements INoProguard {
          */
         public static void getProductDetails(ProductDetailRequest request, GetProductDetailsHandler handler) {
             new GetProductDetailsApi().getProductDetails(request, handler);
+        }
+
+        /**
+         * 查询非消耗商品订单接口 | Query non-expendable commodity order interface
+         * @param request “查询非消耗商品”请求体 | Query non-consumable item request body
+         * @param handler 查询非消耗商品结果回调（结果会在主线程回调） | Query for Non-expendable product result callback (result will be callback in main thread)
+         */
+        public static void getPurchaseInfo(PurchaseInfoRequest request, GetPurchaseInfoHandler handler) {
+            new GetPurchaseInfoApi().getPurchaseInfo(request, handler);
         }
     }
 

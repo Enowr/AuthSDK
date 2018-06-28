@@ -1,5 +1,7 @@
 package com.huawei.android.hms.agent.common;
 
+import com.huawei.android.hms.agent.common.handler.ICallbackResult;
+
 /**
  * 回调线程
  */

@@ -8,10 +8,12 @@ import android.os.Looper;
 import com.huawei.android.hms.agent.HMSAgent;
 import com.huawei.android.hms.agent.common.ActivityMgr;
 import com.huawei.android.hms.agent.common.ApiClientMgr;
+import com.huawei.android.hms.agent.common.BaseAgentActivity;
 import com.huawei.android.hms.agent.common.BaseApiAgent;
 import com.huawei.android.hms.agent.common.CallbackResultRunnable;
 import com.huawei.android.hms.agent.common.HMSAgentLog;
 import com.huawei.android.hms.agent.common.StrUtils;
+import com.huawei.android.hms.agent.common.UIUtils;
 import com.huawei.android.hms.agent.pay.handler.ProductPayHandler;
 import com.huawei.hms.api.HuaweiApiClient;
 import com.huawei.hms.support.api.client.PendingResult;
@@ -100,7 +102,7 @@ public final class ProductPayApi extends BaseApiAgent {
                 }
 
                 int rstCode = status.getStatusCode();
-                HMSAgentLog.d("pms pay rstCode=" + rstCode);
+                HMSAgentLog.d("status=" + status);
                 // 需要重试的错误码，并且可以重试
                 if ((rstCode == CommonCode.ErrorCode.SESSION_INVALID
                         || rstCode == CommonCode.ErrorCode.CLIENT_API_INVALID) && retryTimes > 0) {
@@ -125,6 +127,7 @@ public final class ProductPayApi extends BaseApiAgent {
                     try {
                         statusForPay = status;
                         Intent intent = new Intent(curActivity, HMSPMSPayAgentActivity.class);
+                        intent.putExtra(BaseAgentActivity.EXTRA_IS_FULLSCREEN, UIUtils.isActivityFullscreen(curActivity));
                         curActivity.startActivity(intent);
                     } catch (Exception e) {
                         HMSAgentLog.e("start HMSPayAgentActivity error:" + e.getMessage());

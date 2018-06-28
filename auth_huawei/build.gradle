@@ -23,10 +23,10 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.huawei.android.hms:hwid:2.6.0.301'
-    compile 'com.huawei.android.hms:iap:2.6.0.301'
-    compile 'com.huawei.android.hms:push:2.6.0.301'
-    compile 'com.huawei.android.hms:sns:2.6.0.301'
+    compile 'com.huawei.android.hms:hwid:2.6.1.301'
+    compile 'com.huawei.android.hms:iap:2.6.1.301'
+    compile 'com.huawei.android.hms:push:2.6.1.301'
+    compile 'com.huawei.android.hms:sns:2.6.1.301'
 
 
     implementation project(':auth')
