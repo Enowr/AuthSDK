@@ -2,11 +2,6 @@
     package="tech.jianyue.auth_huawei">
 
     <application>
-        <meta-data
-            android:name="com.huawei.hms.version"
-            android:value="2.6.1">
-        </meta-data>
-
         <!--BridgeActivity定义了HMS-SDK中一些跳转所需要的透明页面-->
         <activity
             android:name="com.huawei.hms.activity.BridgeActivity"
