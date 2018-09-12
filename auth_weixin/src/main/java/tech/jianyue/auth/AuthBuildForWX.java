@@ -487,7 +487,9 @@ public class AuthBuildForWX extends AbsAuthBuildForWX {
 
         @Override
         public void callback() {
-            mBuild.mApi.handleIntent(mActivity.getIntent(), this);
+            if (mBuild.mApi != null) {
+                mBuild.mApi.handleIntent(mActivity.getIntent(), this);
+            }
         }
 
         @Override

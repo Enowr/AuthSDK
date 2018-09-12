@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -15,16 +14,6 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.Toast;
-
-import tech.jianyue.auth.AbsAuthBuildForQQ;
 import tech.jianyue.auth.Auth;
 import tech.jianyue.auth.AuthBuildForHW;
 import tech.jianyue.auth.AuthBuildForQQ;
@@ -34,11 +23,6 @@ import tech.jianyue.auth.AuthBuildForYL;
 import tech.jianyue.auth.AuthBuildForZFB;
 import tech.jianyue.auth.AuthCallback;
 import tech.jianyue.auth.UserInfoForThird;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private String VideoUrl = "https://showimg.caixin.com/dolphinfile/caixin/2017/12/0_21.mp4";
@@ -136,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .addFactoryByWB(AuthBuildForWB.getFactory())
                 .addFactoryByWX(AuthBuildForWX.getFactory())
                 .addFactoryByYL(AuthBuildForYL.getFactory())
-                .addFactoryByYL(AuthBuildForZFB.getFactory())
+                .addFactoryByZFB(AuthBuildForZFB.getFactory())
                 .build();
 
 //        Auth.withHW(this)

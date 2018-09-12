@@ -17,11 +17,11 @@ import java.util.HashMap;
 public class Auth {
     public static final int UNKNOWN_TYPE = -1;                  // 未知类型
 
-    public static final int Pay = 100;                          // 微信\支付宝\银联 支付
+    public static final int Pay = 100;                          // 微信\支付宝\银联\华为 支付
 
     public static final int RouseWeb = 111;                     // 微信(无回调) 唤起WebView
 
-    public static final int LOGIN = 121;                        // 微信\微博\QQ 登录
+    public static final int LOGIN = 121;                        // 微信\微博\QQ\华为 登录
 
     public static final int SHARE_TEXT = 131;                   // 微信/微博 分享文本
     public static final int SHARE_IMAGE = 132;                  // 微信/微博/QQ 分享图片

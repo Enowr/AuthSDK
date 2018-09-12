@@ -24,13 +24,12 @@ public abstract class AbsAuthBuild {
     abstract void init();
 
     void destroy() {
-        Auth.BuilderMap.put(Sign, this);
-        if (Auth.BuilderMap.containsKey(Sign)) {
-            Auth.BuilderMap.remove(Sign);
-        }
         Sign = "";
         mContext = null;
         mCallback = null;
+        if (Auth.BuilderMap.containsKey(Sign)) {
+            Auth.BuilderMap.remove(Sign);
+        }
     }
 
     public abstract AbsAuthBuild setAction(int action);
