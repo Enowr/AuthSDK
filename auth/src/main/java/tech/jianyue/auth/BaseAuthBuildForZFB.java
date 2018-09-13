@@ -9,22 +9,22 @@ import android.content.Context;
  * 时间: 2018/1/19
  * 版本: 1.0
  */
-public abstract class AbsAuthBuildForZFB extends AbsAuthBuild {
+public abstract class BaseAuthBuildForZFB extends BaseAuthBuild {
     boolean isShowLoading = true;
     String mOrderInfo;
     String mUri;
 
-    AbsAuthBuildForZFB(Context context) {
+    BaseAuthBuildForZFB(Context context) {
         super(context, Auth.WITH_ZFB);
     }
 
     @Override
-    public AbsAuthBuildForZFB setAction(@Auth.ActionZFB int action) {
+    public BaseAuthBuildForZFB setAction(@Auth.ActionZFB int action) {
         mAction = action;
         return this;
     }
 
-    public AbsAuthBuildForZFB payOrderInfo(String orderInfo) {
+    public BaseAuthBuildForZFB payOrderInfo(String orderInfo) {
         mOrderInfo = orderInfo;
         return this;
     }
@@ -32,12 +32,12 @@ public abstract class AbsAuthBuildForZFB extends AbsAuthBuild {
     /**
      * 默认为显示
      */
-    public AbsAuthBuildForZFB payIsShowLoading(boolean isShow) {
+    public BaseAuthBuildForZFB payIsShowLoading(boolean isShow) {
         isShowLoading = isShow;
         return this;
     }
 
-    public AbsAuthBuildForZFB rouseWeb(String uri) {
+    public BaseAuthBuildForZFB rouseWeb(String uri) {
         mUri = uri;
         return this;
     }

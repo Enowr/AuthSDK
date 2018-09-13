@@ -14,22 +14,22 @@ import com.unionpay.UPPayAssistEx;
  * 时间: 2018/1/19
  * 版本: 1.0
  */
-public class AuthBuildForYL extends AbsAuthBuildForYL {
+public class AuthBuildForYL extends BaseAuthBuildForYL {
     AuthBuildForYL(Context context) {
         super(context);
     }
 
-    public static AuthBuildFactory getFactory() {
-        return new AuthBuildFactory() {
+    public static Auth.AuthBuildFactory getFactory() {
+        return new Auth.AuthBuildFactory() {
             @Override
-            public AbsAuthBuildForYL getBuildByYL(Context context) {
-                return new AuthBuildForYL(context);
+            <T extends BaseAuthBuild> T getAuthBuild(Context context) {
+                return (T) new AuthBuildForYL(context);
             }
         };
     }
 
     @Override
-    AbsAuthBuildForYL.Controller getController(Activity activity) {
+    BaseAuthBuildForYL.Controller getController(Activity activity) {
         return new Controller(this, activity);
     }
 
@@ -48,7 +48,7 @@ public class AuthBuildForYL extends AbsAuthBuildForYL {
         switch (mAction) {
             case Auth.Pay:
                 Intent intent = new Intent(mContext, AuthActivity.class);
-                intent.putExtra("Sign", Sign);
+                intent.putExtra("Sign", mSign);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
                 break;
@@ -80,7 +80,7 @@ public class AuthBuildForYL extends AbsAuthBuildForYL {
         }
     }
 
-    static class Controller implements AbsAuthBuildForYL.Controller {
+    static class Controller implements BaseAuthBuildForYL.Controller {
         private AuthBuildForYL mBuild;
         private Activity mActivity;
 
@@ -96,9 +96,14 @@ public class AuthBuildForYL extends AbsAuthBuildForYL {
 
         @Override
         public void destroy() {
-            mBuild.destroy();
-            mBuild = null;
-            mActivity = null;
+            if (mActivity != null) {
+                mActivity.finish();
+                mActivity = null;
+            }
+            if (mBuild != null) {
+                mBuild.destroy();
+                mBuild = null;
+            }
         }
 
         @Override
@@ -113,8 +118,7 @@ public class AuthBuildForYL extends AbsAuthBuildForYL {
                     mBuild.mCallback.onCancel();
                 }
             }
-            mBuild.destroy();
-            mActivity.finish();
+            destroy();
         }
     }
 }

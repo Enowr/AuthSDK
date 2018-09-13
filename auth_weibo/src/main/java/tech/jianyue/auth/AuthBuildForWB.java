@@ -31,34 +31,35 @@ import com.sina.weibo.sdk.utils.Utility;
  * 时间: 2018/1/19
  * 版本: 1.0
  */
-public class AuthBuildForWB extends AbsAuthBuildForWB {
+public class AuthBuildForWB extends BaseAuthBuildForWB {
     private static boolean isInit = false;                  // SDK 是否初始化过
 
     AuthBuildForWB(Context context) {
         super(context);
     }
 
-    public static AuthBuildFactory getFactory() {
-        return new AuthBuildFactory() {
+    public static Auth.AuthBuildFactory getFactory() {
+        return new Auth.AuthBuildFactory() {
             @Override
-            public AbsAuthBuildForWB getBuildByWB(Context context) {
-                return new AuthBuildForWB(context);
+            <T extends BaseAuthBuild> T getAuthBuild(Context context) {
+                return (T) new AuthBuildForWB(context);
             }
         };
     }
 
     @Override
-    AbsAuthBuildForWB.Controller getController(Activity activity) {
+    BaseAuthBuildForWB.Controller getController(Activity activity) {
         return new Controller(this, activity);
     }
 
     @Override                                               // 初始化资源
     void init() {
         if (!isInit) {
-            if (TextUtils.isEmpty(Auth.AuthBuilder.WBAppKey) || TextUtils.isEmpty(Auth.AuthBuilder.WBRedirectUrl) || TextUtils.isEmpty(Auth.AuthBuilder.WBScope)) {
+            if (TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().WBAppKey) ||
+                    TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().WBRedirectUrl) || TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().WBScope)) {
                 throw new IllegalArgumentException("WEIBO_APPKEY | WEIBO_REDIRECT_URL | WEIBO_SCOPE was empty");
             } else {
-                WbSdk.install(mContext, new AuthInfo(mContext, Auth.AuthBuilder.WBAppKey, Auth.AuthBuilder.WBRedirectUrl, Auth.AuthBuilder.WBScope));
+                WbSdk.install(mContext, new AuthInfo(mContext, Auth.AuthBuilderInit.getInstance().WBAppKey, Auth.AuthBuilderInit.getInstance().WBRedirectUrl, Auth.AuthBuilderInit.getInstance().WBScope));
                 isInit = true;
             }
         }
@@ -80,7 +81,7 @@ public class AuthBuildForWB extends AbsAuthBuildForWB {
         super.build(callback);
 
         Intent intent = new Intent(mContext, AuthActivity.class);
-        intent.putExtra("Sign", Sign);
+        intent.putExtra("Sign", mSign);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
@@ -284,7 +285,7 @@ public class AuthBuildForWB extends AbsAuthBuildForWB {
         }
     }
 
-    static class Controller implements WbShareCallback, AbsAuthBuildForWB.Controller {
+    static class Controller implements WbShareCallback, BaseAuthBuildForWB.Controller {
         private AuthBuildForWB mBuild;
         private Activity mActivity;
 
@@ -301,22 +302,19 @@ public class AuthBuildForWB extends AbsAuthBuildForWB {
                     @Override
                     public void onSuccess(Oauth2AccessToken oauth2AccessToken) {
                         mBuild.getInfo(oauth2AccessToken);
-                        mBuild.destroy();
-                        mActivity.finish();
+                        destroy();
                     }
 
                     @Override
                     public void cancel() {
                         mBuild.mCallback.onCancel();
-                        mBuild.destroy();
-                        mActivity.finish();
+                        destroy();
                     }
 
                     @Override
                     public void onFailure(WbConnectErrorMessage message) {
                         mBuild.mCallback.onFailed(message.getErrorMessage() + "; code: " + message.getErrorCode());
-                        mBuild.destroy();
-                        mActivity.finish();
+                        destroy();
                     }
                 });
             } else {
@@ -328,10 +326,14 @@ public class AuthBuildForWB extends AbsAuthBuildForWB {
 
         @Override
         public void destroy() {
-            mBuild.destroy();
-            mBuild = null;
-            mActivity = null;
-
+            if (mActivity != null) {
+                mActivity.finish();
+                mActivity = null;
+            }
+            if (mBuild != null) {
+                mBuild.destroy();
+                mBuild = null;
+            }
             mSsoHandler = null;
             mShareHandler = null;
         }
@@ -353,22 +355,19 @@ public class AuthBuildForWB extends AbsAuthBuildForWB {
         @Override
         public void onWbShareSuccess() {
             mBuild.mCallback.onSuccessForShare();
-            mBuild.destroy();
-            mActivity.finish();
+            destroy();
         }
 
         @Override
         public void onWbShareCancel() {
             mBuild.mCallback.onCancel();
-            mBuild.destroy();
-            mActivity.finish();
+            destroy();
         }
 
         @Override
         public void onWbShareFail() {
             mBuild.mCallback.onFailed("微博分享失败");
-            mBuild.destroy();
-            mActivity.finish();
+            destroy();
         }
     }
 }

@@ -4,7 +4,7 @@ public abstract class AuthCallback {
     private int mWith;
     private int mAction;
 
-    void setWith(@Auth.WithThird int with, int action) {
+    final void setWith(int with, int action) {
         mWith = with;
         mAction = action;
     }

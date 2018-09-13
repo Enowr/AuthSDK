@@ -37,14 +37,14 @@ public class AliRouseActivity extends Activity {
                 } else if ("TRADE_PENDING".equals(trade_status)) {                          // 等待卖家收款
                     mCallback.onSuccessForRouse("正在确认签约支付结果...");
                 } else {                                                                    // 其他都认为支付失败
-                    mCallback.onFailed("支付宝支付失败");
+                    mCallback.onFailed("支付宝签约支付失败");
                 }
                 mCallback = null;
             }
         } catch (Exception e) {
             e.printStackTrace();
             if (mCallback != null) {
-                mCallback.onFailed("支付宝支付失败");
+                mCallback.onFailed("支付宝签约支付失败");
             }
         }
         finish();                                                                           // 关闭此activity

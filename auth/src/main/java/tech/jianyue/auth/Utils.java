@@ -54,7 +54,7 @@ public class Utils {
     static String get(String url) {
         HttpURLConnection conn = null;
         try {
-            URL mURL = new URL(url);                            // 利用 string url 构建 URL 对象
+            URL mURL = new URL(url);                                                    // 利用 string url 构建 URL 对象
             conn = (HttpURLConnection) mURL.openConnection();
             conn.setRequestMethod("GET");
             conn.setReadTimeout(5000);
@@ -82,18 +82,18 @@ public class Utils {
         try {
             URL mURL = new URL(url);
             conn = (HttpURLConnection) mURL.openConnection();
-            conn.setRequestMethod("POST");  // 设置请求方法为post
-            conn.setReadTimeout(5000);      // 设置读取超时为5秒
-            conn.setConnectTimeout(10000);  // 设置连接网络超时为10秒
-            conn.setDoOutput(true);         // 设置此方法,允许向服务器输出内容
+            conn.setRequestMethod("POST");                                              // 设置请求方法为post
+            conn.setReadTimeout(5000);                                                  // 设置读取超时为5秒
+            conn.setConnectTimeout(10000);                                              // 设置连接网络超时为10秒
+            conn.setDoOutput(true);                                                     // 设置此方法,允许向服务器输出内容
 
             // 获得一个输出流,向服务器写数据,默认情况下,系统不允许向服务器输出内容
-            OutputStream out = conn.getOutputStream();  // 获得一个输出流,向服务器写数据
+            OutputStream out = conn.getOutputStream();                                  // 获得一个输出流,向服务器写数据
             out.write(content.getBytes());
             out.flush();
             out.close();
 
-            int responseCode = conn.getResponseCode();  // 调用此方法就不必再使用conn.connect()方法
+            int responseCode = conn.getResponseCode();                                  // 调用此方法就不必再使用conn.connect()方法
             if (responseCode == 200) {
                 InputStream is = conn.getInputStream();
                 return getStringFromInputStream(is);
@@ -105,7 +105,7 @@ public class Utils {
             e.printStackTrace();
         } finally {
             if (conn != null) {
-                conn.disconnect();                      // 关闭连接
+                conn.disconnect();                                                      // 关闭连接
             }
         }
         return null;
@@ -119,24 +119,24 @@ public class Utils {
             os.write(buffer, 0, len);
         }
         is.close();
-        String state = os.toString();           // 把流中的数据转换成字符串,采用的编码是utf-8
+        String state = os.toString();                                                   // 把流中的数据转换成字符串,采用的编码是utf-8
         os.close();
         return state;
     }
 
 
     static boolean isAppInstalled(Context context, String packageName) {
-        final PackageManager packageManager = context.getPackageManager();            // 获取packagemanager
-        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);       // 获取所有已安装程序的包信息
-        List<String> pName = new ArrayList<>();                                       // 用于存储所有已安装程序的包名
+        final PackageManager packageManager = context.getPackageManager();              // 获取packagemanager
+        List<PackageInfo> pinfo = packageManager.getInstalledPackages(0);           // 获取所有已安装程序的包信息
+        List<String> pName = new ArrayList<>();                                         // 用于存储所有已安装程序的包名
 
-        if (pinfo != null) {                                                          // 从pinfo中将包名字逐一取出，压入pName list中
+        if (pinfo != null) {                                                            // 从pinfo中将包名字逐一取出，压入pName list中
             for (int i = 0; i < pinfo.size(); i++) {
                 String pn = pinfo.get(i).packageName;
                 pName.add(pn);
             }
         }
-        return pName.contains(packageName);                                           // 判断pName中是否有目标程序的包名，有TRUE，没有FALSE
+        return pName.contains(packageName);                                             // 判断pName中是否有目标程序的包名，有TRUE，没有FALSE
     }
 
     static String decodeURL(String url, String key) {

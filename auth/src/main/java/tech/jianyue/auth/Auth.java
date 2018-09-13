@@ -2,11 +2,11 @@ package tech.jianyue.auth;
 
 import android.content.Context;
 import android.support.annotation.IntDef;
-import android.util.SparseArray;
+import android.text.TextUtils;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * 描述: 分发
@@ -30,49 +30,62 @@ public class Auth {
     public static final int SHARE_MUSIC = 135;                  // 微信/QQ 分享音乐
     public static final int SHARE_PROGRAM = 136;                // 微信/QQ 分享小程序/应用
 
-    public static final int WITH_WX = 141;                      // 微信 第三方标记
-    public static final int WITH_WB = 142;                      // 微博 第三方标记
-    public static final int WITH_QQ = 143;                      // QQ 第三方标记
-    public static final int WITH_ZFB = 144;                     // 支付宝 第三方标记
-    public static final int WITH_YL = 145;                      // 银联 第三方标记
     public static final int WITH_HW = 146;                      // 华为 第三方标记
+    public static final int WITH_QQ = 143;                      // QQ 第三方标记
+    public static final int WITH_WB = 142;                      // 微博 第三方标记
+    public static final int WITH_WX = 141;                      // 微信 第三方标记
+    public static final int WITH_YL = 145;                      // 银联 第三方标记
+    public static final int WITH_ZFB = 144;                     // 支付宝 第三方标记
 
-    static AuthBuilder AuthBuilder;
-    static HashMap<String, AbsAuthBuild> BuilderMap = new HashMap<>();
+    static HashSet<BaseAuthBuild> mBuilderSet = new HashSet<>();
 
-    private Auth() {
+    private Auth() { }
+
+    static BaseAuthBuild getBuilder(String sign) {
+        if (!TextUtils.isEmpty(sign)) {
+            for (BaseAuthBuild build: mBuilderSet) {
+                if (sign.equals(build.mSign)) {
+                    return build;
+                }
+            }
+        }
+        return null;
     }
 
-    static AbsAuthBuild getBuilder(String key) {
-        return Auth.BuilderMap.get(key);
+    static void addBuilder(BaseAuthBuild build) {
+        mBuilderSet.add(build);
     }
 
-    public static AuthBuilder init() {
-        return new AuthBuilder();
+    static void removeBuilder(BaseAuthBuild build) {
+        mBuilderSet.remove(build);
     }
 
-    public static AbsAuthBuildForHW withHW(Context context) {
-        return AuthBuilder.getFactory(WITH_HW).getBuildByHW(context);
+    public static AuthBuilderInit init() {
+        return new AuthBuilderInit();
     }
 
-    public static AbsAuthBuildForQQ withQQ(Context context) {
-        return AuthBuilder.getFactory(WITH_QQ).getBuildByQQ(context);
+    public static BaseAuthBuildForHW withHW(Context context) {
+        return AuthBuilderInit.getInstance().getFactoryForHW().getAuthBuild(context);
     }
 
-    public static AbsAuthBuildForWB withWB(Context context) {
-        return AuthBuilder.getFactory(WITH_WB).getBuildByWB(context);
+    public static BaseAuthBuildForQQ withQQ(Context context) {
+        return AuthBuilderInit.getInstance().getFactoryForQQ().getAuthBuild(context);
     }
 
-    public static AbsAuthBuildForWX withWX(Context context) {
-        return AuthBuilder.getFactory(WITH_WX).getBuildByWX(context);
+    public static BaseAuthBuildForWB withWB(Context context) {
+        return AuthBuilderInit.getInstance().getFactoryForWB().getAuthBuild(context);
     }
 
-    public static AbsAuthBuildForYL withYL(Context context) {
-        return AuthBuilder.getFactory(WITH_YL).getBuildByYL(context);
+    public static BaseAuthBuildForWX withWX(Context context) {
+        return AuthBuilderInit.getInstance().getFactoryForWX().getAuthBuild(context);
     }
 
-    public static AbsAuthBuildForZFB withZFB(Context context) {
-        return AuthBuilder.getFactory(WITH_ZFB).getBuildByZFB(context);
+    public static BaseAuthBuildForYL withYL(Context context) {
+        return AuthBuilderInit.getInstance().getFactoryForYL().getAuthBuild(context);
+    }
+
+    public static BaseAuthBuildForZFB withZFB(Context context) {
+        return AuthBuilderInit.getInstance().getFactoryForZFB().getAuthBuild(context);
     }
 
     @IntDef({RouseWeb, Pay, LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO, SHARE_MUSIC, SHARE_PROGRAM})
@@ -110,7 +123,7 @@ public class Auth {
     public @interface WithThird {
     }
 
-    public static class AuthBuilder {
+    public static class AuthBuilderInit {
         String QQAppID;
 
         String WXAppID;
@@ -124,93 +137,152 @@ public class Auth {
         String HWAppID;
         String HWKey;
 
-        private SparseArray<AuthBuildFactory> mFactoryArray = new SparseArray<>();
+        private static AuthBuilderInit mInstance;
 
-        private AuthBuildFactory getFactory(@WithThird int with) {
-            if (mFactoryArray.get(with) == null) {
-                throw new NullPointerException("添加依赖, 并配置初始化");
+        private AuthBuildFactory mFactoryForHW;
+        private AuthBuildFactory mFactoryForQQ;
+        private AuthBuildFactory mFactoryForWB;
+        private AuthBuildFactory mFactoryForWX;
+        private AuthBuildFactory mFactoryForYL;
+        private AuthBuildFactory mFactoryForZFB;
+
+        static AuthBuilderInit getInstance() {
+            if (mInstance != null) {
+                return mInstance;
             } else {
-                return mFactoryArray.get(with);
+                throw new NullPointerException("添加依赖配置, 初始化");
             }
         }
 
-        public AuthBuilder setQQAppID(String appId) {
+        private AuthBuildFactory getFactoryForHW() {
+            if (mFactoryForHW == null) {
+                throw new NullPointerException("添加华为依赖, 并配置初始化");
+            } else {
+                return mFactoryForHW;
+            }
+        }
+
+        private AuthBuildFactory getFactoryForQQ() {
+            if (mFactoryForQQ == null) {
+                throw new NullPointerException("添加QQ依赖, 并配置初始化");
+            } else {
+                return mFactoryForQQ;
+            }
+        }
+
+        private AuthBuildFactory getFactoryForWB() {
+            if (mFactoryForWB == null) {
+                throw new NullPointerException("添加微博依赖, 并配置初始化");
+            } else {
+                return mFactoryForWB;
+            }
+        }
+
+        private AuthBuildFactory getFactoryForWX() {
+            if (mFactoryForWX == null) {
+                throw new NullPointerException("添加微信依赖, 并配置初始化");
+            } else {
+                return mFactoryForWX;
+            }
+        }
+
+        private AuthBuildFactory getFactoryForYL() {
+            if (mFactoryForYL == null) {
+                throw new NullPointerException("添加银联依赖, 并配置初始化");
+            } else {
+                return mFactoryForYL;
+            }
+        }
+
+        private AuthBuildFactory getFactoryForZFB() {
+            if (mFactoryForZFB == null) {
+                throw new NullPointerException("添加支付宝依赖, 并配置初始化");
+            } else {
+                return mFactoryForZFB;
+            }
+        }
+
+        public AuthBuilderInit setQQAppID(String appId) {
             QQAppID = appId;
             return this;
         }
 
-        public AuthBuilder setWXAppID(String appID) {
+        public AuthBuilderInit setWXAppID(String appID) {
             WXAppID = appID;
             return this;
         }
 
-        public AuthBuilder setWXSecret(String secret) {
+        public AuthBuilderInit setWXSecret(String secret) {
             WXSecret = secret;
             return this;
         }
 
-        public AuthBuilder setWBAppKey(String key) {
+        public AuthBuilderInit setWBAppKey(String key) {
             WBAppKey = key;
             return this;
         }
 
-        public AuthBuilder setWBDedirectUrl(String url) {
+        public AuthBuilderInit setWBDedirectUrl(String url) {
             WBRedirectUrl = url;
             return this;
         }
 
-        public AuthBuilder setWBScope(String scope) {
+        public AuthBuilderInit setWBScope(String scope) {
             WBScope = scope;
             return this;
         }
 
-        public AuthBuilder setHWAppID(String id) {
+        public AuthBuilderInit setHWAppID(String id) {
             HWAppID = id;
             return this;
         }
 
-        public AuthBuilder setHWMerchantID(String id) {
+        public AuthBuilderInit setHWMerchantID(String id) {
             HWMerchantID = id;
             return this;
         }
 
-        public AuthBuilder setHWKey(String key) {
+        public AuthBuilderInit setHWKey(String key) {
             HWKey = key;
             return this;
         }
 
-        public AuthBuilder addFactoryByHW(AuthBuildFactory factory) {
-            mFactoryArray.put(Auth.WITH_HW, factory);
+        public AuthBuilderInit addFactoryForHW(AuthBuildFactory factory) {
+            mFactoryForHW = factory;
             return this;
         }
 
-        public AuthBuilder addFactoryByQQ(AuthBuildFactory factory) {
-            mFactoryArray.put(Auth.WITH_QQ, factory);
+        public AuthBuilderInit addFactoryForQQ(AuthBuildFactory factory) {
+            mFactoryForQQ = factory;
             return this;
         }
 
-        public AuthBuilder addFactoryByWB(AuthBuildFactory factory) {
-            mFactoryArray.put(Auth.WITH_WB, factory);
+        public AuthBuilderInit addFactoryForWB(AuthBuildFactory factory) {
+            mFactoryForWB = factory;
             return this;
         }
 
-        public AuthBuilder addFactoryByWX(AuthBuildFactory factory) {
-            mFactoryArray.put(Auth.WITH_WX, factory);
+        public AuthBuilderInit addFactoryForWX(AuthBuildFactory factory) {
+            mFactoryForWX = factory;
             return this;
         }
 
-        public AuthBuilder addFactoryByYL(AuthBuildFactory factory) {
-            mFactoryArray.put(Auth.WITH_YL, factory);
+        public AuthBuilderInit addFactoryForYL(AuthBuildFactory factory) {
+            mFactoryForYL = factory;
             return this;
         }
 
-        public AuthBuilder addFactoryByZFB(AuthBuildFactory factory) {
-            mFactoryArray.put(Auth.WITH_ZFB, factory);
+        public AuthBuilderInit addFactoryForZFB(AuthBuildFactory factory) {
+            mFactoryForZFB = factory;
             return this;
         }
 
         public void build() {
-            AuthBuilder = this;
+            mInstance = this;
         }
+    }
+
+    abstract static class AuthBuildFactory {
+        abstract <T extends BaseAuthBuild> T getAuthBuild(Context context);
     }
 }

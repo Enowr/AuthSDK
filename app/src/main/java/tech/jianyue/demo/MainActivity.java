@@ -115,12 +115,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setHWAppID("")
                 .setHWKey("")
                 .setHWMerchantID("")
-                .addFactoryByHW(AuthBuildForHW.getFactory())
-                .addFactoryByQQ(AuthBuildForQQ.getFactory())
-                .addFactoryByWB(AuthBuildForWB.getFactory())
-                .addFactoryByWX(AuthBuildForWX.getFactory())
-                .addFactoryByYL(AuthBuildForYL.getFactory())
-                .addFactoryByZFB(AuthBuildForZFB.getFactory())
+                .addFactoryForHW(AuthBuildForHW.getFactory())
+                .addFactoryForQQ(AuthBuildForQQ.getFactory())
+                .addFactoryForWB(AuthBuildForWB.getFactory())
+                .addFactoryForWX(AuthBuildForWX.getFactory())
+                .addFactoryForYL(AuthBuildForYL.getFactory())
+                .addFactoryForZFB(AuthBuildForZFB.getFactory())
                 .build();
 
 //        Auth.withHW(this)

@@ -17,16 +17,16 @@ import java.util.Map;
  * 时间: 2018/1/19
  * 版本: 1.0
  */
-public class AuthBuildForZFB extends AbsAuthBuildForZFB {
+public class AuthBuildForZFB extends BaseAuthBuildForZFB {
     AuthBuildForZFB(Context context) {
         super(context);
     }
 
-    public static AuthBuildFactory getFactory() {
-        return new AuthBuildFactory() {
+    public static Auth.AuthBuildFactory getFactory() {
+        return new Auth.AuthBuildFactory() {
             @Override
-            public AbsAuthBuildForZFB getBuildByZFB(Context context) {
-                return new AuthBuildForZFB(context);
+            <T extends BaseAuthBuild> T getAuthBuild(Context context) {
+                return (T) new AuthBuildForZFB(context);
             }
         };
     }
@@ -54,7 +54,7 @@ public class AuthBuildForZFB extends AbsAuthBuildForZFB {
         switch (mAction) {
             case Auth.Pay:
                 Intent intent = new Intent(mContext, AuthActivity.class);
-                intent.putExtra("Sign", Sign);
+                intent.putExtra("Sign", mSign);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
                 break;

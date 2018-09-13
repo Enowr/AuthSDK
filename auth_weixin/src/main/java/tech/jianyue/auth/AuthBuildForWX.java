@@ -36,34 +36,34 @@ import java.util.List;
  * 时间: 2018/1/19
  * 版本: 1.0
  */
-public class AuthBuildForWX extends AbsAuthBuildForWX {
-    IWXAPI mApi;                                                        // 微信 Api
+public class AuthBuildForWX extends BaseAuthBuildForWX {
+    static IWXAPI mApi;                                                 // 微信 Api
 
     AuthBuildForWX(Context context) {
         super(context);
     }
 
-    public static AuthBuildFactory getFactory() {
-        return new AuthBuildFactory() {
+    public static Auth.AuthBuildFactory getFactory() {
+        return new Auth.AuthBuildFactory() {
             @Override
-            public AbsAuthBuildForWX getBuildByWX(Context context) {
-                return new AuthBuildForWX(context);
+            <T extends BaseAuthBuild> T getAuthBuild(Context context) {
+                return (T) new AuthBuildForWX(context);
             }
         };
     }
 
     @Override
-    AbsAuthBuildForWX.Controller getController(Activity activity) {
+    BaseAuthBuildForWX.Controller getController(Activity activity) {
         return new Controller(this, activity);
     }
 
     @Override                                                           // 初始化资源
     void init() {
-        if (TextUtils.isEmpty(Auth.AuthBuilder.WXAppID)) {
+        if (TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().WXAppID)) {
             throw new IllegalArgumentException("WECHAT_APPID was empty");
         } else if (mApi == null) {
-            mApi = WXAPIFactory.createWXAPI(mContext, Auth.AuthBuilder.WXAppID, true);
-            mApi.registerApp(Auth.AuthBuilder.WXAppID);
+            mApi = WXAPIFactory.createWXAPI(mContext, Auth.AuthBuilderInit.getInstance().WXAppID, true);
+            mApi.registerApp(Auth.AuthBuilderInit.getInstance().WXAppID);
         }
     }
 
@@ -71,10 +71,6 @@ public class AuthBuildForWX extends AbsAuthBuildForWX {
     void destroy() {
         super.destroy();
         mBitmap = null;
-        if (mApi != null) {
-            mApi.detach();
-            mApi = null;
-        }
     }
 
     @Override
@@ -316,7 +312,7 @@ public class AuthBuildForWX extends AbsAuthBuildForWX {
             destroy();
         } else {
             SendMessageToWX.Req req = new SendMessageToWX.Req();
-            req.transaction = Sign;                                                 // 用于唯一标识一个请求
+            req.transaction = mSign;                                                // 用于唯一标识一个请求
             req.scene = mShareType;
             req.message = msg;
             mApi.sendReq(req);
@@ -343,12 +339,11 @@ public class AuthBuildForWX extends AbsAuthBuildForWX {
             mCallback.onFailed("必须添加 Sign, 使用 paySign(sign) ");
             destroy();
         } else {
-            Auth.BuilderMap.put(mPrepayId, Auth.BuilderMap.remove(Sign));
-            Sign = mPrepayId;
+            mSign = mPrepayId;
             PayReq req = new PayReq();
-            req.transaction = Sign;         // 回调时这个标记为 null, 只有 prePayId 可用, 所以使用 prePayId 作为标记
+            req.transaction = mSign;         // 回调时这个标记为 null, 只有 prePayId 可用, 所以使用 prePayId 作为标记
 
-            req.appId = Auth.AuthBuilder.WXAppID;
+            req.appId = Auth.AuthBuilderInit.getInstance().WXAppID;
             req.partnerId = mPartnerId;
             req.prepayId = mPrepayId;
             req.packageValue = mPackageValue;
@@ -365,7 +360,7 @@ public class AuthBuildForWX extends AbsAuthBuildForWX {
             destroy();
         } else {
             OpenWebview.Req req = new OpenWebview.Req();
-            req.transaction = Sign;         // 回调时这个标记和设置的不一样, 无法作为判断依据
+            req.transaction = mSign;         // 回调时这个标记和设置的不一样, 无法作为判断依据
             req.url = mUrl;
             mApi.sendReq(req);
         }
@@ -375,8 +370,8 @@ public class AuthBuildForWX extends AbsAuthBuildForWX {
         if (mApi.isWXAppInstalled()) {
             SendAuth.Req req = new SendAuth.Req();
             req.scope = "snsapi_userinfo";
-            req.state = Sign;
-            req.transaction = Sign;
+            req.state = mSign;
+            req.transaction = mSign;
             mApi.sendReq(req);
         } else {
             mCallback.onFailed("未安装微信客户端");
@@ -430,9 +425,9 @@ public class AuthBuildForWX extends AbsAuthBuildForWX {
         // 微信登录, 2 通过 code 获取 refresh_token
         private String getToken(String code) throws Exception {
             String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="
-                    + Auth.AuthBuilder.WXAppID
+                    + Auth.AuthBuilderInit.getInstance().WXAppID
                     + "&secret="
-                    + Auth.AuthBuilder.WXSecret
+                    + Auth.AuthBuilderInit.getInstance().WXSecret
                     + "&code="
                     + code
                     + "&grant_type=authorization_code";
@@ -442,7 +437,7 @@ public class AuthBuildForWX extends AbsAuthBuildForWX {
         // 微信登录, 3 通过 refresh_token 刷新 access_token
         private String refreshToken(String token) throws Exception {
             String url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid="
-                    + Auth.AuthBuilder.WXAppID
+                    + Auth.AuthBuilderInit.getInstance().WXAppID
                     + "&grant_type=refresh_token"
                     + "&refresh_token="
                     + token;
@@ -469,7 +464,7 @@ public class AuthBuildForWX extends AbsAuthBuildForWX {
         }
     }
 
-    static class Controller implements IWXAPIEventHandler, AbsAuthBuildForWX.Controller {
+    static class Controller implements IWXAPIEventHandler, BaseAuthBuildForWX.Controller {
         private AuthBuildForWX mBuild;
         private Activity mActivity;
 
@@ -480,15 +475,20 @@ public class AuthBuildForWX extends AbsAuthBuildForWX {
 
         @Override
         public void destroy() {
-            mBuild.destroy();
-            mBuild = null;
-            mActivity = null;
+            if (mActivity != null) {
+                mActivity.finish();
+                mActivity = null;
+            }
+            if (mBuild != null) {
+                mBuild.destroy();
+                mBuild = null;
+            }
         }
 
         @Override
         public void callback() {
-            if (mBuild.mApi != null) {
-                mBuild.mApi.handleIntent(mActivity.getIntent(), this);
+            if (mApi != null) {
+                mApi.handleIntent(mActivity.getIntent(), this);
             }
         }
 
@@ -496,9 +496,8 @@ public class AuthBuildForWX extends AbsAuthBuildForWX {
         public void onReq(BaseReq baseReq) {
             if (mBuild.mAction == Auth.RouseWeb) {
                 mBuild.mCallback.onSuccessForRouse("微信签约成功");
-                mBuild.destroy();
             }
-            mActivity.finish();
+            destroy();
         }
 
         @Override
@@ -527,9 +526,8 @@ public class AuthBuildForWX extends AbsAuthBuildForWX {
                             mBuild.mCallback.onFailed(TextUtils.isEmpty(resp.errStr) ? "微信分享失败" : resp.errStr);
                         }
                 }
-                mBuild.destroy();
             }
-            mActivity.finish();
+            destroy();
         }
     }
 }

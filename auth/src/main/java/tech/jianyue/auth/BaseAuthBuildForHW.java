@@ -10,7 +10,7 @@ import android.content.Intent;
  * 时间: 2018/4/3
  * 版本: 1.0
  */
-public abstract class AbsAuthBuildForHW extends AbsAuthBuild {
+public abstract class BaseAuthBuildForHW extends BaseAuthBuild {
     String mProductName;                        // 商品名称
     String mProductDescription;                 // 商品描述
     String mAmount;                             // 支付金额
@@ -25,81 +25,81 @@ public abstract class AbsAuthBuildForHW extends AbsAuthBuild {
     String mSign;                               // 签名, 非单机应用一定要在服务器端储存签名私钥，并在服务器端进行签名操作
     String mUrl;                                // URL
 
-    AbsAuthBuildForHW(Context context) {
+    BaseAuthBuildForHW(Context context) {
         super(context, Auth.WITH_HW);
     }
 
     abstract public void initHW(Activity activity);
 
-    abstract AbsAuthBuildForHW.Controller getController(Activity activity);
+    abstract BaseAuthBuildForHW.Controller getController(Activity activity);
 
     @Override
-    public AbsAuthBuildForHW setAction(@Auth.ActionHW int action) {
+    public BaseAuthBuildForHW setAction(@Auth.ActionHW int action) {
         mAction = action;
         return this;
     }
 
-    public AbsAuthBuildForHW payProductName(String name) {
+    public BaseAuthBuildForHW payProductName(String name) {
         mProductName = name;
         return this;
     }
 
-    public AbsAuthBuildForHW payProductDesc(String description) {
+    public BaseAuthBuildForHW payProductDesc(String description) {
         mProductDescription = description;
         return this;
     }
 
-    public AbsAuthBuildForHW payAmount(String amount) {
+    public BaseAuthBuildForHW payAmount(String amount) {
         mAmount = amount;
         return this;
     }
 
-    public AbsAuthBuildForHW payRequestId(String id) {
+    public BaseAuthBuildForHW payRequestId(String id) {
         mRequestId = id;
         return this;
     }
 
-    public AbsAuthBuildForHW payCountry(String country) {
+    public BaseAuthBuildForHW payCountry(String country) {
         mCountry = country;
         return this;
     }
 
-    public AbsAuthBuildForHW payCurrency(String currency) {
+    public BaseAuthBuildForHW payCurrency(String currency) {
         mCurrency = currency;
         return this;
     }
 
-    public AbsAuthBuildForHW payChannel(int channel) {
+    public BaseAuthBuildForHW payChannel(int channel) {
         mChannel = channel;
         return this;
     }
 
-    public AbsAuthBuildForHW payVersion(String version) {
+    public BaseAuthBuildForHW payVersion(String version) {
         mVersion = version;
         return this;
     }
 
-    public AbsAuthBuildForHW payMerchantName(String merchantName) {
+    public BaseAuthBuildForHW payMerchantName(String merchantName) {
         mMerchantName = merchantName;
         return this;
     }
 
-    public AbsAuthBuildForHW payServiceCatalog(String serviceCatalog) {
+    public BaseAuthBuildForHW payServiceCatalog(String serviceCatalog) {
         mServiceCatalog = serviceCatalog;
         return this;
     }
 
-    public AbsAuthBuildForHW payExtReserved(String extReserved) {
+    public BaseAuthBuildForHW payExtReserved(String extReserved) {
         mExtReserved = extReserved;
         return this;
     }
 
-    public AbsAuthBuildForHW paySign(String sign) {
+    public BaseAuthBuildForHW paySign(String sign) {
         mSign = sign;
         return this;
     }
 
-    public AbsAuthBuildForHW payUrl(String url) {
+    public BaseAuthBuildForHW payUrl(String url) {
         mUrl = url;
         return this;
     }

@@ -10,7 +10,7 @@ import android.graphics.Bitmap;
  * 时间: 2018/1/19
  * 版本: 1.0
  */
-public abstract class AbsAuthBuildForWX extends AbsAuthBuild {
+public abstract class BaseAuthBuildForWX extends BaseAuthBuild {
     int mShareType = -100;                                      // 分享类型
     String mID;                                                 // 小程序 ID
     String mPath;                                               // 小程序 Path
@@ -28,118 +28,95 @@ public abstract class AbsAuthBuildForWX extends AbsAuthBuild {
     Bitmap mBitmap;                                             // 图片
     String mUrl;                                                // Url
 
-    AbsAuthBuildForWX(Context context) {
+    BaseAuthBuildForWX(Context context) {
         super(context, Auth.WITH_WX);
     }
 
     abstract Controller getController(Activity activity);
 
     @Override
-    public AbsAuthBuildForWX setAction(@Auth.ActionWX int action) {
+    public BaseAuthBuildForWX setAction(@Auth.ActionWX int action) {
         mAction = action;
         return this;
     }
 
-    public AbsAuthBuildForWX rouseWeb(String url) {
+    public BaseAuthBuildForWX rouseWeb(String url) {
         mUrl = url;
         return this;
     }
 
-    public AbsAuthBuildForWX payPartnerId(String partnerId) {
+    public BaseAuthBuildForWX payPartnerId(String partnerId) {
         mPartnerId = partnerId;
         return this;
     }
 
-    public AbsAuthBuildForWX payPrepayId(String prepayId) {
+    public BaseAuthBuildForWX payPrepayId(String prepayId) {
         mPrepayId = prepayId;
         return this;
     }
 
-    public AbsAuthBuildForWX payPackageValue(String value) {
+    public BaseAuthBuildForWX payPackageValue(String value) {
         mPackageValue = value;
         return this;
     }
 
-    public AbsAuthBuildForWX payNonceStr(String str) {
+    public BaseAuthBuildForWX payNonceStr(String str) {
         mNonceStr = str;
         return this;
     }
 
-    public AbsAuthBuildForWX payTimestamp(String time) {
+    public BaseAuthBuildForWX payTimestamp(String time) {
         mTimestamp = time;
         return this;
     }
 
-    public AbsAuthBuildForWX paySign(String sign) {
+    public BaseAuthBuildForWX paySign(String sign) {
         mPaySign = sign;
         return this;
     }
 
-    public abstract AbsAuthBuildForWX shareToSession();
+    public abstract BaseAuthBuildForWX shareToSession();
 
-    public abstract AbsAuthBuildForWX shareToTimeline();
+    public abstract BaseAuthBuildForWX shareToTimeline();
 
-    public abstract AbsAuthBuildForWX shareToFavorite();
+    public abstract BaseAuthBuildForWX shareToFavorite();
 
-    public AbsAuthBuildForWX shareText(String text) {
+    public BaseAuthBuildForWX shareText(String text) {
         mText = text;
         return this;
     }
 
-    public AbsAuthBuildForWX shareTextTitle(String title) {
+    public BaseAuthBuildForWX shareTextTitle(String title) {
         mTitle = title;
         return this;
     }
 
-    public AbsAuthBuildForWX shareTextDescription(String description) {
+    public BaseAuthBuildForWX shareTextDescription(String description) {
         mDescription = description;
         return this;
     }
 
-    public AbsAuthBuildForWX shareImage(Bitmap bitmap) {              // imageData 大小限制为 10MB
+    public BaseAuthBuildForWX shareImage(Bitmap bitmap) {              // imageData 大小限制为 10MB
         mBitmap = bitmap;
         return this;
     }
 
-    public AbsAuthBuildForWX shareImageTitle(String title) {
+    public BaseAuthBuildForWX shareImageTitle(String title) {
         mTitle = title;
         return this;
     }
 
-    public AbsAuthBuildForWX shareMusicTitle(String title) {
+    public BaseAuthBuildForWX shareMusicTitle(String title) {
         mTitle = title;
         return this;
     }
 
-    public AbsAuthBuildForWX shareMusicDescription(String description) {
+    public BaseAuthBuildForWX shareMusicDescription(String description) {
         mDescription = description;
         return this;
     }
 
-    public AbsAuthBuildForWX shareMusicImage(Bitmap bitmap) {
-        mBitmap = bitmap;
-        return this;
-    }
-
-    /**
-     * 网络链接
-     */
-    public AbsAuthBuildForWX shareMusicUrl(String url) {
-        mUrl = url;
-        return this;
-    }
-
-    public AbsAuthBuildForWX shareLinkTitle(String title) {
-        mTitle = title;
-        return this;
-    }
-
-    public AbsAuthBuildForWX shareLinkDescription(String description) {
-        mDescription = description;
-        return this;
-    }
-
-    public AbsAuthBuildForWX shareLinkImage(Bitmap bitmap) {
+    public BaseAuthBuildForWX shareMusicImage(Bitmap bitmap) {
         mBitmap = bitmap;
         return this;
     }
@@ -147,22 +124,22 @@ public abstract class AbsAuthBuildForWX extends AbsAuthBuild {
     /**
      * 网络链接
      */
-    public AbsAuthBuildForWX shareLinkUrl(String url) {
+    public BaseAuthBuildForWX shareMusicUrl(String url) {
         mUrl = url;
         return this;
     }
 
-    public AbsAuthBuildForWX shareVideoTitle(String title) {
+    public BaseAuthBuildForWX shareLinkTitle(String title) {
         mTitle = title;
         return this;
     }
 
-    public AbsAuthBuildForWX shareVideoDescription(String description) {
+    public BaseAuthBuildForWX shareLinkDescription(String description) {
         mDescription = description;
         return this;
     }
 
-    public AbsAuthBuildForWX shareVideoImage(Bitmap bitmap) {
+    public BaseAuthBuildForWX shareLinkImage(Bitmap bitmap) {
         mBitmap = bitmap;
         return this;
     }
@@ -170,22 +147,45 @@ public abstract class AbsAuthBuildForWX extends AbsAuthBuild {
     /**
      * 网络链接
      */
-    public AbsAuthBuildForWX shareVideoUrl(String url) {
+    public BaseAuthBuildForWX shareLinkUrl(String url) {
         mUrl = url;
         return this;
     }
 
-    public AbsAuthBuildForWX shareProgramTitle(String title) {             // 分享小程序
+    public BaseAuthBuildForWX shareVideoTitle(String title) {
         mTitle = title;
         return this;
     }
 
-    public AbsAuthBuildForWX shareProgramDescription(String description) {
+    public BaseAuthBuildForWX shareVideoDescription(String description) {
         mDescription = description;
         return this;
     }
 
-    public AbsAuthBuildForWX shareProgramImage(Bitmap bitmap) {
+    public BaseAuthBuildForWX shareVideoImage(Bitmap bitmap) {
+        mBitmap = bitmap;
+        return this;
+    }
+
+    /**
+     * 网络链接
+     */
+    public BaseAuthBuildForWX shareVideoUrl(String url) {
+        mUrl = url;
+        return this;
+    }
+
+    public BaseAuthBuildForWX shareProgramTitle(String title) {             // 分享小程序
+        mTitle = title;
+        return this;
+    }
+
+    public BaseAuthBuildForWX shareProgramDescription(String description) {
+        mDescription = description;
+        return this;
+    }
+
+    public BaseAuthBuildForWX shareProgramImage(Bitmap bitmap) {
         mBitmap = bitmap;
         return this;
     }
@@ -193,17 +193,17 @@ public abstract class AbsAuthBuildForWX extends AbsAuthBuild {
     /**
      * 低版本微信打开的网络链接
      */
-    public AbsAuthBuildForWX shareProgramUrl(String url) {
+    public BaseAuthBuildForWX shareProgramUrl(String url) {
         mUrl = url;
         return this;
     }
 
-    public AbsAuthBuildForWX shareProgramId(String id) {
+    public BaseAuthBuildForWX shareProgramId(String id) {
         mID = id;
         return this;
     }
 
-    public AbsAuthBuildForWX shareProgramPath(String path) {
+    public BaseAuthBuildForWX shareProgramPath(String path) {
         mPath = path;
         return this;
     }

@@ -10,18 +10,18 @@ import android.content.Intent;
  * 时间: 2018/1/19
  * 版本: 1.0
  */
-public abstract class AbsAuthBuildForYL extends AbsAuthBuild {
+public abstract class BaseAuthBuildForYL extends BaseAuthBuild {
     String mOrderInfo;
     boolean mTest = false;
 
-    AbsAuthBuildForYL(Context context) {
+    BaseAuthBuildForYL(Context context) {
         super(context, Auth.WITH_YL);
     }
 
     abstract Controller getController(Activity activity);
 
     @Override
-    public AbsAuthBuildForYL setAction(@Auth.ActionYL int action) {
+    public BaseAuthBuildForYL setAction(@Auth.ActionYL int action) {
         mAction = action;
         return this;
     }
@@ -29,7 +29,7 @@ public abstract class AbsAuthBuildForYL extends AbsAuthBuild {
     /**
      * 订单信息为交易流水号，即TN
      */
-    public AbsAuthBuildForYL payOrderInfo(String orderInfo) {
+    public BaseAuthBuildForYL payOrderInfo(String orderInfo) {
         mOrderInfo = orderInfo;
         return this;
     }
@@ -37,7 +37,7 @@ public abstract class AbsAuthBuildForYL extends AbsAuthBuild {
     /**
      * 是否是测试环境, 默认false; true: 银联测试环境，该环境中不发生真实交易; false: 银联正式环境
      */
-    public AbsAuthBuildForYL payIsTest(boolean test) {
+    public BaseAuthBuildForYL payIsTest(boolean test) {
         mTest = test;
         return this;
     }

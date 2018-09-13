@@ -8,31 +8,29 @@ import android.content.Context;
  * 时间: 2018/4/4
  * 版本: 1.0
  */
-public abstract class AbsAuthBuild {
+public abstract class BaseAuthBuild {
     int mAction = Auth.UNKNOWN_TYPE;                            // 事件
     int mWith;                                                  // 第三方标记
-    String Sign;                                                // 任务标记
+    String mSign;                                               // 任务标记
     Context mContext;                                           // 上下文
     AuthCallback mCallback;                                     // 回调函数
 
-    AbsAuthBuild(Context context, @Auth.WithThird int with) {
-        mContext = context;
+    BaseAuthBuild(Context context, @Auth.WithThird int with) {
         mWith = with;
+        mSign = String.valueOf(System.currentTimeMillis());
+        mContext = context;
         init();
     }
 
     abstract void init();
 
     void destroy() {
-        Sign = "";
+        Auth.removeBuilder(this);
         mContext = null;
         mCallback = null;
-        if (Auth.BuilderMap.containsKey(Sign)) {
-            Auth.BuilderMap.remove(Sign);
-        }
     }
 
-    public abstract AbsAuthBuild setAction(int action);
+    public abstract BaseAuthBuild setAction(int action);
 
     public void build(AuthCallback callback) {
         if (callback == null) {
@@ -45,12 +43,10 @@ public abstract class AbsAuthBuild {
             callback.onFailed("未设置Action, 请调用 setAction(action)");
             destroy();
         } else {
-            Sign = String.valueOf(System.currentTimeMillis());
             mCallback = callback;
             mCallback.setWith(mWith, mAction);
             mCallback.onStart();
-
-            Auth.BuilderMap.put(Sign, this);
+            Auth.addBuilder(this);
         }
     }
 }

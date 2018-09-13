@@ -23,33 +23,33 @@ import org.json.JSONObject;
  * 时间: 2018/4/4
  * 版本: 1.0
  */
-public class AuthBuildForQQ extends AbsAuthBuildForQQ {
+public class AuthBuildForQQ extends BaseAuthBuildForQQ {
     private Tencent mTencent;
 
     AuthBuildForQQ(Context context) {
         super(context);
     }
 
-    public static AuthBuildFactory getFactory() {
-        return new AuthBuildFactory() {
+    public static Auth.AuthBuildFactory getFactory() {
+        return new Auth.AuthBuildFactory() {
             @Override
-            public AbsAuthBuildForQQ getBuildByQQ(Context context) {
-                return new AuthBuildForQQ(context);
+            <T extends BaseAuthBuild> T getAuthBuild(Context context) {
+                return (T) new AuthBuildForQQ(context);
             }
         };
     }
 
     @Override
-    AbsAuthBuildForQQ.Controller getController(Activity activity) {
+    BaseAuthBuildForQQ.Controller getController(Activity activity) {
         return new Controller(this, activity);
     }
 
     @Override
     void init() {
-        if (TextUtils.isEmpty(Auth.AuthBuilder.QQAppID)) {
+        if (TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().QQAppID)) {
             throw new IllegalArgumentException("QQAppID was empty");
         } else {
-            mTencent = Tencent.createInstance(Auth.AuthBuilder.QQAppID, mContext.getApplicationContext());
+            mTencent = Tencent.createInstance(Auth.AuthBuilderInit.getInstance().QQAppID, mContext.getApplicationContext());
         }
     }
 
@@ -68,7 +68,7 @@ public class AuthBuildForQQ extends AbsAuthBuildForQQ {
         super.build(callback);
         if (mTencent.isQQInstalled(mContext)) {
             Intent intent = new Intent(mContext, AuthActivity.class);
-            intent.putExtra("Sign", Sign);
+            intent.putExtra("Sign", mSign);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
         } else {
@@ -266,7 +266,11 @@ public class AuthBuildForQQ extends AbsAuthBuildForQQ {
                     }
                     return new UserInfo(context, tencent.getQQToken());
                 } else {
-                    callback.onFailed(object.getString("msg"));
+                    if (object != null) {
+                        callback.onFailed(object.getString("msg"));
+                    } else {
+                        callback.onFailed("QQ 登录失败");
+                    }
                     return null;
                 }
             } catch (Exception e) {
@@ -291,7 +295,7 @@ public class AuthBuildForQQ extends AbsAuthBuildForQQ {
                             }
                             destroy();
                         } catch (Exception e) {
-                            callback.onFailed("QQ 登录失败");
+                            callback.onFailed(e.getMessage());
                             destroy();
                         }
                     }
@@ -309,7 +313,7 @@ public class AuthBuildForQQ extends AbsAuthBuildForQQ {
                     }
                 });
             } else {
-                callback.onFailed("QQ登录失败");
+//                callback.onFailed("QQ 登录失败");
                 destroy();
             }
         }
@@ -321,8 +325,7 @@ public class AuthBuildForQQ extends AbsAuthBuildForQQ {
         }
     }
 
-
-    static class Controller implements AbsAuthBuildForQQ.Controller, IUiListener {
+    static class Controller implements BaseAuthBuildForQQ.Controller, IUiListener {
         private AuthBuildForQQ mBuild;
         private Activity mActivity;
 
@@ -339,9 +342,14 @@ public class AuthBuildForQQ extends AbsAuthBuildForQQ {
 
         @Override
         public void destroy() {
-            mBuild.destroy();
-            mBuild = null;
-            mActivity = null;
+            if (mActivity != null) {
+                mActivity.finish();
+                mActivity = null;
+            }
+            if (mBuild != null) {
+                mBuild.destroy();
+                mBuild = null;
+            }
         }
 
         @Override
@@ -356,19 +364,19 @@ public class AuthBuildForQQ extends AbsAuthBuildForQQ {
             } else {
                 mBuild.mCallback.onSuccessForShare();
             }
-            mActivity.finish();
+            destroy();
         }
 
         @Override
         public void onError(UiError uiError) {
             mBuild.mCallback.onFailed(uiError.errorMessage);
-            mActivity.finish();
+            destroy();
         }
 
         @Override
         public void onCancel() {
             mBuild.mCallback.onCancel();
-            mActivity.finish();
+            destroy();
         }
     }
 }

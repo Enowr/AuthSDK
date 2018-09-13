@@ -25,23 +25,6 @@ public class UserInfoForThird {
     public String userInfo = "";                        // 第三方平台 用户信息 Json
 
 
-    public UserInfoForThird initForWX(String json, String aToken, String rToken, String openid, long expires_in) throws Exception {
-        JSONObject object = new JSONObject(json);
-        if (object.optInt("errcode", -1) == -1 && !object.optString("unionid", "").equals("")) {
-            this.fromId = "3";                                                 // 来自微信
-            this.nickname = object.optString("nickname");               // 用户昵称
-            this.userId = object.optString("unionid");                  // 用户 id
-            this.openid = openid;
-            this.aToken = aToken;
-            this.rToken = rToken;
-            this.expireIn = String.valueOf(expires_in);
-            this.portrait = object.optString("headimgurl");
-            this.userInfo = json;
-            return this;
-        }
-        return null;
-    }
-
     public UserInfoForThird initForWB(String json, String aToken, String rToken, String expiresTime) throws Exception {
         JSONObject object = new JSONObject(json);
         if (object.optInt("error_code", -1) == -1) {
@@ -70,6 +53,23 @@ public class UserInfoForThird {
             this.expireTime = String.valueOf(expires_time);
             this.portrait = object.optString("figureurl_2");
             this.userInfo = object.toString();
+            return this;
+        }
+        return null;
+    }
+
+    public UserInfoForThird initForWX(String json, String aToken, String rToken, String openid, long expires_in) throws Exception {
+        JSONObject object = new JSONObject(json);
+        if (object.optInt("errcode", -1) == -1 && !object.optString("unionid", "").equals("")) {
+            this.fromId = "3";                                                 // 来自微信
+            this.nickname = object.optString("nickname");               // 用户昵称
+            this.userId = object.optString("unionid");                  // 用户 id
+            this.openid = openid;
+            this.aToken = aToken;
+            this.rToken = rToken;
+            this.expireIn = String.valueOf(expires_in);
+            this.portrait = object.optString("headimgurl");
+            this.userInfo = json;
             return this;
         }
         return null;
