@@ -31,13 +31,13 @@
 2. 根据需求选择是否添加, 在 app module 的 build.gradle 中添加引用:  
     ```aidl
     dependencies {
-        compile 'tech.jianyue.auth:auth:1.2.7'
-        compile 'tech.jianyue.auth:auth_huawei:1.2.7'
-        compile 'tech.jianyue.auth:auth_qq:1.2.7'
-        compile 'tech.jianyue.auth:auth_weibo:1.2.7'
-        compile 'tech.jianyue.auth:auth_weixin:1.2.7'
-        compile 'tech.jianyue.auth:auth_yinlian:1.2.7'
-        compile 'tech.jianyue.auth:auth_zhifubao:1.2.7'
+        compile 'tech.jianyue.auth:auth:1.3.2'
+        compile 'tech.jianyue.auth:auth_huawei:1.3.2'
+        compile 'tech.jianyue.auth:auth_qq:1.3.2'
+        compile 'tech.jianyue.auth:auth_weibo:1.3.2'
+        compile 'tech.jianyue.auth:auth_weixin:1.3.2'
+        compile 'tech.jianyue.auth:auth_yinlian:1.3.2'
+        compile 'tech.jianyue.auth:auth_zhifubao:1.3.2'
     }
     ```
 
@@ -128,12 +128,12 @@
             .setHWAppID("")
             .setHWKey("")
             .setHWMerchantID("")
-            .addFactoryByHW(AuthBuildForHW.getFactory())
-            .addFactoryByQQ(AuthBuildForQQ.getFactory())
-            .addFactoryByWB(AuthBuildForWB.getFactory())
-            .addFactoryByWX(AuthBuildForWX.getFactory())
-            .addFactoryByYL(AuthBuildForYL.getFactory())
-            .addFactoryByZFB(AuthBuildForZFB.getFactory())
+            .addFactoryForHW(AuthBuildForHW.getFactory())
+            .addFactoryForQQ(AuthBuildForQQ.getFactory())
+            .addFactoryForWB(AuthBuildForWB.getFactory())
+            .addFactoryForWX(AuthBuildForWX.getFactory())
+            .addFactoryForYL(AuthBuildForYL.getFactory())
+            .addFactoryForZFB(AuthBuildForZFB.getFactory())
             .build();
          
     如果使用华为支付功能, 还需要在 MainActivity 里初始化华为相关控件(华为接口做的真是没有其他第三方友好, 有待提升啊)
