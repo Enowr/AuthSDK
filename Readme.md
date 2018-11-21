@@ -257,6 +257,12 @@
             .setAction(Auth.RouseWeb)
             .rouseWeb("")
             .build(mCallback);
+    
+    Auth.withHW(this)
+            .setAction(Auth.RouseWeb)
+            .payAmount("")
+            ......
+            .build(mCallback);
     ```
 
     - 支付, 数据由服务器根据第三方协议生成

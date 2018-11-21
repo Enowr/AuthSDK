@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 
 import com.huawei.android.hms.agent.HMSAgent;
+import com.huawei.android.hms.agent.common.ApiClientMgr;
 import com.huawei.android.hms.agent.common.handler.CheckUpdateHandler;
 import com.huawei.android.hms.agent.common.handler.ConnectHandler;
 import com.huawei.android.hms.agent.pay.PaySignUtil;
@@ -18,14 +19,15 @@ import com.huawei.hms.support.api.client.PendingResult;
 import com.huawei.hms.support.api.client.ResultCallback;
 import com.huawei.hms.support.api.entity.pay.PayReq;
 import com.huawei.hms.support.api.entity.pay.PayStatusCodes;
+import com.huawei.hms.support.api.entity.pay.WithholdRequest;
 import com.huawei.hms.support.api.hwid.HuaweiId;
 import com.huawei.hms.support.api.hwid.HuaweiIdSignInOptions;
 import com.huawei.hms.support.api.hwid.HuaweiIdStatusCodes;
 import com.huawei.hms.support.api.hwid.SignInHuaweiId;
 import com.huawei.hms.support.api.hwid.SignInResult;
+import com.huawei.hms.support.api.pay.HuaweiPayApiImpl;
+import com.huawei.hms.support.api.pay.PayResult;
 import com.huawei.hms.support.api.pay.PayResultInfo;
-
-import org.json.JSONObject;
 
 import static com.huawei.android.hms.agent.HMSAgent.AgentResultCode.HMSAGENT_SUCCESS;
 
@@ -120,6 +122,9 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
             case Auth.Pay:
                 pay();
                 break;
+            case Auth.RouseWeb:
+                renewPay();
+                break;
             case Auth.LOGIN:
                 Intent intent = new Intent(mContext, AuthActivity.class);
                 intent.putExtra("Sign", mSign);
@@ -133,6 +138,41 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                 destroy();
                 break;
         }
+    }
+
+    private void renewPay() {
+        WithholdRequest payReq = new WithholdRequest();
+        payReq.productName = mProductName;                                                  // 商品名称
+        payReq.productDesc = mProductDescription;                                           // 商品描述
+        payReq.merchantId = Auth.AuthBuilderInit.getInstance().HWMerchantID;                // 商户ID，来源于开发者联盟的“支付ID”
+        payReq.applicationID = Auth.AuthBuilderInit.getInstance().HWAppID;                  // 应用ID，来源于开发者联盟
+        payReq.amount = mAmount;                                                            // 支付金额
+        payReq.requestId = mRequestId;                                                      // 商户订单号：开发者在支付前生成，用来唯一标识一次支付请求
+        payReq.country = mCountry;                                                          // 国家码
+        payReq.currency = mCurrency;                                                        // 币种
+        payReq.sdkChannel = mChannel;                                                       // 渠道号
+        payReq.urlVer = mVersion;                                                           // 回调接口版本号
+        payReq.merchantName = mMerchantName;                                                // 商户名称，必填，不参与签名。开发者注册的公司名称
+        payReq.serviceCatalog = mServiceCatalog;                                            // 应用设置为"X5"，游戏设置为"X6"
+        payReq.extReserved = mExtReserved;                                                  // 商户保留信息，选填不参与签名，支付成功后会华为支付平台会原样 回调CP服务端
+        payReq.sign = mSignHW;                                                              // 签名
+        payReq.url = mUrl;                                                                  // URL
+
+        HuaweiPayApiImpl payApi = new HuaweiPayApiImpl();
+        PendingResult<PayResult> result = payApi.addWithholdingPlan(ApiClientMgr.INST.getApiClient(), payReq);
+        result.setResultCallback(new ResultCallback<PayResult>() {
+            @Override
+            public void onResult(PayResult result) {
+                if (result.getStatus().isSuccess()) {
+                    mCallback.onSuccessForPay("华为支付成功");
+                } else if (result.getStatus().getStatusCode() == PayStatusCodes.PAY_STATE_CANCEL) {
+                    mCallback.onCancel();
+                } else {
+                    mCallback.onFailed("华为支付失败");
+                }
+            }
+        });
+
     }
 
     private void pay() {
@@ -208,7 +248,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                         signInResult.setResultCallback(new ResultCallback<SignInResult>() {
                             @Override
                             public void onResult(SignInResult result) {
-                                if(result.isSuccess()){                                             // 登录成功
+                                if (result.isSuccess()) {                                             // 登录成功
                                     SignInHuaweiId account = result.getSignInHuaweiId();            // 获取的用户帐号信息在account里，开发者根据自己的需要使用. 可以获取帐号的 openid，昵称，头像 at信息
                                     UserInfoForThird userInfoForThird =
                                             new UserInfoForThird().initForHW(
@@ -256,7 +296,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
             HuaweiApiClient.OnConnectionFailedListener connectionFailedListener = new HuaweiApiClient.OnConnectionFailedListener() {
                 @Override
                 public void onConnectionFailed(ConnectionResult result) {                           // 连接失败
-                    if(HuaweiApiAvailability.getInstance().isUserResolvableError(result.getErrorCode())) {
+                    if (HuaweiApiAvailability.getInstance().isUserResolvableError(result.getErrorCode())) {
                         final int errorCode = result.getErrorCode();
                         new Handler(mActivity.getMainLooper()).post(new Runnable() {
                             @Override
@@ -310,19 +350,19 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
         public void callback(int requestCode, int resultCode, Intent data) {
             String EXTRA_RESULT = "intent.extra.RESULT";
             // 连接失败
-            if(requestCode == REQUEST_HMS_RESOLVE_ERROR) {
-                if(resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_HMS_RESOLVE_ERROR) {
+                if (resultCode == Activity.RESULT_OK) {
                     int result = data.getIntExtra(EXTRA_RESULT, 0);
-                    if(result == ConnectionResult.SUCCESS) {
+                    if (result == ConnectionResult.SUCCESS) {
                         // 错误成功解决
                         if (!mClient.isConnecting() && !mClient.isConnected()) {
                             mClient.connect(mActivity);
                         }
-                    } else if(result == ConnectionResult.CANCELED) {
+                    } else if (result == ConnectionResult.CANCELED) {
                         // 解决错误过程被用户取消
                         mBuild.mCallback.onCancel();
                         destroy();
-                    } else if(result == ConnectionResult.INTERNAL_ERROR) {
+                    } else if (result == ConnectionResult.INTERNAL_ERROR) {
                         // 发生内部错误，重试可以解决
                         // 开发者可以在此处重试连接华为移动服务等操作，导致失败的原因可能是网络原因等
                         mClient.connect(mActivity);
@@ -338,7 +378,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                 }
             } else if (requestCode == REQUEST_SIGN_IN_AUTH) {// 当用户未登录或者未授权，调用signin接口拉起对应的页面处理完毕后会将结果返回给当前activity处理
                 //当返回值是-1的时候表明用户确认授权，
-                if(resultCode == Activity.RESULT_OK) {      // 用户已经授权
+                if (resultCode == Activity.RESULT_OK) {      // 用户已经授权
                     SignInResult result = HuaweiId.HuaweiIdApi.getSignInResultFromIntent(data);
                     if (result.isSuccess()) {
                         // 授权成功，result.getSignInHuaweiId()获取华为帐号信息

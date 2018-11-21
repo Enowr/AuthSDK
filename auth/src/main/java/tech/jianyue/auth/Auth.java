@@ -19,7 +19,7 @@ public class Auth {
 
     public static final int Pay = 100;                          // 微信\支付宝\银联\华为 支付
 
-    public static final int RouseWeb = 111;                     // 微信(无回调) 唤起WebView
+    public static final int RouseWeb = 111;                     // 微信(无回调) 唤起WebView，目前作为自动续费支付
 
     public static final int LOGIN = 121;                        // 微信\微博\QQ\华为 登录
 
@@ -113,7 +113,7 @@ public class Auth {
     public @interface ActionYL {
     }
 
-    @IntDef({LOGIN, Pay})
+    @IntDef({LOGIN, Pay, RouseWeb})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActionHW {
     }
