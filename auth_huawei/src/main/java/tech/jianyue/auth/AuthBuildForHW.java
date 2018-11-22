@@ -423,7 +423,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                     }
                 }
             } else if (mBuild.mAction == Auth.RouseWeb && REQUEST_RENEW_IN_AUTH == requestCode) {
-                if (resultCode == -1) {     // 支付调用成功
+                if (resultCode == Activity.RESULT_OK) {     // 支付调用成功
                     PayResultInfo info = HuaweiPay.HuaweiPayApi.getPayResultInfoFromIntent(data);
                     if (info != null) {
                         HashMap<String, Object> params = new HashMap<>();
