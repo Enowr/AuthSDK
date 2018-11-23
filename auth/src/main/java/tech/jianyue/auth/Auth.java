@@ -136,7 +136,7 @@ public class Auth {
         String HWMerchantID;
         String HWAppID;
         String HWKey;
-        String HWPublicKey;
+        String HWPublicKey;         // 开发者联盟提供的支付公钥
 
         private static AuthBuilderInit mInstance;
 

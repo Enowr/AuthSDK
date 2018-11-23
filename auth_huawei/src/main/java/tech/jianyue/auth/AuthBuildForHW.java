@@ -449,6 +449,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                         }
                     }
                 } else if (Activity.RESULT_FIRST_USER == resultCode) {
+                    // 不做处理
                 } else {
                     mBuild.mCallback.onFailed("华为订阅失败");
                 }
@@ -480,18 +481,18 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
         }
 
         private static boolean doCheck(String content, String sign) {
-            String publicKey = Auth.AuthBuilderInit.getInstance().HWPublicKey;                  // 开发者联盟提供的支付公钥
-            String SIGN_ALGORITHMS = "SHA256WithRSA";       // 使用加密算法规则
-            try {
-                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-                byte [] encodedKey = Base64.decode(publicKey, Base64.DEFAULT);
-                PublicKey pubKey = keyFactory.generatePublic(new X509EncodedKeySpec(encodedKey));
-                java.security.Signature signature = java.security.Signature.getInstance(SIGN_ALGORITHMS);
-                signature.initVerify(pubKey);
-                signature.update(content.getBytes("UTF-8"));
-                return signature.verify(Base64.decode(sign, Base64.DEFAULT));
-            } catch (Exception e){
-                e.printStackTrace();
+            if (!TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().HWPublicKey)) {
+                try {
+                    KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                    byte [] encodedKey = Base64.decode( Auth.AuthBuilderInit.getInstance().HWPublicKey, Base64.DEFAULT);
+                    PublicKey pubKey = keyFactory.generatePublic(new X509EncodedKeySpec(encodedKey));
+                    java.security.Signature signature = java.security.Signature.getInstance("SHA256WithRSA");   // 使用加密算法规则
+                    signature.initVerify(pubKey);
+                    signature.update(content.getBytes("UTF-8"));
+                    return signature.verify(Base64.decode(sign, Base64.DEFAULT));
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
             }
             return false;
         }
