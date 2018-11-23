@@ -93,7 +93,7 @@ public class AuthActivity extends Activity {
     // 华为相关
     private void initHW(String sign) {
         BaseAuthBuild builder = Auth.getBuilder(sign);
-        if (builder != null && builder instanceof BaseAuthBuildForHW && builder.mAction == Auth.LOGIN) {
+        if (builder != null && builder instanceof BaseAuthBuildForHW) {
             mControllerHW = ((BaseAuthBuildForHW) builder).getController(this);
         }
     }
