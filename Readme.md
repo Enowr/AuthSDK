@@ -31,13 +31,13 @@
 2. 根据需求选择是否添加, 在 app module 的 build.gradle 中添加引用:  
     ```aidl
     dependencies {
-        compile 'tech.jianyue.auth:auth:1.3.6'
-        compile 'tech.jianyue.auth:auth_huawei:1.3.6'
-        compile 'tech.jianyue.auth:auth_qq:1.3.6'
-        compile 'tech.jianyue.auth:auth_weibo:1.3.6'
-        compile 'tech.jianyue.auth:auth_weixin:1.3.6'
-        compile 'tech.jianyue.auth:auth_yinlian:1.3.6'
-        compile 'tech.jianyue.auth:auth_zhifubao:1.3.6'
+        compile 'tech.jianyue.auth:auth:1.3.7'
+        compile 'tech.jianyue.auth:auth_huawei:1.3.7'
+        compile 'tech.jianyue.auth:auth_qq:1.3.7'
+        compile 'tech.jianyue.auth:auth_weibo:1.3.7'
+        compile 'tech.jianyue.auth:auth_weixin:1.3.7'
+        compile 'tech.jianyue.auth:auth_yinlian:1.3.7'
+        compile 'tech.jianyue.auth:auth_zhifubao:1.3.7'
     }
     ```
 

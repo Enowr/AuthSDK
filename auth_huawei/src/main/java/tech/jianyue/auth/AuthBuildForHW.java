@@ -333,11 +333,14 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                         mBuild.mCallback.onFailed("华为订阅失败");
+                                        destroy();
                                     }
                                 } else if (result.getStatus().getStatusCode() == PayStatusCodes.PAY_STATE_CANCEL) {
                                     mBuild.mCallback.onCancel();
+                                    destroy();
                                 } else {
                                     mBuild.mCallback.onFailed("华为订阅失败");
+                                    destroy();
                                 }
                             }
                         });
