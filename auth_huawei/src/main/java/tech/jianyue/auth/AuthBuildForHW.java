@@ -484,10 +484,10 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
         }
 
         private static boolean doCheck(String content, String sign) {
-            if (!TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().HWPublicKey)) {
+            if (!TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().HWKey)) {
                 try {
                     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-                    byte [] encodedKey = Base64.decode( Auth.AuthBuilderInit.getInstance().HWPublicKey, Base64.DEFAULT);
+                    byte [] encodedKey = Base64.decode( Auth.AuthBuilderInit.getInstance().HWKey, Base64.DEFAULT);
                     PublicKey pubKey = keyFactory.generatePublic(new X509EncodedKeySpec(encodedKey));
                     java.security.Signature signature = java.security.Signature.getInstance("SHA256WithRSA");   // 使用加密算法规则
                     signature.initVerify(pubKey);
