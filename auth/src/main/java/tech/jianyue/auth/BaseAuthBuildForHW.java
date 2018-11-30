@@ -11,15 +11,17 @@ import android.content.Intent;
  * 版本: 1.0
  */
 public abstract class BaseAuthBuildForHW extends BaseAuthBuild {
+    String mApplicationId;                      // 应用ID
+    String mAmount;                             // 支付金额
     String mProductName;                        // 商品名称
     String mProductDescription;                 // 商品描述
-    String mAmount;                             // 支付金额
     String mRequestId;                          // 商户订单号：开发者在支付前生成，用来唯一标识一次支付请求
     String mCountry;                            // 国家码
     String mCurrency;                           // 币种
     int mChannel;                               // 渠道号
     String mVersion;                            // 回调接口版本号
     String mMerchantName;                       // 商户名称，必填，不参与签名。开发者注册的公司名称
+    String mMerchantId;                         // 商户ID
     String mServiceCatalog;                     // 分类，必填，不参与签名。该字段会影响风控策略; 应用设置为"X5"，游戏设置为"X6"
     String mExtReserved;                        // 商户保留信息，选填不参与签名，支付成功后会华为支付平台会原样 回调CP服务端
     String mSignHW;                             // 签名, 非单机应用一定要在服务器端储存签名私钥，并在服务器端进行签名操作
@@ -36,6 +38,11 @@ public abstract class BaseAuthBuildForHW extends BaseAuthBuild {
     @Override
     public BaseAuthBuildForHW setAction(@Auth.ActionHW int action) {
         mAction = action;
+        return this;
+    }
+
+    public BaseAuthBuildForHW payApplicationId(String appId) {
+        mApplicationId = appId;
         return this;
     }
 
@@ -76,6 +83,11 @@ public abstract class BaseAuthBuildForHW extends BaseAuthBuild {
 
     public BaseAuthBuildForHW payVersion(String version) {
         mVersion = version;
+        return this;
+    }
+
+    public BaseAuthBuildForHW payMerchantId(String merchantId) {
+        mMerchantId = merchantId;
         return this;
     }
 

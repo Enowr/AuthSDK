@@ -150,6 +150,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
 
     private void pay() {
         PayReq payReq = new PayReq();
+        payReq.applicationID = mApplicationId;                                              // 应用ID
         payReq.productName = mProductName;                                                  // 商品名称
         payReq.productDesc = mProductDescription;                                           // 商品描述
         payReq.merchantId = Auth.AuthBuilderInit.getInstance().HWMerchantID;                // 商户ID，来源于开发者联盟的“支付ID”
@@ -160,6 +161,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
         payReq.currency = mCurrency;                                                        // 币种
         payReq.sdkChannel = mChannel;                                                       // 渠道号
         payReq.urlVer = mVersion;                                                           // 回调接口版本号
+        payReq.merchantId = mMerchantId;                                                    // 商户Id
         payReq.merchantName = mMerchantName;                                                // 商户名称，必填，不参与签名。开发者注册的公司名称
         payReq.serviceCatalog = mServiceCatalog;                                            // 应用设置为"X5"，游戏设置为"X6"
         payReq.extReserved = mExtReserved;                                                  // 商户保留信息，选填不参与签名，支付成功后会华为支付平台会原样 回调CP服务端
@@ -303,6 +305,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                 mClient.connect(mActivity);
             } else if (mBuild.mAction == Auth.RouseWeb) {
                 WithholdRequest payReq = new WithholdRequest();
+                payReq.applicationID = mBuild.mApplicationId;                                       // 应用ID
                 payReq.productName = mBuild.mProductName;                                           // 商品名称
                 payReq.productDesc = mBuild.mProductDescription;                                    // 商品描述
                 payReq.merchantId = Auth.AuthBuilderInit.getInstance().HWMerchantID;                // 商户ID，来源于开发者联盟的“支付ID”
@@ -313,6 +316,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                 payReq.currency = mBuild.mCurrency;                                                 // 币种
                 payReq.sdkChannel = mBuild.mChannel;                                                // 渠道号
                 payReq.urlVer = mBuild.mVersion;                                                    // 回调接口版本号
+                payReq.merchantId = mBuild.mMerchantId;                                             // 商户Id
                 payReq.merchantName = mBuild.mMerchantName;                                         // 商户名称，必填，不参与签名。开发者注册的公司名称
                 payReq.serviceCatalog = mBuild.mServiceCatalog;                                     // 应用设置为"X5"，游戏设置为"X6"
                 payReq.extReserved = mBuild.mExtReserved;                                           // 商户保留信息，选填不参与签名，支付成功后会华为支付平台会原样 回调CP服务端
