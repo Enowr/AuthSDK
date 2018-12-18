@@ -150,13 +150,8 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
 
     private void pay() {
         PayReq payReq = new PayReq();
-        if (TextUtils.isEmpty(mMerchantId) || TextUtils.isEmpty(mApplicationId)) {
-            payReq.merchantId = Auth.AuthBuilderInit.getInstance().HWMerchantID;            // 商户ID，来源于开发者联盟的“支付ID”
-            payReq.applicationID = Auth.AuthBuilderInit.getInstance().HWAppID;              // 应用ID，来源于开发者联盟
-        } else {
-            payReq.applicationID = mApplicationId;                                          // 应用ID
-            payReq.merchantId = mMerchantId;                                                // 商户Id
-        }
+        payReq.applicationID = mApplicationId;                                              // 应用ID，来源于开发者联盟
+        payReq.merchantId = mMerchantId;                                                    // 商户ID，来源于开发者联盟的“支付ID”
         payReq.merchantName = mMerchantName;                                                // 商户名称，必填，不参与签名。开发者注册的公司名称
         payReq.productName = mProductName;                                                  // 商品名称
         payReq.productDesc = mProductDescription;                                           // 商品描述
@@ -175,7 +170,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
             @Override
             public void onResult(int retCode, PayResultInfo payInfo) {
                 if (retCode == HMSAGENT_SUCCESS && payInfo != null) {
-                    boolean checkRst = PaySignUtil.checkSign(payInfo, Auth.AuthBuilderInit.getInstance().HWKey);
+                    boolean checkRst = PaySignUtil.checkSign(payInfo, mPublicKey);
                     if (checkRst) {
                         mCallback.onSuccessForPay("华为支付成功");                    // 支付成功并且验签成功，发放商品
                     } else {
@@ -308,13 +303,8 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                 mClient.connect(mActivity);
             } else if (mBuild.mAction == Auth.RouseWeb) {
                 WithholdRequest payReq = new WithholdRequest();
-                if (TextUtils.isEmpty(mBuild.mMerchantId) || TextUtils.isEmpty(mBuild.mApplicationId)) {
-                    payReq.merchantId = Auth.AuthBuilderInit.getInstance().HWMerchantID;            // 商户ID，来源于开发者联盟的“支付ID”
-                    payReq.applicationID = Auth.AuthBuilderInit.getInstance().HWAppID;              // 应用ID，来源于开发者联盟
-                } else {
-                    payReq.applicationID = mBuild.mApplicationId;                                   // 应用ID
-                    payReq.merchantId = mBuild.mMerchantId;                                         // 商户Id
-                }
+                payReq.applicationID = mBuild.mApplicationId;                                       // 应用ID
+                payReq.merchantId = mBuild.mMerchantId;                                             // 商户Id
                 payReq.merchantName = mBuild.mMerchantName;                                         // 商户名称，必填，不参与签名。开发者注册的公司名称
                 payReq.productName = mBuild.mProductName;                                           // 商品名称
                 payReq.productDesc = mBuild.mProductDescription;                                    // 商品描述
@@ -493,11 +483,11 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
             return content.toString();
         }
 
-        private static boolean doCheck(String content, String sign) {
-            if (!TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().HWKey)) {
+        private boolean doCheck(String content, String sign) {
+            if (!TextUtils.isEmpty(mBuild.mPublicKey)) {
                 try {
                     KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-                    byte [] encodedKey = Base64.decode( Auth.AuthBuilderInit.getInstance().HWKey, Base64.DEFAULT);
+                    byte [] encodedKey = Base64.decode(mBuild.mPublicKey, Base64.DEFAULT);
                     PublicKey pubKey = keyFactory.generatePublic(new X509EncodedKeySpec(encodedKey));
                     java.security.Signature signature = java.security.Signature.getInstance("SHA256WithRSA");   // 使用加密算法规则
                     signature.initVerify(pubKey);
