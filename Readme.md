@@ -31,13 +31,13 @@
 2. 根据需求选择是否添加, 在 app module 的 build.gradle 中添加引用:  
     ```aidl
     dependencies {
-        compile 'tech.jianyue.auth:auth:1.3.7'
-        compile 'tech.jianyue.auth:auth_huawei:1.3.7'
-        compile 'tech.jianyue.auth:auth_qq:1.3.7'
-        compile 'tech.jianyue.auth:auth_weibo:1.3.7'
-        compile 'tech.jianyue.auth:auth_weixin:1.3.7'
-        compile 'tech.jianyue.auth:auth_yinlian:1.3.7'
-        compile 'tech.jianyue.auth:auth_zhifubao:1.3.7'
+        compile 'tech.jianyue.auth:auth:1.4.1'
+        compile 'tech.jianyue.auth:auth_huawei:1.4.1'
+        compile 'tech.jianyue.auth:auth_qq:1.4.1'
+        compile 'tech.jianyue.auth:auth_weibo:1.4.1'
+        compile 'tech.jianyue.auth:auth_weixin:1.4.1'
+        compile 'tech.jianyue.auth:auth_yinlian:1.4.1'
+        compile 'tech.jianyue.auth:auth_zhifubao:1.4.1'
     }
     ```
 
@@ -94,6 +94,10 @@
              
         <!--在application节点下增加provider，UpdateProvider用于HMS-SDK引导升级HMS，提供给系统安装器读取升级文件。UpdateSdkFileProvider用于应用自升级。-->
         <!--“xxx.xxx.xxx”用实际的应用包名替换-->
+        <meta-data
+            android:name="com.huawei.hms.version"
+            android:value="2.6.3.300">
+        </meta-data>
         <provider 
             android:name="com.huawei.hms.update.provider.UpdateProvider"
             android:authorities="xxx.xxx.xxx.hms.update.provider"

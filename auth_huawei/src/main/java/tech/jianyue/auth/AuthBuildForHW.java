@@ -318,6 +318,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                 payReq.extReserved = mBuild.mExtReserved;                                           // 商户保留信息，选填不参与签名，支付成功后会华为支付平台会原样 回调CP服务端
                 payReq.sign = mBuild.mSignHW;                                                       // 签名
                 payReq.url = mBuild.mUrl;                                                           // URL
+                payReq.tradeType = mBuild.mTradeType;                                               // 交易类型
 
                 if (!ApiClientMgr.INST.getApiClient().isConnected()) {
                     ApiClientMgr.INST.getApiClient().connect(mActivity);

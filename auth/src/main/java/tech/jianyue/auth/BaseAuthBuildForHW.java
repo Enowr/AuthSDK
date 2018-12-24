@@ -14,6 +14,7 @@ import android.text.TextUtils;
 public abstract class BaseAuthBuildForHW extends BaseAuthBuild {
     String mApplicationId = Auth.AuthBuilderInit.getInstance().HWAppID;                             // 应用ID
     String mPublicKey = Auth.AuthBuilderInit.getInstance().HWKey;                                   // 公钥
+    String mTradeType = "toSign";                                                                   // 交易类型（目前只在签约时使用）
     String mMerchantId = Auth.AuthBuilderInit.getInstance().HWMerchantID;                           // 商户ID
     String mMerchantName;                                                                           // 商户名称，必填，不参与签名。开发者注册的公司名称
     String mAmount;                                                                                 // 支付金额
@@ -58,6 +59,11 @@ public abstract class BaseAuthBuildForHW extends BaseAuthBuild {
         } else {
             mPublicKey = key;
         }
+        return this;
+    }
+
+    public BaseAuthBuildForHW payTradeType(String tradeType) {
+        mTradeType = tradeType;
         return this;
     }
 
