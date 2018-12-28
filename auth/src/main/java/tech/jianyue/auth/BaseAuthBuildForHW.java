@@ -12,10 +12,10 @@ import android.text.TextUtils;
  * 版本: 1.0
  */
 public abstract class BaseAuthBuildForHW extends BaseAuthBuild {
-    String mApplicationId = Auth.AuthBuilderInit.getInstance().HWAppID;                             // 应用ID
-    String mPublicKey = Auth.AuthBuilderInit.getInstance().HWKey;                                   // 公钥
+    String mApplicationId = Auth.AuthBuilderInit.getInstance().getHWAppID();                        // 应用ID
+    String mPublicKey = Auth.AuthBuilderInit.getInstance().getHWKey();                              // 公钥
     String mTradeType = "toSign";                                                                   // 交易类型（目前只在签约时使用）
-    String mMerchantId = Auth.AuthBuilderInit.getInstance().HWMerchantID;                           // 商户ID
+    String mMerchantId = Auth.AuthBuilderInit.getInstance().getHWMerchantID();                      // 商户ID
     String mMerchantName;                                                                           // 商户名称，必填，不参与签名。开发者注册的公司名称
     String mAmount;                                                                                 // 支付金额
     String mProductName;                                                                            // 商品名称
@@ -46,7 +46,7 @@ public abstract class BaseAuthBuildForHW extends BaseAuthBuild {
 
     public BaseAuthBuildForHW payApplicationId(String appId) {
         if (TextUtils.isEmpty(appId)) {
-            mApplicationId = Auth.AuthBuilderInit.getInstance().HWAppID;
+            mApplicationId = Auth.AuthBuilderInit.getInstance().getHWAppID();
         } else {
             mApplicationId = appId;
         }
@@ -55,7 +55,7 @@ public abstract class BaseAuthBuildForHW extends BaseAuthBuild {
 
     public BaseAuthBuildForHW payPublicKey(String key) {
         if (TextUtils.isEmpty(key)) {
-            mPublicKey = Auth.AuthBuilderInit.getInstance().HWKey;
+            mPublicKey = Auth.AuthBuilderInit.getInstance().getHWKey();
         } else {
             mPublicKey = key;
         }
@@ -69,7 +69,7 @@ public abstract class BaseAuthBuildForHW extends BaseAuthBuild {
 
     public BaseAuthBuildForHW payMerchantId(String merchantId) {
         if (TextUtils.isEmpty(merchantId)) {
-            mMerchantId = Auth.AuthBuilderInit.getInstance().HWMerchantID;
+            mMerchantId = Auth.AuthBuilderInit.getInstance().getHWMerchantID();
         } else {
             mMerchantId = merchantId;
         }

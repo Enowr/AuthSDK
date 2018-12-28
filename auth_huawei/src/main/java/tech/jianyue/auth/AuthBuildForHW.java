@@ -113,9 +113,9 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
 
     @Override
     void init() {
-        if (TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().HWAppID) ||
-                TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().HWMerchantID) ||
-                TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().HWKey)) {
+        if (TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().getHWAppID()) ||
+                TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().getHWMerchantID()) ||
+                TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().getHWKey())) {
             throw new IllegalArgumentException("HuaWei was no initialization");
         }
     }
@@ -132,7 +132,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
             case Auth.Pay:
                 pay();
                 break;
-            case Auth.RouseWeb:
+            case Auth.Rouse:
             case Auth.LOGIN:
                 Intent intent = new Intent(mContext, AuthActivity.class);
                 intent.putExtra("Sign", mSign);
@@ -140,9 +140,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                 mContext.startActivity(intent);
                 break;
             default:
-                if (mAction != Auth.UNKNOWN_TYPE) {
-                    mCallback.onFailed("华为暂未支持的 Action");
-                }
+                mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "华为暂未支持的 Action");
                 destroy();
                 break;
         }
@@ -172,16 +170,16 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                 if (retCode == HMSAGENT_SUCCESS && payInfo != null) {
                     boolean checkRst = PaySignUtil.checkSign(payInfo, mPublicKey);
                     if (checkRst) {
-                        mCallback.onSuccessForPay("华为支付成功");                    // 支付成功并且验签成功，发放商品
+                        mCallback.onSuccessForPay(String.valueOf(retCode), "华为支付成功");          // 支付成功并且验签成功，发放商品
                     } else {
-                        mCallback.onSuccessForPay("华为支付成功状态待查询");           // 签名失败，需要查询订单状态：对于没有服务器的单机应用，调用查询订单接口查询；其他应用到开发者服务器查询订单状态。
+                        mCallback.onSuccessForPay(String.valueOf(retCode), "华为支付成功状态待查询"); // 签名失败，需要查询订单状态：对于没有服务器的单机应用，调用查询订单接口查询；其他应用到开发者服务器查询订单状态。
                     }
                 } else if (retCode == HMSAgent.AgentResultCode.ON_ACTIVITY_RESULT_ERROR
                         || retCode == PayStatusCodes.PAY_STATE_TIME_OUT
                         || retCode == PayStatusCodes.PAY_STATE_NET_ERROR) {
-                    mCallback.onSuccessForPay("华为支付成功状态待查询");               // 需要查询订单状态：对于没有服务器的单机应用，调用查询订单接口查询；其他应用到开发者服务器查询订单状态。
+                    mCallback.onSuccessForPay(String.valueOf(retCode), "华为支付成功状态待查询");     // 需要查询订单状态：对于没有服务器的单机应用，调用查询订单接口查询；其他应用到开发者服务器查询订单状态。
                 } else {
-                    mCallback.onFailed("华为支付失败");                               // 其他错误码意义参照支付api参考
+                    mCallback.onFailed(String.valueOf(retCode), "华为支付失败");                      // 其他错误码意义参照支付api参考
                 }
                 destroy();
             }
@@ -242,16 +240,16 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                                                 mActivity.startActivityForResult(intent, REQUEST_SIGN_IN_AUTH);
                                             } else {
                                                 // 异常场景，未知原因导致的登录失败，开发者可以在这走容错处理
-                                                mBuild.mCallback.onFailed("华为: 登录失败, 未知原因");
+                                                mBuild.mCallback.onFailed(String.valueOf(result.getStatus().getStatusCode()), "华为: 登录失败, 未知原因");
                                                 destroy();
                                             }
                                         } else if (result.getStatus().getStatusCode() == HuaweiIdStatusCodes.SIGN_IN_NETWORK_ERROR) {
                                             //网络异常，请开发者自行处理
-                                            mBuild.mCallback.onFailed("华为: 登录失败, 网络异常");
+                                            mBuild.mCallback.onFailed(String.valueOf(result.getStatus().getStatusCode()), "华为: 登录失败, 网络异常");
                                             destroy();
                                         } else {
                                             //其他异常
-                                            mBuild.mCallback.onFailed("华为: 登录失败, 其他异常");
+                                            mBuild.mCallback.onFailed(String.valueOf(result.getStatus().getStatusCode()), "华为: 登录失败, 其他异常");
                                             destroy();
                                         }
                                     }
@@ -282,7 +280,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                             });
                         } else {
                             //其他错误码请参见开发指南或者API文档
-                            mBuild.mCallback.onFailed("华为: 连接客户端失败, 错误码为" + result.getErrorCode());
+                            mBuild.mCallback.onFailed(String.valueOf(result.getErrorCode()), "华为: 连接客户端失败, 错误码为" + result.getErrorCode());
                             destroy();
                         }
                     }
@@ -301,7 +299,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                 //建议在oncreate()的时候连接华为移动服务
                 //业务可以根据自己业务的形态来确定client的连接和断开的时机，但是确保connect和disconnect必须成对出现
                 mClient.connect(mActivity);
-            } else if (mBuild.mAction == Auth.RouseWeb) {
+            } else if (mBuild.mAction == Auth.Rouse) {
                 WithholdRequest payReq = new WithholdRequest();
                 payReq.applicationID = mBuild.mApplicationId;                                       // 应用ID
                 payReq.merchantId = mBuild.mMerchantId;                                             // 商户Id
@@ -333,14 +331,14 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                                         result.getStatus().startResolutionForResult(mActivity, REQUEST_RENEW_IN_AUTH);
                                     } catch (Exception e) {
                                         e.printStackTrace();
-                                        mBuild.mCallback.onFailed("华为订阅失败");
+                                        mBuild.mCallback.onFailed(String.valueOf(result.getStatus().getStatusCode()), "华为订阅失败");
                                         destroy();
                                     }
                                 } else if (result.getStatus().getStatusCode() == PayStatusCodes.PAY_STATE_CANCEL) {
                                     mBuild.mCallback.onCancel();
                                     destroy();
                                 } else {
-                                    mBuild.mCallback.onFailed("华为订阅失败");
+                                    mBuild.mCallback.onFailed(String.valueOf(result.getStatus().getStatusCode()), "华为订阅失败");
                                     destroy();
                                 }
                             }
@@ -389,12 +387,12 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                             mClient.connect(mActivity);
                         } else {
                             // 未知返回码
-                            mBuild.mCallback.onFailed("华为: 连接客户端失败, 错误码为" + result);
+                            mBuild.mCallback.onFailed(String.valueOf(result),"华为: 连接客户端失败");
                             destroy();
                         }
                     } else {
                         // 调用解决方案发生错误
-                        mBuild.mCallback.onFailed("华为: 连接客户端失败, 调用解决方案发生错误");
+                        mBuild.mCallback.onFailed(String.valueOf(resultCode), "华为: 连接客户端失败, 调用解决方案发生错误");
                         destroy();
                     }
                 } else if (requestCode == REQUEST_SIGN_IN_AUTH) {// 当用户未登录或者未授权，调用signin接口拉起对应的页面处理完毕后会将结果返回给当前activity处理
@@ -417,16 +415,16 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                             destroy();
                         } else {
                             // 授权失败，result.getStatus()获取错误原因
-                            mBuild.mCallback.onFailed("华为: 授权失败 失败原因:" + result.getStatus().toString());
+                            mBuild.mCallback.onFailed(String.valueOf(result.getStatus().getStatusCode()), "华为: 授权失败，" + result.getStatus().toString());
                             destroy();
                         }
                     } else {
                         //当resultCode 为0的时候表明用户未授权，则开发者可以处理用户未授权事件
-                        mBuild.mCallback.onFailed("华为: 用户未授权");
+                        mBuild.mCallback.onFailed(String.valueOf(resultCode), "华为: 用户未授权");
                         destroy();
                     }
                 }
-            } else if (mBuild.mAction == Auth.RouseWeb && REQUEST_RENEW_IN_AUTH == requestCode) {
+            } else if (mBuild.mAction == Auth.Rouse && REQUEST_RENEW_IN_AUTH == requestCode) {
                 if (resultCode == Activity.RESULT_OK) {     // 支付调用成功
                     PayResultInfo info = HuaweiPay.HuaweiPayApi.getPayResultInfoFromIntent(data);
                     if (info != null) {
@@ -442,20 +440,20 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                             params.put("withholdID", info.getWithholdID());
 
                             if (doCheck(getNoSign(params), info.getSign())) {
-                                mBuild.mCallback.onSuccessForPay("华为订阅成功");
+                                mBuild.mCallback.onSuccessForPay(String.valueOf(info.getReturnCode()), "华为订阅成功");
                             } else {    // 订阅成功，但是签名校验失败.CP需要到服务器上查询该次支付的情况，然后再进行处理 
-                                mBuild.mCallback.onSuccessForPay("华为订阅成功，但是签名校验失败，需要去服务器查询");
+                                mBuild.mCallback.onSuccessForPay(String.valueOf(info.getReturnCode()), "华为订阅成功，但是签名校验失败，需要去服务器查询");
                             }
                         } else if (PayStatusCodes.PAY_STATE_CANCEL == info.getReturnCode()) {
                             mBuild.mCallback.onCancel();        // 用户取消了订阅，可能是用户取消登录，或者取消订阅
                         } else {
-                            mBuild.mCallback.onFailed("华为订阅失败");
+                            mBuild.mCallback.onFailed(String.valueOf(info.getReturnCode()), "华为订阅失败");
                         }
                     }
                 } else if (Activity.RESULT_FIRST_USER == resultCode) {
                     // 不做处理
                 } else {
-                    mBuild.mCallback.onFailed("华为订阅失败");
+                    mBuild.mCallback.onFailed(String.valueOf(resultCode), "华为订阅失败");
                 }
                 destroy();
             }

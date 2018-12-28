@@ -59,11 +59,11 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
 
     @Override                                                           // 初始化资源
     void init() {
-        if (TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().WXAppID)) {
+        if (TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().getWXAppID())) {
             throw new IllegalArgumentException("WECHAT_APPID was empty");
         } else if (mApi == null) {
-            mApi = WXAPIFactory.createWXAPI(mContext, Auth.AuthBuilderInit.getInstance().WXAppID, true);
-            mApi.registerApp(Auth.AuthBuilderInit.getInstance().WXAppID);
+            mApi = WXAPIFactory.createWXAPI(mContext, Auth.AuthBuilderInit.getInstance().getWXAppID(), true);
+            mApi.registerApp(Auth.AuthBuilderInit.getInstance().getWXAppID());
         }
     }
 
@@ -96,15 +96,15 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
         super.build(callback);
         if (!isWXAppInstalled()) {
             destroy();
-        } else if (mAction != Auth.LOGIN && mAction != Auth.Pay && mAction != Auth.RouseWeb && mShareType == -100) {
-            mCallback.onFailed("必须添加分享类型, 使用 shareToSession(),shareToTimeline(),shareToFavorite() ");
+        } else if (mAction != Auth.LOGIN && mAction != Auth.Pay && mAction != Auth.Rouse && mShareType == -100) {
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加分享类型, 使用 shareToSession(),shareToTimeline(),shareToFavorite() ");
             destroy();
         } else {
             switch (mAction) {
                 case Auth.Pay:
                     pay();
                     break;
-                case Auth.RouseWeb:
+                case Auth.Rouse:
                     rouseWeb();
                     break;
                 case Auth.LOGIN:
@@ -129,9 +129,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
                     shareProgram();
                     break;
                 default:
-                    if (mAction != Auth.UNKNOWN_TYPE) {
-                        mCallback.onFailed("微信暂未支持的 Action");
-                    }
+                    mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "微信暂未支持的 Action");
                     destroy();
                     break;
             }
@@ -150,10 +148,10 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
                     }
                 }
             }
-            mCallback.onFailed("未安装微信客户端");
+            mCallback.onFailed(String.valueOf(Auth.ErrorUninstalled), "未安装微信客户端");
             return false;
         } else if (!mApi.isWXAppSupportAPI()) {
-            mCallback.onFailed("微信客户端版本过低");
+            mCallback.onFailed(String.valueOf(Auth.ErrorUnknown), "微信客户端版本过低");
             return false;
         } else {
             return true;
@@ -163,10 +161,10 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
     private void shareText() {
         // 分享文本到微信, 文本描述，分享到朋友圈可以不传,聊天界面和收藏必须传
         if (TextUtils.isEmpty(mText)) {
-            mCallback.onFailed("必须添加文本, 使用 shareText(str) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加文本, 使用 shareText(str) ");
             destroy();
         } else if (mShareType != SendMessageToWX.Req.WXSceneTimeline && TextUtils.isEmpty(mDescription)) {
-            mCallback.onFailed("必须添加文本描述, 使用 shareTextDescription(str) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加文本描述, 使用 shareTextDescription(str) ");
             destroy();
         } else {
             WXMediaMessage msg = new WXMediaMessage();
@@ -180,7 +178,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
 
     private void shareBitmap() {
         if (mBitmap == null) {
-            mCallback.onFailed("必须添加 Bitmap, 且不为空, 使用 shareImage(bitmap) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加 Bitmap, 且不为空, 使用 shareImage(bitmap) ");
             destroy();
         } else {
             // imageData 大小限制为 10MB, 缩略图大小限制为 32K
@@ -197,13 +195,13 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
 
     private void shareMusic() {
         if (TextUtils.isEmpty(mUrl)) {
-            mCallback.onFailed("必须添加音乐链接, 且不为空, 使用 shareMusicUrl(url) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加音乐链接, 且不为空, 使用 shareMusicUrl(url) ");
             destroy();
         } else if (mBitmap == null) {
-            mCallback.onFailed("必须添加音乐缩略图, 且不为空, 使用 shareMusicImage(bitmap) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加音乐缩略图, 且不为空, 使用 shareMusicImage(bitmap) ");
             destroy();
         } else if (mTitle == null) {
-            mCallback.onFailed("必须添加音乐标题, 使用 shareMusicTitle(title) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加音乐标题, 使用 shareMusicTitle(title) ");
             destroy();
         } else {
             Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 120, 120, true);
@@ -222,13 +220,13 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
 
     private void shareLink() {
         if (TextUtils.isEmpty(mUrl)) {
-            mCallback.onFailed("必须添加链接, 且不为空, 使用 shareLinkUrl(url) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加链接, 且不为空, 使用 shareLinkUrl(url) ");
             destroy();
         } else if (mBitmap == null) {
-            mCallback.onFailed("必须添加链接缩略图, 且不为空, 使用 shareLinkImage(bitmap) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加链接缩略图, 且不为空, 使用 shareLinkImage(bitmap) ");
             destroy();
         } else if (mTitle == null) {
-            mCallback.onFailed("必须添加链接标题, 使用 shareLinkTitle(title) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加链接标题, 使用 shareLinkTitle(title) ");
             destroy();
         } else {
             Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 120, 120, true);
@@ -247,13 +245,13 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
 
     private void shareVideo() {
         if (TextUtils.isEmpty(mUrl)) {
-            mCallback.onFailed("必须添加视频链接, 且不为空, 使用 shareVideoUrl(url) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加视频链接, 且不为空, 使用 shareVideoUrl(url) ");
             destroy();
         } else if (mBitmap == null) {
-            mCallback.onFailed("必须添加视频缩略图, 且不为空, 使用 shareVideoImage(bitmap) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加视频缩略图, 且不为空, 使用 shareVideoImage(bitmap) ");
             destroy();
         } else if (mTitle == null) {
-            mCallback.onFailed("必须添加视频标题, 使用 shareVideoTitle(title) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加视频标题, 使用 shareVideoTitle(title) ");
             destroy();
         } else {
             Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 120, 120, true);
@@ -272,22 +270,22 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
 
     private void shareProgram() {
         if (TextUtils.isEmpty(mUrl)) {
-            mCallback.onFailed("必须添加小程序链接, 且不为空, 使用 shareProgramUrl(url) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加小程序链接, 且不为空, 使用 shareProgramUrl(url) ");
             destroy();
         } else if (TextUtils.isEmpty(mID)) {
-            mCallback.onFailed("必须添加小程序ID, 使用 shareProgramId(id) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加小程序ID, 使用 shareProgramId(id) ");
             destroy();
         } else if (TextUtils.isEmpty(mPath)) {
-            mCallback.onFailed("必须添加小程序Path, 使用 shareProgramPath(path) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加小程序Path, 使用 shareProgramPath(path) ");
             destroy();
         } else if (mBitmap == null) {
-            mCallback.onFailed("必须添加小程序缩略图, 且不为空, 使用 shareProgramImage(bitmap) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加小程序缩略图, 且不为空, 使用 shareProgramImage(bitmap) ");
             destroy();
         } else if (mTitle == null) {
-            mCallback.onFailed("必须添加小程序标题, 使用 shareProgramTitle(title) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加小程序标题, 使用 shareProgramTitle(title) ");
             destroy();
         } else if (mShareType != SendMessageToWX.Req.WXSceneSession) {
-            mCallback.onFailed("目前只支持分享到会话 ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "目前只支持分享到会话 ");
             destroy();
         } else {
             Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 120, 120, true);
@@ -308,7 +306,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
 
     private void share(WXMediaMessage msg) {
         if (msg == null) {
-            mCallback.onFailed("分享失败, Auth 内部错误");
+            mCallback.onFailed(String.valueOf(Auth.ErrorUnknown), "分享失败, Auth 内部错误");
             destroy();
         } else {
             SendMessageToWX.Req req = new SendMessageToWX.Req();
@@ -321,29 +319,29 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
 
     private void pay() {
         if (TextUtils.isEmpty(mPartnerId)) {
-            mCallback.onFailed("必须添加 PartnerId, 使用 payPartnerId(id) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加 PartnerId, 使用 payPartnerId(id) ");
             destroy();
         } else if (TextUtils.isEmpty(mPrepayId)) {
-            mCallback.onFailed("必须添加 PrepayId, 使用 payPrepayId(id) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加 PrepayId, 使用 payPrepayId(id) ");
             destroy();
         } else if (TextUtils.isEmpty(mPackageValue)) {
-            mCallback.onFailed("必须添加 PackageValue, 使用 payPackageValue(value) 固定值: \"Sign=WXPay\" ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加 PackageValue, 使用 payPackageValue(value) 固定值: \"Sign=WXPay\" ");
             destroy();
         } else if (TextUtils.isEmpty(mNonceStr)) {
-            mCallback.onFailed("必须添加 NonceStr, 使用 payNonceStr(str) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加 NonceStr, 使用 payNonceStr(str) ");
             destroy();
         } else if (TextUtils.isEmpty(mTimestamp)) {
-            mCallback.onFailed("必须添加 Timestamp, 使用 payTimestamp(time) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加 Timestamp, 使用 payTimestamp(time) ");
             destroy();
         } else if (TextUtils.isEmpty(mPaySign)) {
-            mCallback.onFailed("必须添加 Sign, 使用 paySign(sign) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加 Sign, 使用 paySign(sign) ");
             destroy();
         } else {
             mSign = mPrepayId;
             PayReq req = new PayReq();
             req.transaction = mSign;         // 回调时这个标记为 null, 只有 prePayId 可用, 所以使用 prePayId 作为标记
 
-            req.appId = Auth.AuthBuilderInit.getInstance().WXAppID;
+            req.appId = Auth.AuthBuilderInit.getInstance().getWXAppID();
             req.partnerId = mPartnerId;
             req.prepayId = mPrepayId;
             req.packageValue = mPackageValue;
@@ -356,7 +354,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
 
     private void rouseWeb() {
         if (TextUtils.isEmpty(mUrl)) {
-            mCallback.onFailed("必须添加 Url, 使用 rouseWeb(url) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加 Url, 使用 rouseWeb(url) ");
             destroy();
         } else {
             OpenWebview.Req req = new OpenWebview.Req();
@@ -374,7 +372,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
             req.transaction = mSign;
             mApi.sendReq(req);
         } else {
-            mCallback.onFailed("未安装微信客户端");
+            mCallback.onFailed(String.valueOf(Auth.ErrorUninstalled), "未安装微信客户端");
         }
     }
 
@@ -417,7 +415,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
             if (info != null) {
                 callback.onSuccessForLogin(info);
             } else {
-                callback.onFailed("微信登录失败");
+                callback.onFailed(String.valueOf(Auth.ErrorUnknown), "微信登录失败");
             }
             callback = null;
         }
@@ -425,9 +423,9 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
         // 微信登录, 2 通过 code 获取 refresh_token
         private String getToken(String code) throws Exception {
             String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid="
-                    + Auth.AuthBuilderInit.getInstance().WXAppID
+                    + Auth.AuthBuilderInit.getInstance().getWXAppID()
                     + "&secret="
-                    + Auth.AuthBuilderInit.getInstance().WXSecret
+                    + Auth.AuthBuilderInit.getInstance().getWXSecret()
                     + "&code="
                     + code
                     + "&grant_type=authorization_code";
@@ -437,7 +435,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
         // 微信登录, 3 通过 refresh_token 刷新 access_token
         private String refreshToken(String token) throws Exception {
             String url = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid="
-                    + Auth.AuthBuilderInit.getInstance().WXAppID
+                    + Auth.AuthBuilderInit.getInstance().getWXAppID()
                     + "&grant_type=refresh_token"
                     + "&refresh_token="
                     + token;
@@ -494,8 +492,8 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
 
         @Override
         public void onReq(BaseReq baseReq) {
-            if (mBuild.mAction == Auth.RouseWeb) {
-                mBuild.mCallback.onSuccessForRouse("微信签约成功");
+            if (mBuild.mAction == Auth.Rouse) {
+                mBuild.mCallback.onSuccessForRouse(String.valueOf(baseReq.getType()), "微信签约成功");
             }
             destroy();
         }
@@ -510,7 +508,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
                         break;
                     case BaseResp.ErrCode.ERR_OK:
                         if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
-                            mBuild.mCallback.onSuccessForPay("微信支付成功");
+                            mBuild.mCallback.onSuccessForPay(String.valueOf(BaseResp.ErrCode.ERR_OK), "微信支付成功");
                         } else if (resp instanceof SendAuth.Resp && resp.getType() == ConstantsAPI.COMMAND_SENDAUTH) {                      // 微信授权登录 resp.getType() == 1
                             mBuild.getInfo(((SendAuth.Resp) resp).code);
                         } else if (resp instanceof SendMessageToWX.Resp && resp.getType() == ConstantsAPI.COMMAND_SENDMESSAGE_TO_WX) {      // resp.getType() == 2
@@ -519,11 +517,11 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
                         break;
                     default:
                         if (mBuild.mAction == Auth.LOGIN) {
-                            mBuild.mCallback.onFailed(TextUtils.isEmpty(resp.errStr) ? "微信登录失败" : resp.errStr);
+                            mBuild.mCallback.onFailed(String.valueOf(resp.errCode), TextUtils.isEmpty(resp.errStr) ? "微信登录失败" : resp.errStr);
                         } else if (mBuild.mAction == Auth.Pay) {
-                            mBuild.mCallback.onFailed(TextUtils.isEmpty(resp.errStr) ? "微信支付失败" : resp.errStr);
-                        } else if (mBuild.mAction != Auth.RouseWeb) {
-                            mBuild.mCallback.onFailed(TextUtils.isEmpty(resp.errStr) ? "微信分享失败" : resp.errStr);
+                            mBuild.mCallback.onFailed(String.valueOf(resp.errCode), TextUtils.isEmpty(resp.errStr) ? "微信支付失败" : resp.errStr);
+                        } else if (mBuild.mAction != Auth.Rouse) {
+                            mBuild.mCallback.onFailed(String.valueOf(resp.errCode), TextUtils.isEmpty(resp.errStr) ? "微信分享失败" : resp.errStr);
                         }
                 }
             }

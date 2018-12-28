@@ -15,20 +15,23 @@ import java.util.HashSet;
  * 版本: 1.0
  */
 public class Auth {
-    public static final int UNKNOWN_TYPE = -1;                  // 未知类型
+    public static final int ErrorUninstalled = -9991;              // 错误码，未安装客户端
+    public static final int ErrorNotAction = -9992;                // 错误码，未设置Action
+    public static final int ErrorParameter = -9993;                // 错误码，参数错误
+    public static final int ErrorUnknown = -9994;                  // 错误码，未知错误
 
-    public static final int Pay = 100;                          // 微信\支付宝\银联\华为 支付
+    public static final int Pay = 100;                          // 微信、支付宝、银联、华为，支付
 
-    public static final int RouseWeb = 111;                     // 微信(无回调) 唤起WebView，目前作为自动续费支付
+    public static final int Rouse = 111;                        // 唤起微信、支付宝、华为，目前作为签约支付       微信(无回调) 唤起WebView，
 
-    public static final int LOGIN = 121;                        // 微信\微博\QQ\华为 登录
+    public static final int LOGIN = 121;                        // 微信、微博、QQ、华为，登录
 
-    public static final int SHARE_TEXT = 131;                   // 微信/微博 分享文本
-    public static final int SHARE_IMAGE = 132;                  // 微信/微博/QQ 分享图片
-    public static final int SHARE_LINK = 133;                   // 微信/微博 分享链接
-    public static final int SHARE_VIDEO = 134;                  // 微信/微博/QQ 分享视频
-    public static final int SHARE_MUSIC = 135;                  // 微信/QQ 分享音乐
-    public static final int SHARE_PROGRAM = 136;                // 微信/QQ 分享小程序/应用
+    public static final int SHARE_TEXT = 131;                   // 微信、微博 分享文本
+    public static final int SHARE_IMAGE = 132;                  // 微信、微博、QQ 分享图片
+    public static final int SHARE_LINK = 133;                   // 微信、 微博 分享链接
+    public static final int SHARE_VIDEO = 134;                  // 微信、微博、QQ 分享视频
+    public static final int SHARE_MUSIC = 135;                  // 微信、QQ 分享音乐
+    public static final int SHARE_PROGRAM = 136;                // 微信、QQ 分享小程序、应用
 
     public static final int WITH_HW = 146;                      // 华为 第三方标记
     public static final int WITH_QQ = 143;                      // QQ 第三方标记
@@ -38,6 +41,14 @@ public class Auth {
     public static final int WITH_ZFB = 144;                     // 支付宝 第三方标记
 
     static HashSet<BaseAuthBuild> mBuilderSet = new HashSet<>();
+
+    static void addBuilder(BaseAuthBuild build) {
+        mBuilderSet.add(build);
+    }
+
+    static void removeBuilder(BaseAuthBuild build) {
+        mBuilderSet.remove(build);
+    }
 
     private Auth() { }
 
@@ -50,14 +61,6 @@ public class Auth {
             }
         }
         return null;
-    }
-
-    static void addBuilder(BaseAuthBuild build) {
-        mBuilderSet.add(build);
-    }
-
-    static void removeBuilder(BaseAuthBuild build) {
-        mBuilderSet.remove(build);
     }
 
     public static AuthBuilderInit init() {
@@ -88,56 +91,21 @@ public class Auth {
         return AuthBuilderInit.getInstance().getFactoryForZFB().getAuthBuild(context);
     }
 
-    @IntDef({RouseWeb, Pay, LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO, SHARE_MUSIC, SHARE_PROGRAM})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ActionWX {
-    }
-
-    @IntDef({LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ActionWB {
-    }
-
-    @IntDef({LOGIN, SHARE_IMAGE, SHARE_MUSIC, SHARE_VIDEO, SHARE_PROGRAM})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ActionQQ {
-    }
-
-    @IntDef({RouseWeb, Pay})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ActionZFB {
-    }
-
-    @IntDef({Pay})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ActionYL {
-    }
-
-    @IntDef({LOGIN, Pay, RouseWeb})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface ActionHW {
-    }
-
-    @IntDef({WITH_HW, WITH_QQ, WITH_WB, WITH_WX, WITH_YL, WITH_ZFB})
-    @Retention(RetentionPolicy.SOURCE)
-    public @interface WithThird {
-    }
-
     public static class AuthBuilderInit {
-        String QQAppID;
-
-        String WXAppID;
-        String WXSecret;
-
-        String WBAppKey;
-        String WBRedirectUrl;
-        String WBScope;
-
-        String HWMerchantID;
-        String HWAppID;
-        String HWKey;
-
         private static AuthBuilderInit mInstance;
+
+        private String QQAppID;
+
+        private String WXAppID;
+        private String WXSecret;
+
+        private String WBAppKey;
+        private String WBRedirectUrl;
+        private String WBScope;
+
+        private String HWMerchantID;
+        private String HWAppID;
+        private String HWKey;
 
         private AuthBuildFactory mFactoryForHW;
         private AuthBuildFactory mFactoryForQQ;
@@ -146,11 +114,85 @@ public class Auth {
         private AuthBuildFactory mFactoryForYL;
         private AuthBuildFactory mFactoryForZFB;
 
+        AuthBuilderInit() {}
+
         static AuthBuilderInit getInstance() {
             if (mInstance != null) {
                 return mInstance;
             } else {
                 throw new NullPointerException("添加依赖配置, 初始化");
+            }
+        }
+
+        public String getQQAppID() {
+            if (TextUtils.isEmpty(QQAppID)) {
+                throw new NullPointerException("请配置 QQAppID");
+            } else {
+                return QQAppID;
+            }
+        }
+
+        public String getWXAppID() {
+            if (TextUtils.isEmpty(WXAppID)) {
+                throw new NullPointerException("请配置 WXAppID");
+            } else {
+                return WXAppID;
+            }
+        }
+
+        public String getWXSecret() {
+            if (TextUtils.isEmpty(WXSecret)) {
+                throw new NullPointerException("请配置 WXSecret");
+            } else {
+                return WXSecret;
+            }
+        }
+
+        public String getWBAppKey() {
+            if (TextUtils.isEmpty(WBAppKey)) {
+                throw new NullPointerException("请配置 WBAppKey");
+            } else {
+                return WBAppKey;
+            }
+        }
+
+        public String getWBRedirectUrl() {
+            if (TextUtils.isEmpty(WBRedirectUrl)) {
+                throw new NullPointerException("请配置 WBRedirectUrl");
+            } else {
+                return WBRedirectUrl;
+            }
+        }
+
+        public String getWBScope() {
+            if (TextUtils.isEmpty(WBScope)) {
+                throw new NullPointerException("请配置 WBScope");
+            } else {
+                return WBScope;
+            }
+        }
+
+        public String getHWMerchantID() {
+            if (TextUtils.isEmpty(HWMerchantID)) {
+                throw new NullPointerException("请配置 HWMerchantID");
+            } else {
+                return HWMerchantID;
+            }
+        }
+
+        public String getHWAppID() {
+            if (TextUtils.isEmpty(HWAppID)) {
+                throw new NullPointerException("请配置 HWAppID");
+            } else {
+                return HWAppID;
+            }
+        }
+
+        public String getHWKey() {
+            if (TextUtils.isEmpty(HWKey)) {
+                throw new NullPointerException("请配置 HWKey");
+            } else {
+                return HWKey;
             }
         }
 
@@ -242,6 +284,9 @@ public class Auth {
             return this;
         }
 
+        /**
+         * 配置华为公钥
+         */
         public AuthBuilderInit setHWKey(String key) {
             HWKey = key;
             return this;
@@ -285,4 +330,32 @@ public class Auth {
     abstract static class AuthBuildFactory {
         abstract <T extends BaseAuthBuild> T getAuthBuild(Context context);
     }
+
+    @IntDef({Rouse, Pay, LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO, SHARE_MUSIC, SHARE_PROGRAM})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ActionWX { }
+
+    @IntDef({LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ActionWB { }
+
+    @IntDef({LOGIN, SHARE_IMAGE, SHARE_MUSIC, SHARE_VIDEO, SHARE_PROGRAM})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ActionQQ { }
+
+    @IntDef({Rouse, Pay})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ActionZFB { }
+
+    @IntDef({Pay})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ActionYL { }
+
+    @IntDef({LOGIN, Pay, Rouse})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface ActionHW { }
+
+    @IntDef({WITH_HW, WITH_QQ, WITH_WB, WITH_WX, WITH_YL, WITH_ZFB})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface WithThird { }
 }

@@ -53,16 +53,14 @@ public class AuthBuildForYL extends BaseAuthBuildForYL {
                 mContext.startActivity(intent);
                 break;
             default:
-                if (mAction != Auth.UNKNOWN_TYPE) {
-                    mCallback.onFailed("银联暂未支持的 Action");
-                }
+                mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "银联暂未支持的 Action");
                 destroy();
         }
     }
 
     private void pay(Activity activity) {
         if (TextUtils.isEmpty(mOrderInfo)) {
-            mCallback.onFailed("必须添加 OrderInfo, 使用 payOrderInfo(info) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加 OrderInfo, 使用 payOrderInfo(info) ");
             activity.finish();
         } else {
             int i;
@@ -74,7 +72,7 @@ public class AuthBuildForYL extends BaseAuthBuildForYL {
             if (UPPayAssistEx.PLUGIN_VALID == i) {                  // 该终端已经安装控件，并启动控件
 
             } else if (UPPayAssistEx.PLUGIN_NOT_FOUND == i) {       // 手机终端尚未安装支付控件，需要先安装支付控件
-                mCallback.onFailed("手机终端尚未安装支付控件，需要先安装支付控件 ");
+                mCallback.onFailed(String.valueOf(Auth.ErrorUninstalled), "手机终端尚未安装支付控件，需要先安装支付控件 ");
                 activity.finish();
             }
         }
@@ -111,9 +109,9 @@ public class AuthBuildForYL extends BaseAuthBuildForYL {
             if (data != null && data.getExtras() != null) {
                 String str = data.getExtras().getString("pay_result");
                 if( "success".equalsIgnoreCase(str) ){
-                    mBuild.mCallback.onSuccessForPay("银联支付成功");
+                    mBuild.mCallback.onSuccessForPay(String.valueOf(resultCode), "银联支付成功");
                 }  else if ("fail".equalsIgnoreCase(str)) {
-                    mBuild.mCallback.onFailed("银联支付失败");
+                    mBuild.mCallback.onFailed(String.valueOf(resultCode), "银联支付失败");
                 } else if ("cancel".equalsIgnoreCase(str)) {
                     mBuild.mCallback.onCancel();
                 }

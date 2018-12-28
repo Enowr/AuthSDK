@@ -33,18 +33,18 @@ public class AliRouseActivity extends Activity {
                 String status_agreement = Utils.decodeURL(data, "status=");             // 如果只是签订续订协议，则根据status字段来判断协议的状态
 
                 if ("TRADE_FINISHED".equals(trade_status) || "TRADE_SUCCESS".equals(trade_status) || "NORMAL".equals(status_agreement)) { // 支付成功或签约成功
-                    mCallback.onSuccessForRouse("支付宝签约支付成功");
+                    mCallback.onSuccessForRouse(trade_status, "支付宝签约支付成功");
                 } else if ("TRADE_PENDING".equals(trade_status)) {                          // 等待卖家收款
-                    mCallback.onSuccessForRouse("正在确认签约支付结果...");
+                    mCallback.onSuccessForRouse(trade_status,"正在确认签约支付结果...");
                 } else {                                                                    // 其他都认为支付失败
-                    mCallback.onFailed("支付宝签约支付失败");
+                    mCallback.onFailed(trade_status,"支付宝签约支付失败");
                 }
                 mCallback = null;
             }
         } catch (Exception e) {
             e.printStackTrace();
             if (mCallback != null) {
-                mCallback.onFailed("支付宝签约支付失败");
+                mCallback.onFailed(String.valueOf(Auth.ErrorUnknown), "支付宝签约支付失败");
             }
         }
         finish();                                                                           // 关闭此activity

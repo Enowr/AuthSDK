@@ -1,12 +1,12 @@
 # Android 第三方登录、分享、支付、签约集成方案
 
-  目前很多 APP 都添加了第三方功能，包括登录、分享、支付、签约等功能。其中集成较多的平台是微信、QQ、支付宝、微博、银联、华为支付。这里主要介绍这几个平台的集成方案。
+- 目前很多 APP 都添加了第三方授权功能，包括登录、分享、支付、签约等等。其中集成较多的平台是微信、QQ、支付宝、微博、银联、华为。
+- 由于这些代码都是固定写法，所以最后抽取成了一个库 [AuthSDK](https://github.com/WJ-G/AuthSDK)。
+- 目前支持微信、微博、QQ、华为的登录和分享（不包括华为）功能，微信、支付宝、银联、华为的支付功能，微信、支付宝、华为的签约功能。
+- 可根据需求引用不同第三方集成库。
+- SDK 不支持同时做多个请求。
 
-  由于这些代码都是固定写法，所以最后抽取成了一个第三方集成库 [AuthSDK](https://github.com/Jieger/AuthSDK)。
-
-  目前支持 微信、微博、QQ、华为的登录和分享功能，微信、支付宝、银联、华为的支付功能，微信、支付宝、华为的签约功能。SDK 不支持并发操作，也就是说不能同时做多个请求，只能串行请求。
-
-### 当前 SDK 集成为最新的第三方SDK：  
+### 集成第三方 SDK 版本：  
   - 微信 : com.tencent.mm.opensdk:wechat-sdk-android-without-mta:5.1.4  
   - 微博 : com.sina.weibo.sdk:core:4.2.7:openDefaultRelease@aar  
   - QQ : open_sdk_r5990_lite  
@@ -15,8 +15,9 @@
   - 华为: 2.6.1.301
 
 # 集成方法
-1. 根据需求选择是否添加, 在 project 目录下的 build.gradle 文件中添加微博和华为的 maven 地址：  
-    ```aidl
+1. 根据需求选择是否添加, 在 project 目录下的 build.gradle 文件中添加微博和华为的 maven 地址： 
+ 
+	```
     allprojects {
         repositories {
             google()
@@ -26,35 +27,39 @@
             maven { url 'http://developer.huawei.com/repo/' }               // 华为仓库
         }
     }
-    ```
+	```
     
 2. 根据需求选择是否添加, 在 app module 的 build.gradle 中添加引用:  
-    ```aidl
+
+	```aidl
     dependencies {
-        compile 'tech.jianyue.auth:auth:1.4.1'
-        compile 'tech.jianyue.auth:auth_huawei:1.4.1'
-        compile 'tech.jianyue.auth:auth_qq:1.4.1'
-        compile 'tech.jianyue.auth:auth_weibo:1.4.1'
-        compile 'tech.jianyue.auth:auth_weixin:1.4.1'
-        compile 'tech.jianyue.auth:auth_yinlian:1.4.1'
-        compile 'tech.jianyue.auth:auth_zhifubao:1.4.1'
+        compile 'tech.jianyue.auth:auth:1.4.2'
+        compile 'tech.jianyue.auth:auth_huawei:1.4.2'
+        compile 'tech.jianyue.auth:auth_qq:1.4.2'
+        compile 'tech.jianyue.auth:auth_weibo:1.4.2'
+        compile 'tech.jianyue.auth:auth_weixin:1.4.2'
+        compile 'tech.jianyue.auth:auth_yinlian:1.4.2'
+        compile 'tech.jianyue.auth:auth_zhifubao:1.4.2'
     }
     ```
 
-3. 在 app module 的清单文件中添加 QQ、微信、支付宝、华为 的配置:  
-    其中 QQ_SCHEME 为配置项，值为: tencent 加 QQ 的 AppID；  
-    支付宝的 scheme 为签约回调的标记，需要与支付宝确定；  
-    用到哪个第三方就配置对应的项目就可以，其他第三方不需配置；
-    ```aidl
+3. 在 app module 的清单文件中添加 QQ、微信、支付宝、华为的配置:  
+	> 其中 QQ_SCHEME 为配置项，值为: tencent 加 QQ 的 AppID；  
+	> 支付宝的 scheme 为签约回调的标记，需要与支付宝确定；   
+	> 用到哪个第三方就配置对应的项目就可以；
+
+    ``` xml
         <!-- 微信 -->
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:exported="true"/>
 
         <activity 
             android:name=".wxapi.WXPayEntryActivity"
             android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:exported="true" />
 
         <!-- QQ -->
@@ -112,9 +117,10 @@
         </provider>
     ```
 
-4. 在 app module 的包名下添加 wxapi 包, 并创建 WXEntryActivity 类和 WXPayEntryActivity 类, 继承自库内 AuthActivity 类；
-    其中 WXEntryActivity 为登录、分享回调；WXPayEntryActivity 为支付回调；
-    ```aidl
+4. 在 app module 的包名下添加 wxapi 包, 并创建 WXEntryActivity 类和 WXPayEntryActivity 类, 继承自库内 AuthActivity 类；  
+	> 其中 WXEntryActivity 为登录、分享回调；WXPayEntryActivity 为支付回调；
+
+    ``` java
     public class WXPayEntryActivity extends AuthActivity {
     }
     public class WXEntryActivity extends AuthActivity {
@@ -122,13 +128,14 @@
     ```
 
 5. 初始化 Auth 库，其中的 ID、KYE 等需要通过第三方网站进行注册申请  
-    ```aidl
-    Auth.init().setQQAppID("QQ_APPID")
-            .setWXAppID("WECHAT_APPID")
-            .setWXSecret("WECHAT_SECRET")
-            .setWBAppKey("WEIBO_APPKEY")
-            .setWBDedirectUrl("WEIBO_REDIRECT_URL")
-            .setWBScope("WEIBO_SCOPE")
+    
+    ``` java 
+    Auth.init().setQQAppID("")
+            .setWXAppID("")
+            .setWXSecret("")
+            .setWBAppKey("")
+            .setWBDedirectUrl("")
+            .setWBScope("")
             .setHWAppID("")
             .setHWKey("")
             .setHWMerchantID("")
@@ -140,99 +147,160 @@
             .addFactoryForZFB(AuthBuildForZFB.getFactory())
             .build();
          
-    如果使用华为支付功能, 还需要在 MainActivity 里初始化华为相关控件(华为接口做的真是没有其他第三方友好, 有待提升啊)
-    Auth.withHW(context)
-           .initHW(activity);
-      
+    // 如果使用华为支付功能, 还需要在 MainActivity 里初始化华为相关控件(华为接口做的真是没有其他第三方友好, 有待提升啊)
+    Auth.withHW(context).initHW(activity);
     ```
 
-6. 添加权限
-    ```aidl
+6. 添加权限（已经在对应库的Manifest中添加，无需再次手动添加）
+
+    ``` xml
+    <!-- QQ -->
+    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>-->
+ 
+    <!-- 微博 -->
+    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />&lt;!&ndash; 用于调用 JNI &ndash;&gt;-->
+    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+ 
+    <!-- 微信 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+ 
+    <!--银联-->
+    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
     <uses-permission android:name="android.permission.NFC" />
     <uses-permission android:name="org.simalliance.openmobileapi.SMARTCARD" />
     <uses-feature android:name="android.hardware.nfc.hce" />
+ 
+    <!--支付宝-->
+    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />-->
+    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+ 
+    <!--华为-->
+    <!--HMS-SDK引导升级HMS功能，访问OTA服务器需要网络权限-->
+    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <!--HMS-SDK引导升级HMS功能，保存下载的升级包需要SD卡写权限-->
+    <!--<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />-->
+    <!--检测网络状态-->
+    <!--<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>-->
+    <!--检测wifi状态-->
+    <!--<uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>-->
+    <!--为了获取用户手机的IMEI，用来唯一的标识用户。-->
+    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE"/>-->
+    <!--如果是安卓8.0，应用编译配置的targetSdkVersion>=26，请务必添加以下权限 -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+ 
     ```
 
 7. 添加混淆:
-    ```aidl
-    # Auth
-    -keep class tech.jianyue.auth.** {*;}
- 
-    # 微博
-    -keep class com.sina.weibo.sdk.** { *; }
- 
-    # 微信
-    -keep class com.tencent.mm.opensdk.** {
-       *;
-    }
-    -keep class com.tencent.wxop.** {
-       *;
-    }
-    -keep class com.tencent.mm.sdk.** {
-       *;
-    }
- 
-    # QQ
-    -keep class com.tencent.open.TDialog$*
-    -keep class com.tencent.open.TDialog$* {*;}
-    -keep class com.tencent.open.PKDialog
-    -keep class com.tencent.open.PKDialog {*;}
-    -keep class com.tencent.open.PKDialog$*
-    -keep class com.tencent.open.PKDialog$* {*;}
- 
-    # 支付宝
-    -keep class com.alipay.android.app.IAlixPay{*;}
-    -keep class com.alipay.android.app.IAlixPay$Stub{*;}
-    -keep class com.alipay.android.app.IRemoteServiceCallback{*;}
-    -keep class com.alipay.android.app.IRemoteServiceCallback$Stub{*;}
-    -keep class com.alipay.sdk.app.PayTask{ public *;}
-    -keep class com.alipay.sdk.app.AuthTask{ public *;}
-    -keep class com.alipay.sdk.app.H5PayCallback {
-        <fields>;
-        <methods>;
-    }
-    -keep class com.alipay.android.phone.mrpc.core.** { *; }
-    -keep class com.alipay.apmobilesecuritysdk.** { *; }
-    -keep class com.alipay.mobile.framework.service.annotation.** { *; }
-    -keep class com.alipay.mobilesecuritysdk.face.** { *; }
-    -keep class com.alipay.tscenter.biz.rpc.** { *; }
-    -keep class org.json.alipay.** { *; }
-    -keep class com.alipay.tscenter.** { *; }
-    -keep class com.ta.utdid2.** { *;}
-    -keep class com.ut.device.** { *;}
- 
-    # 银联
-    -keep class cn.gov.pbc.** { *;}
-    -keep class com.UCMobile.PayPlugin.** { *;}
-    -keep class com.UCMobile.unionpay.** { *;}
-    -keep class com.unionpay.** { *;}
- 
-    # 华为
-    -ignorewarning
-    -keepattributes *Annotation*
-    -keepattributes Exceptions
-    -keepattributes InnerClasses
-    -keepattributes Signature
-    -keepattributes SourceFile,LineNumberTable
-    -keep class com.hianalytics.android.**{*;}
-    -keep class com.huawei.updatesdk.**{*;}
-    -keep class com.huawei.hms.**{*;}
- 
-    -keep class com.huawei.gamebox.plugin.gameservice.**{*;}    
+
+    ``` pro
+	# Auth
+	-keep class tech.jianyue.auth.** {*;}
+
+	# 微博
+	-keep class com.sina.weibo.sdk.** { *; }
+
+	# 微信
+	-keep class com.tencent.mm.opensdk.** { *; }
+	-keep class com.tencent.wxop.** { *; }
+	-keep class com.tencent.mm.sdk.** { *; }
+
+	# QQ
+	-keep class com.tencent.open.TDialog$*
+	-keep class com.tencent.open.TDialog$* {*;}
+	-keep class com.tencent.open.PKDialog
+	-keep class com.tencent.open.PKDialog {*;}
+	-keep class com.tencent.open.PKDialog$*
+	-keep class com.tencent.open.PKDialog$* {*;}
+
+	# 支付宝
+	-keep class com.alipay.android.app.IAlixPay{*;}
+	-keep class com.alipay.android.app.IAlixPay$Stub{*;}
+	-keep class com.alipay.android.app.IRemoteServiceCallback{*;}
+	-keep class com.alipay.android.app.IRemoteServiceCallback$Stub{*;}
+	-keep class com.alipay.sdk.app.PayTask{ public *;}
+	-keep class com.alipay.sdk.app.AuthTask{ public *;}
+	-keep class com.alipay.sdk.app.H5PayCallback {
+    	<fields>;
+    	<methods>;
+	}
+	-keep class com.alipay.android.phone.mrpc.core.** { *; }
+	-keep class com.alipay.apmobilesecuritysdk.** { *; }
+	-keep class com.alipay.mobile.framework.service.annotation.** { *; }
+	-keep class com.alipay.mobilesecuritysdk.face.** { *; }
+	-keep class com.alipay.tscenter.biz.rpc.** { *; }
+	-keep class org.json.alipay.** { *; }
+	-keep class com.alipay.tscenter.** { *; }
+	-keep class com.ta.utdid2.** { *;}
+	-keep class com.ut.device.** { *;}
+
+	# 银联
+	-keep  public class com.unionpay.uppay.net.HttpConnection {
+		public <methods>;
+	}
+	-keep  public class com.unionpay.uppay.net.HttpParameters {
+		public <methods>;
+	}
+	-keep  public class com.unionpay.uppay.model.BankCardInfo {
+		public <methods>;
+	}
+	-keep  public class com.unionpay.uppay.model.PAAInfo {
+		public <methods>;
+	}
+	-keep  public class com.unionpay.uppay.model.ResponseInfo {
+		public <methods>;
+	}
+	-keep  public class com.unionpay.uppay.model.PurchaseInfo {
+		public <methods>;
+	}
+	-keep  public class com.unionpay.uppay.util.DeviceInfo {
+		public <methods>;
+	}
+	-keep  public class com.unionpay.uppay.util.PayEngine {
+		public <methods>;
+		native <methods>;
+	}
+	-keep  public class com.unionpay.utils.UPUtils {
+		native <methods>;
+	}
+
+	# 华为
+	-ignorewarning
+	-keepattributes *Annotation*
+	-keepattributes Exceptions
+	-keepattributes InnerClasses
+	-keepattributes Signature
+	-keepattributes SourceFile,LineNumberTable
+	-keep class com.hianalytics.android.**{*;}
+	-keep class com.huawei.updatesdk.**{*;}
+	-keep class com.huawei.hms.**{*;}
+	-keep class com.huawei.gamebox.plugin.gameservice.**{*;}
+	-keep public class com.huawei.android.hms.agent.** extends android.app.Activity { public *; protected *; }
+	-keep interface com.huawei.android.hms.agent.common.INoProguard {*;}
+	-keep class * extends com.huawei.android.hms.agent.common.INoProguard {*;} 
     ```
 
 8. 调用方式:  
-
+    
     - 登录
-    ```aidl
+    
+    ``` java
     Auth.withWX(context)
             .setAction(Auth.LOGIN)
             .build(mCallback);
@@ -250,58 +318,61 @@
              .build(mCallback);
     ```
 
-    - 签约, rouseWeb 数据由服务器根据第三方协议生成
-    ```aidl
-    Auth.withWX(context)
-            .setAction(Auth.RouseWeb)
-            .rouseWeb("www.qq.com")
+    - 签约, rouse 数据由服务器根据第三方协议生成
+    
+    ``` java
+    Auth.withWX(context)				// 微信唤起Web, 可用于唤起微信的自动续订服务，目前没有回调结果
+            .setAction(Auth.Rouse)
+            .rouseWeb("")
             .build(mCallback);
 
     Auth.withZFB(context)
-            .setAction(Auth.RouseWeb)
+            .setAction(Auth.Rouse)
             .rouseWeb("")
             .build(mCallback);
     
-    Auth.withHW(this)
-            .setAction(Auth.RouseWeb)
-            .payAmount("")
-            ......
+    Auth.withHW(context)              // 参数按文档配置全
+            .setAction(Auth.Rouse)
+            .payTradeType("")
+            .payPublicKey("")
             .build(mCallback);
     ```
 
     - 支付, 数据由服务器根据第三方协议生成
-    ```aidl
+
+    ``` java
     Auth.withWX(context)
             .setAction(Auth.Pay)
-            .payNonceStr("1")
-            .payPackageValue("1")
-            .payPartnerId("1")
-            .payPrepayId("1")
-            .paySign("1")
-            .payTimestamp("1")
+            .payNonceStr("")
+            .payPackageValue("")
+            .payPartnerId("")
+            .payPrepayId("")
+            .paySign("")
+            .payTimestamp("")
             .build(mCallback);
 
     Auth.withZFB(context)
             .setAction(Auth.Pay)
-            .payOrderInfo("1")
+            .payOrderInfo("")
             .payIsShowLoading(true)      // 支付宝提供, 是否显示加载动画
             .build(mCallback);
 
     Auth.withYL(context)
             .setAction(Auth.Pay)
-            .payOrderInfo("111")
+            .payOrderInfo("")
             .build(mCallback);
          
     Auth.withHW(this)
             .setAction(Auth.Pay)
             .payAmount("")
-            ......
+            ...
             .build(mCallback);
     ```
 
     - 分享  
     微信中 shareToSession shareToTimeline shareToFavorite 互斥, 只能使用其中一个;
-    ``` aidl
+    
+    ``` java
     // 微信分享文本、图片、链接、视频、音乐、小程序
     Auth.withWX(context)
             .setAction(Auth.SHARE_TEXT)
@@ -317,7 +388,7 @@
             .setAction(Auth.SHARE_IMAGE)
             .shareToTimeline()
             .shareImageTitle("Title")
-            .shareImage(getBitmap())      // 必填
+            .shareImage(getBitmap())   	           // 必填
             .build(mCallback);
 
     Auth.withWX(context)
@@ -355,7 +426,7 @@
             .shareProgramId("")
             .shareProgramImage(getBitmap())
             .shareProgramPath("")
-            .shareProgramUrl("")         // 低版本微信打开的网络链接
+            .shareProgramUrl("")                  // 低版本微信打开的网络链接
             .build(mCallback);
 
     // 微博分享文本、图片、链接、视频
@@ -366,8 +437,8 @@
 
     Auth.withWB(context)
             .setAction(Auth.SHARE_IMAGE)
-            .shareToStory()                // 分享到微博故事, 仅支持单图和视频, 需要设置 shareImageUri(uri)
-            .shareImageUri(getImageUri())  // 分享图片到微博故事时调用, Uri 为本地图片
+            .shareToStory()                       // 分享到微博故事, 仅支持单图和视频, 需要设置 shareImageUri(uri)
+            .shareImageUri(getImageUri())         // 分享图片到微博故事时调用, Uri 为本地图片
             .build(mCallback);
 
     Auth.withWB(context)
@@ -394,7 +465,7 @@
     Auth.withWB(context)
             .setAction(Auth.SHARE_VIDEO)
             .shareToStory()
-            .shareVideoUri(getVideoUri())      // 必填, 本地 Uri
+            .shareVideoUri(getVideoUri())        // 必填, 本地 Uri
             .build(mCallback);
 
     Auth.withWB(context)
@@ -402,24 +473,24 @@
             .shareVideoTitle("Title")
             .shareVideoDescription("Description")
             .shareVideoText("Text")
-            .shareVideoUri(getVideoUri())      // 必填, 本地 Uri
+            .shareVideoUri(getVideoUri())        // 必填, 本地 Uri
             .build(mCallback);
 
     // QQ 分享
     Auth.withQQ(context)
             .setAction(Auth.SHARE_IMAGE)
-            .shareToQzone(false)              // 单图和图文有效; 三种状态: 1. 不调用默认是不隐藏分享到QZone按钮且不自动打开分享到QZone的对话框 2. true 直接打开QZone的对话框, 3. false 隐藏分享到QZone
-            .shareImageUrl(getImagePath())    // 单图只支持本地路径
-            .shareImageName("Name")           // 单图有效, 设置后无明显效果
+            .shareToQzone(false)                // 单图和图文有效; 三种状态: 1. 不调用默认是不隐藏分享到QZone按钮且不自动打开分享到QZone的对话框 2. true 直接打开QZone的对话框, 3. false 隐藏分享到QZone
+            .shareImageUrl(getImagePath())      // 单图只支持本地路径
+            .shareImageName("Name")             // 单图有效, 设置后无明显效果
             .build(mCallback);
 
     Auth.withQQ(context)
             .setAction(Auth.SHARE_IMAGE)
-            .shareImageTitle("Title")         // 图文分享与多图分享时必传, 不传为单图分享
-            .shareImageUrl(getImagePath())    // 图文支持分享图片的URL或者本地路径
-            .shareImageTargetUrl(LinkUrl)     // 图文分享与多图分享时必传, 点击后的跳转URL, 网络链接
-            .shareImageName("Name")           // 图文有效, 设置后无明显效果
-            .shareImageArk("{\"ark\":\"a\"}") // 可选, 分享携带ARK JSON串. 仅支持图文方式
+            .shareImageTitle("Title")           // 图文分享与多图分享时必传, 不传为单图分享
+            .shareImageUrl(getImagePath())      // 图文支持分享图片的URL或者本地路径
+            .shareImageTargetUrl(LinkUrl)       // 图文分享与多图分享时必传, 点击后的跳转URL, 网络链接
+            .shareImageName("Name")             // 图文有效, 设置后无明显效果
+            .shareImageArk("{\"ark\":\"a\"}")   // 可选, 分享携带ARK JSON串. 仅支持图文方式
             .shareImageDescription("Description") // 多图\图文有效
             .build(mCallback);
 
@@ -439,7 +510,7 @@
             .shareImageMultiImage(getImagePathList())
             .build(mCallback);
 
-    Auth.withQQ(context)       // 由于 Video 只能分享到 QQ 空间, 不受 shareToQzone() 状态影响;
+    Auth.withQQ(context)                      // 由于 Video 只能分享到 QQ 空间, 不受 shareToQzone() 状态影响;
             .setAction(Auth.SHARE_VIDEO)
             .shareVideoUrl(getVideoPath())    // 仅支持本地路径
             .shareVideoScene("Scene")
@@ -468,9 +539,10 @@
     ```
 
 9. 注意事项: 
-      使用中如出现异常, 可以查看项目源码, 其中有第三方 SDK 的一些使用限制注释;  
-      支付时, 参照官方文档获取服务器返回信息.  
-      项目中的 UserInfoForThird 类为第三方登录后返回的数据, 其中 userInfo 字段包含了第三方返回的原始用户信息数据 Json
+	> 使用中如出现异常, 可以查看项目源码, 其中有第三方 SDK 的一些使用限制注释;  
+	> 支付时, 参照官方文档获取服务器返回信息.  
+	> 项目中的 UserInfoForThird 类为第三方登录后返回的数据, 其中 userInfo 字段包含了第三方返回的原始用户信息数据 Json.  
+	> 回调函数里添加了一些返回Code，主要由第三方返回，用于调试或自己处理某些特殊处理的情况，比如支付时支付宝会返回 8000，表示支付待确认状态，需要服务器端做轮询操作，可通过这个返回code做相应处理；
 
 ## 项目结构
 1. Auth 类是对外开放, 用于实际使用的类, 包含了 Action 类型, 和不同第三方功能的调用.

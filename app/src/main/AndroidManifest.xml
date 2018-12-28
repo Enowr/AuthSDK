@@ -17,16 +17,22 @@
             </intent-filter>
         </activity>
 
+
+
         <!-- 微信 -->
         <activity
             android:name=".wxapi.WXEntryActivity"
             android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:exported="true"/>
 
         <activity
             android:name=".wxapi.WXPayEntryActivity"
             android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:exported="true" />
+
+
 
         <!-- QQ -->
         <activity
@@ -42,6 +48,8 @@
             </intent-filter>
         </activity>
 
+
+
         <!-- 支付宝签约 -->
         <activity
             android:name="tech.jianyue.auth.AliRouseActivity"
@@ -56,13 +64,14 @@
             </intent-filter>
         </activity>
 
+
+
         <!--华为-->
         <!--在application节点下增加APPID value的值“xxx”用实际申请的应用ID替换，来源于开发者联盟网站应用的服务详情。-->
         <meta-data
             android:name="com.huawei.hms.client.appid"
             android:value="appid=xxx">
         </meta-data>
-
         <!--在application节点下增加provider，UpdateProvider用于HMS-SDK引导升级HMS，提供给系统安装器读取升级文件。UpdateSdkFileProvider用于应用自升级。-->
         <!--“xxx.xxx.xxx”用实际的应用包名替换-->
         <provider

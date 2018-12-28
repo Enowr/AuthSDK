@@ -55,11 +55,15 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
     @Override                                               // 初始化资源
     void init() {
         if (!isInit) {
-            if (TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().WBAppKey) ||
-                    TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().WBRedirectUrl) || TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().WBScope)) {
+            if (TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().getWBAppKey()) ||
+                    TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().getWBRedirectUrl()) || TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().getWBScope())) {
                 throw new IllegalArgumentException("WEIBO_APPKEY | WEIBO_REDIRECT_URL | WEIBO_SCOPE was empty");
             } else {
-                WbSdk.install(mContext, new AuthInfo(mContext, Auth.AuthBuilderInit.getInstance().WBAppKey, Auth.AuthBuilderInit.getInstance().WBRedirectUrl, Auth.AuthBuilderInit.getInstance().WBScope));
+                WbSdk.install(mContext, new AuthInfo(
+                        mContext,
+                        Auth.AuthBuilderInit.getInstance().getWBAppKey(),
+                        Auth.AuthBuilderInit.getInstance().getWBRedirectUrl(),
+                        Auth.AuthBuilderInit.getInstance().getWBScope()));
                 isInit = true;
             }
         }
@@ -88,7 +92,7 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
 
     private void share(Activity activity, WbShareHandler handler) {                        // 微博分享 API
         if (handler == null) {
-            mCallback.onFailed("微博分享失败, WbShareHandler 为空");
+            mCallback.onFailed(String.valueOf(Auth.ErrorUnknown), "微博分享失败, WbShareHandler 为空");
             activity.finish();
         } else {
             switch (mAction) {
@@ -105,9 +109,7 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
                     shareVideo(activity, handler);
                     break;
                 default:
-                    if (mAction != Auth.UNKNOWN_TYPE) {
-                        mCallback.onFailed("微博暂未支持的 Action");
-                    }
+                    mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "微博暂未支持的 Action");
                     activity.finish();
                     break;
             }
@@ -116,7 +118,7 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
 
     private void shareText(Activity activity, WbShareHandler handler) {
         if (TextUtils.isEmpty(mText)) {
-            mCallback.onFailed("必须添加文本, 使用 shareText(str) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加文本, 使用 shareText(str) ");
             activity.finish();
         } else {
             TextObject textObject = new TextObject();
@@ -139,17 +141,17 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
                 sm.setImageUri(mUri);
                 handler.shareToStory(sm);
             } else {
-                mCallback.onFailed("分享到微博故事, 必须添加 Uri, 且不为空, 使用 shareImageUri(uri) ");
+                mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "分享到微博故事, 必须添加 Uri, 且不为空, 使用 shareImageUri(uri) ");
                 activity.finish();
             }
         } else if (mMultiImage) {
             // pathList 设置的是本地文件的路径,并且是当前应用可以访问的路径，现在不支持网络路径（多图分享依靠微博最新版本的支持，所以当分享到低版本的微博应用时，多图分享失效
             // 可以通过WbSdk.hasSupportMultiImage 方法判断是否支持多图分享,h5分享微博暂时不支持多图）多图分享接入程序必须有文件读写权限，否则会造成分享失败
             if (!WbSdk.supportMultiImage(activity)) {
-                mCallback.onFailed("当前微博版本暂不支持多图分享");
+                mCallback.onFailed(String.valueOf(Auth.ErrorUnknown), "当前微博版本暂不支持多图分享");
                 activity.finish();
             } else if (mImagePathList == null || mImagePathList.size() < 1) {
-                mCallback.onFailed("必须添加多图路径集合, 使用 shareImageMultiImage(list) ");
+                mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加多图路径集合, 使用 shareImageMultiImage(list) ");
                 activity.finish();
             } else {
                 TextObject textObject = new TextObject();                   // sdk 原因, 不添加 TextObject 分享会失败
@@ -165,7 +167,7 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
                 handler.shareMessage(msg, false);
             }
         } else if (mBitmap == null) {
-            mCallback.onFailed("必须添加 Bitmap, 且不为空, 使用 shareImage(bitmap) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加 Bitmap, 且不为空, 使用 shareImage(bitmap) ");
             activity.finish();
         } else {
             ImageObject imageObject = new ImageObject();                    // 图片大小限制2M
@@ -186,13 +188,13 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
 
     private void shareLink(Activity activity, WbShareHandler handler) {
         if (TextUtils.isEmpty(mUrl)) {
-            mCallback.onFailed("必须添加链接, 且不为空, 使用 shareLinkUrl(url) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加链接, 且不为空, 使用 shareLinkUrl(url) ");
             activity.finish();
         } else if (mBitmap == null) {
-            mCallback.onFailed("必须添加链接缩略图, 且不为空, 使用 shareLinkImage(bitmap) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加链接缩略图, 且不为空, 使用 shareLinkImage(bitmap) ");
             activity.finish();
         } else if (mTitle == null) {
-            mCallback.onFailed("必须添加链接标题, 使用 shareLinkTitle(title) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加链接标题, 使用 shareLinkTitle(title) ");
             activity.finish();
         } else {
             Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 150, 150, true);
@@ -219,10 +221,10 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
 
     private void shareVideo(Activity activity, WbShareHandler handler) {
         if (!WbSdk.supportMultiImage(activity)) {
-            mCallback.onFailed("当前微博版本暂不支持视频分享");
+            mCallback.onFailed(String.valueOf(Auth.ErrorUnknown), "当前微博版本暂不支持视频分享");
             activity.finish();
         } else if (mUri == null) {
-            mCallback.onFailed("必须添加视频Uri, 且不为空, 使用 shareVideoUri(uri) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加视频Uri, 且不为空, 使用 shareVideoUri(uri) ");
             activity.finish();
         } else if (mStory) {                                         // 分享到 微博故事
             StoryMessage sm = new StoryMessage();
@@ -279,7 +281,7 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
             if (info != null) {
                 callback.onSuccessForLogin(info);
             } else {
-                callback.onFailed("微博登录失败");
+                callback.onFailed(String.valueOf(Auth.ErrorParameter), "微博登录失败，获取用户信息失败");
             }
             callback = null;
         }
@@ -313,7 +315,7 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
 
                     @Override
                     public void onFailure(WbConnectErrorMessage message) {
-                        mBuild.mCallback.onFailed(message.getErrorMessage() + "; code: " + message.getErrorCode());
+                        mBuild.mCallback.onFailed(String.valueOf(message.getErrorCode()), message.getErrorMessage());
                         destroy();
                     }
                 });
@@ -366,7 +368,7 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
 
         @Override
         public void onWbShareFail() {
-            mBuild.mCallback.onFailed("微博分享失败");
+            mBuild.mCallback.onFailed(String.valueOf(Auth.ErrorUnknown), "微博分享失败");
             destroy();
         }
     }

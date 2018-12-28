@@ -58,12 +58,12 @@ public class AuthBuildForZFB extends BaseAuthBuildForZFB {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 mContext.startActivity(intent);
                 break;
-            case Auth.RouseWeb:
+            case Auth.Rouse:
                 // 判断是否安装支付宝客户端(因为走SDK时，如果未安装支付宝，SDK会打开一个支付宝登录界面，但是走URI的不会这样做，所以在这里判断是否安装客户端并给予用户提示)
                 if (!Utils.isAppInstalled(mContext, "com.eg.android.AlipayGphone")) {
-                    mCallback.onFailed("请安装支付宝客户端！");
+                    mCallback.onFailed(String.valueOf(Auth.ErrorUninstalled), "请安装支付宝客户端！");
                 } else if (TextUtils.isEmpty(mUri)) {
-                    mCallback.onFailed("必须添加 uri, 调用 rouseWeb(uri)");
+                    mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加 uri, 调用 rouseWeb(uri)");
                 } else {
                     try {
                         Intent intent2 = new Intent(Intent.ACTION_VIEW, Uri.parse(mUri));
@@ -71,15 +71,13 @@ public class AuthBuildForZFB extends BaseAuthBuildForZFB {
                         mContext.startActivity(intent2);
                         AliRouseActivity.mCallback = callback;
                     } catch (Exception e) {
-                        mCallback.onFailed(e.getMessage());
+                        mCallback.onFailed(String.valueOf(Auth.ErrorUnknown), e.getMessage());
                     }
                 }
                 destroy();
                 break;
             default:
-                if (mAction != Auth.UNKNOWN_TYPE) {
-                    mCallback.onFailed("支付宝暂未支持的 Action");
-                }
+                mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "支付宝暂未支持的 Action");
                 destroy();
         }
     }
@@ -87,7 +85,7 @@ public class AuthBuildForZFB extends BaseAuthBuildForZFB {
     @Override
     void pay(Activity activity) {
         if (TextUtils.isEmpty(mOrderInfo)) {
-            mCallback.onFailed("必须添加 OrderInfo, 使用 payOrderInfo(info) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加 OrderInfo, 使用 payOrderInfo(info) ");
             activity.finish();
         } else {
             new AuthBuildForZFB.Pay(activity, mCallback, isShowLoading).execute(mOrderInfo);
@@ -136,18 +134,18 @@ public class AuthBuildForZFB extends BaseAuthBuildForZFB {
                 // 对于支付结果，请商户依赖服务端的异步通知结果。同步通知结果，仅作为支付结束的通知。
                 // 判断 resultStatus 为 9000 则代表支付成功
                 if (TextUtils.equals(resultStatus, "9000")) {               // 该笔订单是否真实支付成功，需要依赖服务端的异步通知
-                    callback.onSuccessForPay(resultMap.toString());
+                    callback.onSuccessForPay(resultStatus, resultMap.toString());
                 } else if (TextUtils.equals(resultStatus, "6001")) {
                     callback.onCancel();
                 } else {                                                       // 判断resultStatus 为非“9000”则代表可能支付失败, 该笔订单真实的支付结果，需要依赖服务端的异步通知
                     if (TextUtils.equals(resultStatus, "8000")) {           // “8000”代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
-                        callback.onSuccessForPay(resultMap.toString());        // 默认为支付成功
+                        callback.onSuccessForPay(resultStatus, resultMap.toString());        // 默认为支付成功
                     } else {                                                   // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
-                        callback.onFailed("支付宝支付失败");
+                        callback.onFailed(resultStatus, "支付宝支付失败");
                     }
                 }
             } else {
-                callback.onFailed("支付宝支付失败");
+                callback.onFailed(String.valueOf(Auth.ErrorUnknown), "支付宝支付失败");
             }
             activity.finish();
             callback = null;

@@ -29,6 +29,12 @@
             android:text="支付宝支付" />
 
         <Button
+            android:id="@+id/pay_hw"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="华为支付" />
+
+        <Button
             android:id="@+id/login_wx"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -48,11 +54,31 @@
             android:text="QQ 登录" />
 
         <Button
-            android:id="@+id/rouse_web"
+            android:id="@+id/login_hw"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="华为登录" />
+
+        <Button
+            android:id="@+id/rouse_wx"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
-            android:text="微信唤起Web" />
+            android:text="微信签约" />
+
+        <Button
+            android:id="@+id/rouse_zfb"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:text="支付宝签约" />
+
+        <Button
+            android:id="@+id/rouse_hw"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:text="华为签约" />
 
         <Button
             android:id="@+id/share_wx_text"

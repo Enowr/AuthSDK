@@ -46,10 +46,10 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
 
     @Override
     void init() {
-        if (TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().QQAppID)) {
+        if (TextUtils.isEmpty(Auth.AuthBuilderInit.getInstance().getQQAppID())) {
             throw new IllegalArgumentException("QQAppID was empty");
         } else {
-            mTencent = Tencent.createInstance(Auth.AuthBuilderInit.getInstance().QQAppID, mContext.getApplicationContext());
+            mTencent = Tencent.createInstance(Auth.AuthBuilderInit.getInstance().getQQAppID(), mContext.getApplicationContext());
         }
     }
 
@@ -72,7 +72,7 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
         } else {
-            mCallback.onFailed("未安装QQ客户端");
+            mCallback.onFailed(String.valueOf(Auth.ErrorUninstalled), "未安装QQ客户端");
             destroy();
         }
     }
@@ -92,9 +92,7 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
                 shareProgram(activity, listener);
                 break;
             default:
-                if (mAction != Auth.UNKNOWN_TYPE) {
-                    mCallback.onFailed("QQ 暂未支持的 Action");
-                }
+                mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "QQ 暂未支持的 Action");
                 activity.finish();
                 break;
         }
@@ -113,7 +111,7 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
             mTencent.publishToQzone(activity, params, listener);
         } else if (TextUtils.isEmpty(mTitle)) {
             if (TextUtils.isEmpty(mImageUrl)) {
-                mCallback.onFailed("必须添加Image本地路径, 且不为空, 使用 shareImageUrl(url), 若使用多图分享或图文分享,还需要添加 Title, 使用 shareImageTitle(str) ");
+                mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加Image本地路径, 且不为空, 使用 shareImageUrl(url), 若使用多图分享或图文分享,还需要添加 Title, 使用 shareImageTitle(str) ");
                 activity.finish();
             } else {
                 Bundle params = new Bundle();
@@ -130,7 +128,7 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
                 mTencent.shareToQQ(activity, params, listener);
             }
         } else if (TextUtils.isEmpty(mUrl)) {
-            mCallback.onFailed("必须添加跳转链接, 且不为空, 使用 shareImageTargetUrl(url) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加跳转链接, 且不为空, 使用 shareImageTargetUrl(url) ");
             activity.finish();
         } else if (mMultiImage) {
             final Bundle params = new Bundle();
@@ -164,13 +162,13 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
 
     private void shareMusic(Activity activity, IUiListener listener) {
         if (TextUtils.isEmpty(mTitle)) {
-            mCallback.onFailed("必须添加标题, 使用 shareMusicTitle(str) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加标题, 使用 shareMusicTitle(str) ");
             activity.finish();
         } else if (TextUtils.isEmpty(mUrl)) {
-            mCallback.onFailed("必须添加点击后跳转链接, 且不为空, 使用 shareMusicTargetUrl(url) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加点击后跳转链接, 且不为空, 使用 shareMusicTargetUrl(url) ");
             activity.finish();
         } else if (TextUtils.isEmpty(mAudioUrl)) {
-            mCallback.onFailed("必须添加音乐链接, 不支持本地音乐, 使用 shareMusicUrl(url) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加音乐链接, 不支持本地音乐, 使用 shareMusicUrl(url) ");
             activity.finish();
         } else {
             final Bundle params = new Bundle();
@@ -194,7 +192,7 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
 
     private void shareVideo(Activity activity, IUiListener listener) {
         if (TextUtils.isEmpty(mUrl)) {
-            mCallback.onFailed("必须添加Video链接, 且不为空, 使用 shareVideoUrl(url) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加Video链接, 且不为空, 使用 shareVideoUrl(url) ");
             activity.finish();
         } else {
             final Bundle params = new Bundle();
@@ -210,7 +208,7 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
 
     private void shareProgram(Activity activity, IUiListener listener) {
         if (TextUtils.isEmpty(mTitle)) {
-            mCallback.onFailed("必须添加标题, 使用 shareProgramTitle(str) ");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加标题, 使用 shareProgramTitle(str) ");
             activity.finish();
         } else {
             final Bundle params = new Bundle();
@@ -267,14 +265,14 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
                     return new UserInfo(context, tencent.getQQToken());
                 } else {
                     if (object != null) {
-                        callback.onFailed(object.getString("msg"));
+                        callback.onFailed(object.getString("code"), object.getString("msg"));
                     } else {
-                        callback.onFailed("QQ 登录失败");
+                        callback.onFailed(String.valueOf(Auth.ErrorUnknown), "QQ 登录失败，获取信息为空");
                     }
                     return null;
                 }
             } catch (Exception e) {
-                callback.onFailed(e.getMessage());
+                callback.onFailed(String.valueOf(Auth.ErrorUnknown), e.getMessage());
                 return null;
             }
         }
@@ -291,18 +289,18 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
                             if (info != null) {
                                 callback.onSuccessForLogin(info);
                             } else {
-                                callback.onFailed("QQ 登录失败");
+                                callback.onFailed(String.valueOf(Auth.ErrorUnknown), "QQ 登录失败，获取信息为空");
                             }
                             destroy();
                         } catch (Exception e) {
-                            callback.onFailed(e.getMessage());
+                            callback.onFailed(String.valueOf(Auth.ErrorUnknown), e.getMessage());
                             destroy();
                         }
                     }
 
                     @Override
                     public void onError(UiError uiError) {
-                        callback.onFailed(uiError.errorMessage);
+                        callback.onFailed(String.valueOf(uiError.errorCode), uiError.errorMessage);
                         destroy();
                     }
 
@@ -369,7 +367,7 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
 
         @Override
         public void onError(UiError uiError) {
-            mBuild.mCallback.onFailed(uiError.errorMessage);
+            mBuild.mCallback.onFailed(String.valueOf(uiError.errorCode), uiError.errorMessage);
             destroy();
         }
 

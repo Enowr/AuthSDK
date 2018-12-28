@@ -23,7 +23,7 @@ public abstract class AuthCallback {
     public void onStart() {
     }
 
-    public void onSuccessForPay(String result) {
+    public void onSuccessForPay(String code, String result) {
     }
 
     public void onSuccessForShare() {
@@ -32,12 +32,12 @@ public abstract class AuthCallback {
     public void onSuccessForLogin(UserInfoForThird info) {
     }
 
-    public void onSuccessForRouse(String result) {
+    public void onSuccessForRouse(String code, String result) {
     }
 
     public void onCancel() {
     }
 
-    public void onFailed(String msg) {
+    public void onFailed(String code, String msg) {
     }
 }
