@@ -96,16 +96,16 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
             activity.finish();
         } else {
             switch (mAction) {
-                case Auth.SHARE_TEXT:
+                case Auth.ShareText:
                     shareText(activity, handler);
                     break;
-                case Auth.SHARE_IMAGE:
+                case Auth.ShareImage:
                     shareImage(activity, handler);
                     break;
-                case Auth.SHARE_LINK:
+                case Auth.ShareLink:
                     shareLink(activity, handler);
                     break;
-                case Auth.SHARE_VIDEO:
+                case Auth.ShareVideo:
                     shareVideo(activity, handler);
                     break;
                 default:
@@ -298,7 +298,7 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
             mBuild = build;
             mActivity = activity;
 
-            if (mBuild.mAction == Auth.LOGIN) {
+            if (mBuild.mAction == Auth.Login) {
                 mSsoHandler = new SsoHandler(mActivity);
                 mSsoHandler.authorize(new WbAuthListener() {
                     @Override

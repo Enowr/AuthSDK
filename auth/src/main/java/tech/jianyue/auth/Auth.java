@@ -15,30 +15,30 @@ import java.util.HashSet;
  * 版本: 1.0
  */
 public class Auth {
-    public static final int ErrorUninstalled = -9991;              // 错误码，未安装客户端
-    public static final int ErrorNotAction = -9992;                // 错误码，未设置Action
-    public static final int ErrorParameter = -9993;                // 错误码，参数错误
-    public static final int ErrorUnknown = -9994;                  // 错误码，未知错误
+    public static final int ErrorUninstalled = -9991;       // 错误码，未安装客户端
+    public static final int ErrorNotAction = -9992;         // 错误码，未设置Action
+    public static final int ErrorParameter = -9993;         // 错误码，参数错误
+    public static final int ErrorUnknown = -9994;           // 错误码，未知错误
 
-    public static final int Pay = 100;                          // 微信、支付宝、银联、华为，支付
+    public static final int Pay = 100;                      // 微信、支付宝、银联、华为，支付
 
-    public static final int Rouse = 111;                        // 唤起微信、支付宝、华为，目前作为签约支付       微信(无回调) 唤起WebView，
+    public static final int Rouse = 111;                    // 唤起微信、支付宝、华为，目前作为签约支付       微信(无回调) 唤起WebView，
 
-    public static final int LOGIN = 121;                        // 微信、微博、QQ、华为，登录
+    public static final int Login = 121;                    // 微信、微博、QQ、华为，登录
 
-    public static final int SHARE_TEXT = 131;                   // 微信、微博 分享文本
-    public static final int SHARE_IMAGE = 132;                  // 微信、微博、QQ 分享图片
-    public static final int SHARE_LINK = 133;                   // 微信、 微博 分享链接
-    public static final int SHARE_VIDEO = 134;                  // 微信、微博、QQ 分享视频
-    public static final int SHARE_MUSIC = 135;                  // 微信、QQ 分享音乐
-    public static final int SHARE_PROGRAM = 136;                // 微信、QQ 分享小程序、应用
+    public static final int ShareText = 131;                // 微信、微博 分享文本
+    public static final int ShareLink = 132;                // 微信、 微博 分享链接
+    public static final int ShareImage = 133;               // 微信、微博、QQ 分享图片
+    public static final int ShareVideo = 134;               // 微信、微博、QQ 分享视频
+    public static final int ShareMusic = 135;               // 微信、QQ 分享音乐
+    public static final int ShareProgram = 136;             // 微信、QQ 分享小程序、应用
 
-    public static final int WITH_HW = 146;                      // 华为 第三方标记
-    public static final int WITH_QQ = 143;                      // QQ 第三方标记
-    public static final int WITH_WB = 142;                      // 微博 第三方标记
-    public static final int WITH_WX = 141;                      // 微信 第三方标记
-    public static final int WITH_YL = 145;                      // 银联 第三方标记
-    public static final int WITH_ZFB = 144;                     // 支付宝 第三方标记
+    public static final int WithHW = 146;                   // 华为 第三方标记
+    public static final int WithQQ = 143;                   // QQ 第三方标记
+    public static final int WithWB = 142;                   // 微博 第三方标记
+    public static final int WithWX = 141;                   // 微信 第三方标记
+    public static final int WithYL = 145;                   // 银联 第三方标记
+    public static final int WithZFB = 144;                  // 支付宝 第三方标记
 
     static HashSet<BaseAuthBuild> mBuilderSet = new HashSet<>();
 
@@ -331,15 +331,15 @@ public class Auth {
         abstract <T extends BaseAuthBuild> T getAuthBuild(Context context);
     }
 
-    @IntDef({Rouse, Pay, LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO, SHARE_MUSIC, SHARE_PROGRAM})
+    @IntDef({Rouse, Pay, Login, ShareText, ShareImage, ShareLink, ShareVideo, ShareMusic, ShareProgram})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActionWX { }
 
-    @IntDef({LOGIN, SHARE_TEXT, SHARE_IMAGE, SHARE_LINK, SHARE_VIDEO})
+    @IntDef({Login, ShareText, ShareImage, ShareLink, ShareVideo})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActionWB { }
 
-    @IntDef({LOGIN, SHARE_IMAGE, SHARE_MUSIC, SHARE_VIDEO, SHARE_PROGRAM})
+    @IntDef({Login, ShareImage, ShareMusic, ShareVideo, ShareProgram})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActionQQ { }
 
@@ -351,11 +351,11 @@ public class Auth {
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActionYL { }
 
-    @IntDef({LOGIN, Pay, Rouse})
+    @IntDef({Login, Pay, Rouse})
     @Retention(RetentionPolicy.SOURCE)
     public @interface ActionHW { }
 
-    @IntDef({WITH_HW, WITH_QQ, WITH_WB, WITH_WX, WITH_YL, WITH_ZFB})
+    @IntDef({WithHW, WithQQ, WithWB, WithWX, WithYL, WithZFB})
     @Retention(RetentionPolicy.SOURCE)
     public @interface WithThird { }
 }

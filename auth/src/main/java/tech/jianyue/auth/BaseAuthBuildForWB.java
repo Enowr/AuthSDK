@@ -27,7 +27,7 @@ public abstract class BaseAuthBuildForWB extends BaseAuthBuild {
     ArrayList<Uri> mImagePathList;                          // 微博 多图路径地址
 
     BaseAuthBuildForWB(Context context) {
-        super(context, Auth.WITH_WB);
+        super(context, Auth.WithWB);
     }
 
     abstract Controller getController(Activity activity);

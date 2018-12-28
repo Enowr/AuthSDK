@@ -47,19 +47,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String with = "";
             String action;
             switch (getWith()) {
-                case Auth.WITH_WB:
+                case Auth.WithWB:
                     with = "微博";
                     break;
-                case Auth.WITH_QQ:
+                case Auth.WithQQ:
                     with = "QQ";
                     break;
-                case Auth.WITH_WX:
+                case Auth.WithWX:
                     with = "微信";
                     break;
-                case Auth.WITH_ZFB:
+                case Auth.WithZFB:
                     with = "支付宝";
                     break;
-                case Auth.WITH_YL:
+                case Auth.WithYL:
                     with = "银联";
                     break;
             }
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case Auth.Pay:
                     action = "支付";
                     break;
-                case Auth.LOGIN:
+                case Auth.Login:
                     action = "登录";
                     break;
                 case Auth.Rouse:
@@ -179,22 +179,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.login_wx:
                 Auth.withWX(this)
-                        .setAction(Auth.LOGIN)
+                        .setAction(Auth.Login)
                         .build(mCallback);
                 break;
             case R.id.login_wb:
                 Auth.withWB(this)
-                        .setAction(Auth.LOGIN)
+                        .setAction(Auth.Login)
                         .build(mCallback);
                 break;
             case R.id.login_qq:
                 Auth.withQQ(this)
-                        .setAction(Auth.LOGIN)
+                        .setAction(Auth.Login)
                         .build(mCallback);
                 break;
             case R.id.login_hw:
                 Auth.withHW(this)
-                        .setAction(Auth.LOGIN)
+                        .setAction(Auth.Login)
                         .build(mCallback);
                 break;
             case R.id.rouse_wx:                                        // 微信唤起Web, 可用于唤起微信的自动续订服务，目前没有回调结果
@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.share_wx_text:
                 Auth.withWX(this)
-                        .setAction(Auth.SHARE_TEXT)
+                        .setAction(Auth.ShareText)
 //                        .shareToSession()                             // 分享到对话
 //                        .shareToTimeline()                            // 分享到朋友圈
                         .shareToFavorite()                              // 分享到收藏, 三个分享方式如果共存, 则只取最后一个.
@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.share_wx_image:
                 Auth.withWX(this)
-                        .setAction(Auth.SHARE_IMAGE)
+                        .setAction(Auth.ShareImage)
                         .shareToTimeline()
                         .shareImageTitle("Title")
                         .shareImage(null)                               // 必填
@@ -237,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.share_wx_link:
                 Auth.withWX(this)
-                        .setAction(Auth.SHARE_LINK)
+                        .setAction(Auth.ShareLink)
                         .shareToTimeline()
                         .shareLinkTitle("Title")                        // 必填
                         .shareLinkDescription("Description")
@@ -247,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.share_wx_video:
                 Auth.withWX(this)
-                        .setAction(Auth.SHARE_VIDEO)
+                        .setAction(Auth.ShareVideo)
                         .shareToTimeline()
                         .shareVideoTitle("Title")                       // 必填
                         .shareVideoDescription("Description")
@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.share_wx_music:
                 Auth.withWX(this)
-                        .setAction(Auth.SHARE_MUSIC)
+                        .setAction(Auth.ShareMusic)
                         .shareToTimeline()
                         .shareMusicTitle("Title")                       // 必填
                         .shareMusicDescription("Description")
@@ -267,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.share_wx_program:                                 // TODO 未测试
                 Auth.withWX(this)
-                        .setAction(Auth.SHARE_PROGRAM)
+                        .setAction(Auth.ShareProgram)
                         .shareToTimeline()
                         .shareProgramTitle("Title")
                         .shareProgramDescription("Description")
@@ -280,13 +280,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.share_wb_text:
                 Auth.withWB(this)
-                        .setAction(Auth.SHARE_TEXT)
+                        .setAction(Auth.ShareText)
                         .shareText("Text")
                         .build(mCallback);
                 break;
             case R.id.share_wb_image:
                 Auth.withWB(this)
-                        .setAction(Auth.SHARE_IMAGE)
+                        .setAction(Auth.ShareImage)
 //                        .shareToStory()                                 // 分享到微博故事, 仅支持单图和视频, 需要设置 shareImageUri(uri)
 //                        .shareImageUri(getImageUri())                   // 分享图片到微博故事时调用, shareImage shareImageText shareImageMultiImage 将失效, 只使用 uri 内容, Uri 为本地图片
                         .shareImageText("Text")
@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.share_wb_link:
                 Auth.withWB(this)
-                        .setAction(Auth.SHARE_LINK)
+                        .setAction(Auth.ShareLink)
                         .shareLinkTitle("Title")                        // 必填
                         .shareLinkImage(null)                           // 必填
                         .shareLinkUrl("")                               // 必填, 网络链接
@@ -306,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.share_wb_video:
                 Auth.withWB(this)
-                        .setAction(Auth.SHARE_VIDEO)
+                        .setAction(Auth.ShareVideo)
 //                        .shareToStory()
                         .shareVideoTitle("Title")
                         .shareVideoDescription("Description")
@@ -317,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.share_qq_image:
                 Auth.withQQ(this)
-                        .setAction(Auth.SHARE_IMAGE)
+                        .setAction(Auth.ShareImage)
 //                        .shareToQzone(false)                            // 多图\分享到说说时, 设置无效果; 三种状态: 1. 不调用默认是不隐藏分享到QZone按钮且不自动打开分享到QZone的对话框 2. true 直接打开QZone的对话框, 3. false 隐藏分享到QZone
 //                        .shareImageToMood()                             // 分享图文到说说, 会过滤掉 shareImageTitle 信息, 图片以 shareImageMultiImage 传入，以便支持多张图片（注：<=9张图片为发表说说，>9张为上传图片到相册），只支持本地图片
 //                        .shareImageScene("Scene")                       // 调用 shareImageToMood 后生效, 区分分享场景，用于异化feeds点击行为和小尾巴展示
@@ -333,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.share_qq_video:
                 Auth.withQQ(this)                               // 由于 Video 只能分享到 QQ 空间, 不受 shareToQzone() 状态影响;
-                        .setAction(Auth.SHARE_VIDEO)
+                        .setAction(Auth.ShareVideo)
                         .shareVideoUrl("")                              // 仅支持本地路径
                         .shareVideoScene("Scene")
                         .shareVideoBack("Back")
@@ -341,7 +341,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.share_qq_music:
                 Auth.withQQ(this)
-                        .setAction(Auth.SHARE_MUSIC)
+                        .setAction(Auth.ShareMusic)
                         .shareToQzone(false)
                         .shareMusicTitle("Title")
                         .shareMusicDescription("Description")
@@ -353,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.share_qq_program:
                 Auth.withQQ(this)
-                        .setAction(Auth.SHARE_PROGRAM)
+                        .setAction(Auth.ShareProgram)
                         .shareToQzone(false)
                         .shareProgramTitle("Title")
                         .shareProgramDescription("Description")

@@ -29,7 +29,7 @@ public abstract class BaseAuthBuildForWX extends BaseAuthBuild {
     String mUrl;                                                // Url
 
     BaseAuthBuildForWX(Context context) {
-        super(context, Auth.WITH_WX);
+        super(context, Auth.WithWX);
     }
 
     abstract Controller getController(Activity activity);

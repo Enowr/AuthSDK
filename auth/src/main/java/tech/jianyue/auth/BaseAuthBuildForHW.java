@@ -31,7 +31,7 @@ public abstract class BaseAuthBuildForHW extends BaseAuthBuild {
     String mUrl;                                                                                    // URL
 
     BaseAuthBuildForHW(Context context) {
-        super(context, Auth.WITH_HW);
+        super(context, Auth.WithHW);
     }
 
     abstract public void initHW(Activity activity);

@@ -15,7 +15,7 @@ public abstract class BaseAuthBuildForYL extends BaseAuthBuild {
     boolean mTest = false;
 
     BaseAuthBuildForYL(Context context) {
-        super(context, Auth.WITH_YL);
+        super(context, Auth.WithYL);
     }
 
     abstract Controller getController(Activity activity);

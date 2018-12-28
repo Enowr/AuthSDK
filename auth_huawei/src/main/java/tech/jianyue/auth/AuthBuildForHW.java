@@ -133,7 +133,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                 pay();
                 break;
             case Auth.Rouse:
-            case Auth.LOGIN:
+            case Auth.Login:
                 Intent intent = new Intent(mContext, AuthActivity.class);
                 intent.putExtra("Sign", mSign);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -202,7 +202,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
             mBuild = build;
             mActivity = activity;
 
-            if (mBuild.mAction == Auth.LOGIN) {
+            if (mBuild.mAction == Auth.Login) {
                 // 创建基础权限的登录参数options
                 HuaweiIdSignInOptions signInOptions = new HuaweiIdSignInOptions.Builder(HuaweiIdSignInOptions.DEFAULT_SIGN_IN)
                         .requestOpenId()
@@ -216,7 +216,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
                 HuaweiApiClient.ConnectionCallbacks connectionCallbacks = new HuaweiApiClient.ConnectionCallbacks() {
                     @Override
                     public void onConnected() {                                                     // HuaweiApiClient 连接成功回调, 在这边处理业务自己的事件
-                        if (mBuild.mAction == Auth.LOGIN) {
+                        if (mBuild.mAction == Auth.Login) {
                             PendingResult<SignInResult> signInResult = HuaweiId.HuaweiIdApi.signIn(mActivity, mClient);
                             signInResult.setResultCallback(new ResultCallback<SignInResult>() {
                                 @Override
@@ -366,7 +366,7 @@ public class AuthBuildForHW extends BaseAuthBuildForHW {
 
         @Override
         public void callback(int requestCode, int resultCode, Intent data) {
-            if (mBuild.mAction == Auth.LOGIN) {
+            if (mBuild.mAction == Auth.Login) {
                 String EXTRA_RESULT = "intent.extra.RESULT";
                 // 连接失败
                 if (requestCode == REQUEST_HMS_RESOLVE_ERROR) {

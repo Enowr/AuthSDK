@@ -79,16 +79,16 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
 
     private void share(Activity activity, IUiListener listener) {
         switch (mAction) {
-            case Auth.SHARE_IMAGE:
+            case Auth.ShareImage:
                 shareImage(activity, listener);
                 break;
-            case Auth.SHARE_MUSIC:
+            case Auth.ShareMusic:
                 shareMusic(activity, listener);
                 break;
-            case Auth.SHARE_VIDEO:
+            case Auth.ShareVideo:
                 shareVideo(activity, listener);
                 break;
-            case Auth.SHARE_PROGRAM:
+            case Auth.ShareProgram:
                 shareProgram(activity, listener);
                 break;
             default:
@@ -331,7 +331,7 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
             mBuild = build;
             mActivity = activity;
 
-            if (mBuild.mAction == Auth.LOGIN) {
+            if (mBuild.mAction == Auth.Login) {
                 mBuild.mTencent.login(mActivity, "all", this);
             } else {
                 mBuild.share(mActivity, this);
@@ -357,7 +357,7 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
 
         @Override
         public void onComplete(Object o) {
-            if (mBuild.mAction == Auth.LOGIN) {
+            if (mBuild.mAction == Auth.Login) {
                 mBuild.getInfo((JSONObject) o);
             } else {
                 mBuild.mCallback.onSuccessForShare();

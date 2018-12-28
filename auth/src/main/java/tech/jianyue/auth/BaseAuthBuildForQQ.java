@@ -30,7 +30,7 @@ public abstract class BaseAuthBuildForQQ extends BaseAuthBuild {
 
 
     BaseAuthBuildForQQ(Context context) {
-        super(context, Auth.WITH_QQ);
+        super(context, Auth.WithQQ);
     }
 
     abstract Controller getController(Activity activity);

@@ -15,7 +15,7 @@ public abstract class BaseAuthBuildForZFB extends BaseAuthBuild {
     String mUri;
 
     BaseAuthBuildForZFB(Context context) {
-        super(context, Auth.WITH_ZFB);
+        super(context, Auth.WithZFB);
     }
 
     @Override

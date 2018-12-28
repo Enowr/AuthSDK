@@ -96,7 +96,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
         super.build(callback);
         if (!isWXAppInstalled()) {
             destroy();
-        } else if (mAction != Auth.LOGIN && mAction != Auth.Pay && mAction != Auth.Rouse && mShareType == -100) {
+        } else if (mAction != Auth.Login && mAction != Auth.Pay && mAction != Auth.Rouse && mShareType == -100) {
             mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加分享类型, 使用 shareToSession(),shareToTimeline(),shareToFavorite() ");
             destroy();
         } else {
@@ -107,25 +107,25 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
                 case Auth.Rouse:
                     rouseWeb();
                     break;
-                case Auth.LOGIN:
+                case Auth.Login:
                     login();
                     break;
-                case Auth.SHARE_TEXT:
+                case Auth.ShareText:
                     shareText();
                     break;
-                case Auth.SHARE_IMAGE:
+                case Auth.ShareImage:
                     shareBitmap();
                     break;
-                case Auth.SHARE_LINK:
+                case Auth.ShareLink:
                     shareLink();
                     break;
-                case Auth.SHARE_VIDEO:
+                case Auth.ShareVideo:
                     shareVideo();
                     break;
-                case Auth.SHARE_MUSIC:
+                case Auth.ShareMusic:
                     shareMusic();
                     break;
-                case Auth.SHARE_PROGRAM:
+                case Auth.ShareProgram:
                     shareProgram();
                     break;
                 default:
@@ -516,7 +516,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
                         }
                         break;
                     default:
-                        if (mBuild.mAction == Auth.LOGIN) {
+                        if (mBuild.mAction == Auth.Login) {
                             mBuild.mCallback.onFailed(String.valueOf(resp.errCode), TextUtils.isEmpty(resp.errStr) ? "微信登录失败" : resp.errStr);
                         } else if (mBuild.mAction == Auth.Pay) {
                             mBuild.mCallback.onFailed(String.valueOf(resp.errCode), TextUtils.isEmpty(resp.errStr) ? "微信支付失败" : resp.errStr);

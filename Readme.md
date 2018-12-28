@@ -33,13 +33,13 @@
 
 	```aidl
     dependencies {
-        compile 'tech.jianyue.auth:auth:1.4.3'
-        compile 'tech.jianyue.auth:auth_huawei:1.4.3'
-        compile 'tech.jianyue.auth:auth_qq:1.4.3'
-        compile 'tech.jianyue.auth:auth_weibo:1.4.3'
-        compile 'tech.jianyue.auth:auth_weixin:1.4.3'
-        compile 'tech.jianyue.auth:auth_yinlian:1.4.3'
-        compile 'tech.jianyue.auth:auth_zhifubao:1.4.3'
+        compile 'tech.jianyue.auth:auth:1.4.4'
+        compile 'tech.jianyue.auth:auth_huawei:1.4.4'
+        compile 'tech.jianyue.auth:auth_qq:1.4.4'
+        compile 'tech.jianyue.auth:auth_weibo:1.4.4'
+        compile 'tech.jianyue.auth:auth_weixin:1.4.4'
+        compile 'tech.jianyue.auth:auth_yinlian:1.4.4'
+        compile 'tech.jianyue.auth:auth_zhifubao:1.4.4'
     }
     ```
 
@@ -302,19 +302,19 @@
     
     ``` java
     Auth.withWX(context)
-            .setAction(Auth.LOGIN)
+            .setAction(Auth.Login)
             .build(mCallback);
 
     Auth.withWB(context)
-             .setAction(Auth.LOGIN)
+             .setAction(Auth.Login)
              .build(mCallback);
 
     Auth.withQQ(context)
-             .setAction(Auth.LOGIN)
+             .setAction(Auth.Login)
              .build(mCallback);
           
     Auth.withHW(context)
-             .setAction(Auth.LOGIN)
+             .setAction(Auth.Login)
              .build(mCallback);
     ```
 
@@ -375,7 +375,7 @@
     ``` java
     // 微信分享文本、图片、链接、视频、音乐、小程序
     Auth.withWX(context)
-            .setAction(Auth.SHARE_TEXT)
+            .setAction(Auth.ShareText)
             .shareToSession()      // 分享到对话
             .shareToTimeline()     // 分享到朋友圈
             .shareToFavorite()     // 分享到收藏, 三个分享方式如果共存, 则只取最后一个.
@@ -385,14 +385,14 @@
             .build(mCallback);
 
     Auth.withWX(context)
-            .setAction(Auth.SHARE_IMAGE)
+            .setAction(Auth.ShareImage)
             .shareToTimeline()
             .shareImageTitle("Title")
             .shareImage(getBitmap())   	           // 必填
             .build(mCallback);
 
     Auth.withWX(context)
-            .setAction(Auth.SHARE_LINK)
+            .setAction(Auth.ShareLink)
             .shareToTimeline()
             .shareLinkTitle("Title")               // 必填
             .shareLinkDescription("Description")
@@ -401,7 +401,7 @@
             .build(mCallback);
 
     Auth.withWX(context)
-            .setAction(Auth.SHARE_VIDEO)
+            .setAction(Auth.ShareVideo)
             .shareToTimeline()
             .shareVideoTitle("Title")              // 必填
             .shareVideoDescription("Description")
@@ -410,7 +410,7 @@
             .build(mCallback);
 
     Auth.withWX(context)
-            .setAction(Auth.SHARE_MUSIC)
+            .setAction(Auth.ShareMusic)
             .shareToTimeline()
             .shareMusicTitle("Title")             // 必填
             .shareMusicDescription("Description")
@@ -419,7 +419,7 @@
             .build(mCallback);
 
     Auth.withWX(context)
-            .setAction(Auth.SHARE_PROGRAM)
+            .setAction(Auth.ShareProgram)
             .shareToTimeline()
             .shareProgramTitle("Title")
             .shareProgramDescription("Description")
@@ -431,30 +431,30 @@
 
     // 微博分享文本、图片、链接、视频
     Auth.withWB(context)
-            .setAction(Auth.SHARE_TEXT)
+            .setAction(Auth.ShareText)
             .shareText("Text")
             .build(mCallback);
 
     Auth.withWB(context)
-            .setAction(Auth.SHARE_IMAGE)
+            .setAction(Auth.ShareImage)
             .shareToStory()                       // 分享到微博故事, 仅支持单图和视频, 需要设置 shareImageUri(uri)
             .shareImageUri(getImageUri())         // 分享图片到微博故事时调用, Uri 为本地图片
             .build(mCallback);
 
     Auth.withWB(context)
-            .setAction(Auth.SHARE_IMAGE)
+            .setAction(Auth.ShareImage)
             .shareImageText("Text")
             .shareImage(getBitmap())
             .build(mCallback);
 
     Auth.withWB(context)
-            .setAction(Auth.SHARE_IMAGE)
+            .setAction(Auth.ShareImage)
             .shareImageText("Text")
             .shareImageMultiImage(getImageUriList())  // 分享多张图片, 本地图片 Uri 集合
             .build(mCallback);
 
     Auth.withWB(context)
-            .setAction(Auth.SHARE_LINK)
+            .setAction(Auth.ShareLink)
             .shareLinkTitle("Title")             // 必填
             .shareLinkImage(getBitmap())         // 必填
             .shareLinkUrl(LinkUrl)               // 必填, 网络链接
@@ -463,13 +463,13 @@
             .build(mCallback);
 
     Auth.withWB(context)
-            .setAction(Auth.SHARE_VIDEO)
+            .setAction(Auth.ShareVideo)
             .shareToStory()
             .shareVideoUri(getVideoUri())        // 必填, 本地 Uri
             .build(mCallback);
 
     Auth.withWB(context)
-            .setAction(Auth.SHARE_VIDEO)
+            .setAction(Auth.ShareVideo)
             .shareVideoTitle("Title")
             .shareVideoDescription("Description")
             .shareVideoText("Text")
@@ -478,14 +478,14 @@
 
     // QQ 分享
     Auth.withQQ(context)
-            .setAction(Auth.SHARE_IMAGE)
+            .setAction(Auth.ShareImage)
             .shareToQzone(false)                // 单图和图文有效; 三种状态: 1. 不调用默认是不隐藏分享到QZone按钮且不自动打开分享到QZone的对话框 2. true 直接打开QZone的对话框, 3. false 隐藏分享到QZone
             .shareImageUrl(getImagePath())      // 单图只支持本地路径
             .shareImageName("Name")             // 单图有效, 设置后无明显效果
             .build(mCallback);
 
     Auth.withQQ(context)
-            .setAction(Auth.SHARE_IMAGE)
+            .setAction(Auth.ShareImage)
             .shareImageTitle("Title")           // 图文分享与多图分享时必传, 不传为单图分享
             .shareImageUrl(getImagePath())      // 图文支持分享图片的URL或者本地路径
             .shareImageTargetUrl(LinkUrl)       // 图文分享与多图分享时必传, 点击后的跳转URL, 网络链接
@@ -495,7 +495,7 @@
             .build(mCallback);
 
     Auth.withQQ(context)
-            .setAction(Auth.SHARE_IMAGE)
+            .setAction(Auth.ShareImage)
             .shareImageTitle("Title")                 // 图文分享与多图分享时必传, 不传为单图分享
             .shareImageMultiImage(getImagePathList()) // 默认为(仅支持)发表到QQ空间, 以便支持多张图片（注：图片最多支持9张图片，多余的图片会被丢弃); shareImageToMood 模式下只支持本地图片, 不调用 shareImageToMood 同时支持网络和本地 // TODO QZone 接口暂不支持发送多张图片的能力，若传入多张图片，则会自动选入第一张图片作为预览图。多图的能力将会在以后支持
             .shareImageTargetUrl(LinkUrl)             // 图文分享与多图分享时必传, 点击后的跳转URL, 网络链接
@@ -503,7 +503,7 @@
             .build(mCallback);
 
     Auth.withQQ(context)
-            .setAction(Auth.SHARE_IMAGE)
+            .setAction(Auth.ShareImage)
             .shareImageToMood()               // 分享图文到说说, 会过滤掉 shareImageTitle 信息, 图片以 shareImageMultiImage 传入, 以便支持多张图片（注：<=9张图片为发表说说，>9张为上传图片到相册），只支持本地图片
             .shareImageScene("Scene")         // 调用 shareImageToMood 后生效, 区分分享场景，用于异化feeds点击行为和小尾巴展示
             .shareImageBack("Back")           // 调用 shareImageToMood 后生效, 游戏自定义字段，点击分享消息回到游戏时回传给游戏
@@ -511,14 +511,14 @@
             .build(mCallback);
 
     Auth.withQQ(context)                      // 由于 Video 只能分享到 QQ 空间, 不受 shareToQzone() 状态影响;
-            .setAction(Auth.SHARE_VIDEO)
+            .setAction(Auth.ShareVideo)
             .shareVideoUrl(getVideoPath())    // 仅支持本地路径
             .shareVideoScene("Scene")
             .shareVideoBack("Back")
             .build(mCallback);
 
     Auth.withQQ(context)
-            .setAction(Auth.SHARE_MUSIC)
+            .setAction(Auth.ShareMusic)
             .shareToQzone(false)
             .shareMusicTitle("Title")
             .shareMusicDescription("Description")
@@ -529,7 +529,7 @@
             .build(mCallback);
 
     Auth.withQQ(context)
-            .setAction(Auth.SHARE_PROGRAM)
+            .setAction(Auth.ShareProgram)
             .shareToQzone(true)
             .shareProgramTitle("Title")
             .shareProgramDescription("Description")
