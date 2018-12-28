@@ -38,9 +38,9 @@ public abstract class BaseAuthBuild {
             throw new NullPointerException("AuthCallback is null");
         } else if (mContext == null) {
             destroy();
-            throw new NullPointerException("Context is null");
+            callback.onFailed(String.valueOf(Auth.ErrorParameter), "Context is null");
         } else if (mAction == Auth.ErrorNotAction) {
-            callback.onFailed(String.valueOf(mAction), "未设置 Action, 请调用 setAction(action)");
+            callback.onFailed(String.valueOf(Auth.ErrorParameter), "未设置 Action, 请调用 setAction(action)");
             destroy();
         } else {
             mCallback = callback;

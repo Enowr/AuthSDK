@@ -72,7 +72,7 @@ public class AuthBuildForYL extends BaseAuthBuildForYL {
             if (UPPayAssistEx.PLUGIN_VALID == i) {                  // 该终端已经安装控件，并启动控件
 
             } else if (UPPayAssistEx.PLUGIN_NOT_FOUND == i) {       // 手机终端尚未安装支付控件，需要先安装支付控件
-                mCallback.onFailed(String.valueOf(Auth.ErrorUninstalled), "手机终端尚未安装支付控件，需要先安装支付控件 ");
+                mCallback.onFailed(String.valueOf(Auth.ErrorUninstalled), "请安装银联支付控件 ");
                 activity.finish();
             }
         }

@@ -148,7 +148,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
                     }
                 }
             }
-            mCallback.onFailed(String.valueOf(Auth.ErrorUninstalled), "未安装微信客户端");
+            mCallback.onFailed(String.valueOf(Auth.ErrorUninstalled), "请安装微信客户端");
             return false;
         } else if (!mApi.isWXAppSupportAPI()) {
             mCallback.onFailed(String.valueOf(Auth.ErrorUnknown), "微信客户端版本过低");
@@ -372,7 +372,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
             req.transaction = mSign;
             mApi.sendReq(req);
         } else {
-            mCallback.onFailed(String.valueOf(Auth.ErrorUninstalled), "未安装微信客户端");
+            mCallback.onFailed(String.valueOf(Auth.ErrorUninstalled), "请安装微信客户端");
         }
     }
 

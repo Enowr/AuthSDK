@@ -92,7 +92,7 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
 
     private void share(Activity activity, WbShareHandler handler) {                        // 微博分享 API
         if (handler == null) {
-            mCallback.onFailed(String.valueOf(Auth.ErrorUnknown), "微博分享失败, WbShareHandler 为空");
+            mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "微博分享失败, WbShareHandler 为空");
             activity.finish();
         } else {
             switch (mAction) {

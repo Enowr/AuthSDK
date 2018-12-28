@@ -72,7 +72,7 @@ public class AuthBuildForQQ extends BaseAuthBuildForQQ {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             mContext.startActivity(intent);
         } else {
-            mCallback.onFailed(String.valueOf(Auth.ErrorUninstalled), "未安装QQ客户端");
+            mCallback.onFailed(String.valueOf(Auth.ErrorUninstalled), "请安装QQ客户端");
             destroy();
         }
     }
