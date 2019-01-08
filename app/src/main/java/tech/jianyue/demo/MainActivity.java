@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setWXAppID("wx1")
                 .setWXSecret("wx1")
                 .setWBAppKey("WEIBO_APPKEY")
-                .setWBDedirectUrl("WEIBO_REDIRECT_URL")
+                .setWBRedirectUrl("WEIBO_REDIRECT_URL")
                 .setWBScope("WEIBO_SCOPE")
                 .setHWAppID("111")
                 .setHWKey("111")

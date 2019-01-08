@@ -264,7 +264,7 @@ public class Auth {
             return this;
         }
 
-        public AuthBuilderInit setWBDedirectUrl(String url) {
+        public AuthBuilderInit setWBRedirectUrl(String url) {
             WBRedirectUrl = url;
             return this;
         }
