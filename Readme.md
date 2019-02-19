@@ -33,13 +33,13 @@
 
 	```aidl
     dependencies {
-        compile 'tech.jianyue.auth:auth:1.4.5'
-        compile 'tech.jianyue.auth:auth_huawei:1.4.5'
-        compile 'tech.jianyue.auth:auth_qq:1.4.5'
-        compile 'tech.jianyue.auth:auth_weibo:1.4.5'
-        compile 'tech.jianyue.auth:auth_weixin:1.4.5'
-        compile 'tech.jianyue.auth:auth_yinlian:1.4.5'
-        compile 'tech.jianyue.auth:auth_zhifubao:1.4.5'
+        compile 'tech.jianyue.auth:auth:1.4.9'
+        compile 'tech.jianyue.auth:auth_huawei:1.4.9'
+        compile 'tech.jianyue.auth:auth_qq:1.4.9'
+        compile 'tech.jianyue.auth:auth_weibo:1.4.9'
+        compile 'tech.jianyue.auth:auth_weixin:1.4.9'
+        compile 'tech.jianyue.auth:auth_yinlian:1.4.9'
+        compile 'tech.jianyue.auth:auth_zhifubao:1.4.9'
     }
     ```
 

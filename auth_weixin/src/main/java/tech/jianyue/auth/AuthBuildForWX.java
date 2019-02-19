@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
@@ -70,6 +71,9 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
     @Override                                                           // 清理资源
     void destroy() {
         super.destroy();
+        if (mBitmap != null && !mBitmap.isRecycled()) {
+            mBitmap.recycle();
+        }
         mBitmap = null;
     }
 
@@ -182,11 +186,9 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
             destroy();
         } else {
             // imageData 大小限制为 10MB, 缩略图大小限制为 32K
-            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 120, 120, true);
-
             WXMediaMessage msg = new WXMediaMessage();
             msg.mediaObject = new WXImageObject(mBitmap);
-            msg.thumbData = Utils.bmpToByteArray(thumbBmp, false);
+            msg.thumbData = bmpToByteArray(mBitmap, false);
             msg.title = mTitle;
 
             share(msg);
@@ -204,7 +206,6 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
             mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加音乐标题, 使用 shareMusicTitle(title) ");
             destroy();
         } else {
-            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 120, 120, true);
             WXMusicObject musicObject = new WXMusicObject();
             musicObject.musicUrl = mUrl;                                            // 音乐链接
 
@@ -212,7 +213,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
             msg.mediaObject = musicObject;
             msg.title = mTitle;                                                     // 音乐标题，必传，但是可是是空字符串
             msg.description = mDescription;                                         // 音乐描述，可不传
-            msg.thumbData = Utils.bmpToByteArray(thumbBmp, false);      // 缩略图大小限制为32K
+            msg.thumbData = bmpToByteArray(mBitmap, true);              // 缩略图大小限制为32K
 
             share(msg);
         }
@@ -229,7 +230,6 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
             mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加链接标题, 使用 shareLinkTitle(title) ");
             destroy();
         } else {
-            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 120, 120, true);
             WXWebpageObject webObject = new WXWebpageObject();
             webObject.webpageUrl = mUrl;
 
@@ -237,7 +237,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
             msg.mediaObject = webObject;
             msg.title = mTitle;
             msg.description = mDescription;
-            msg.thumbData = Utils.bmpToByteArray(thumbBmp, false);      // 缩略图大小限制为32K
+            msg.thumbData = bmpToByteArray(mBitmap, true);              // 缩略图大小限制为32K
 
             share(msg);
         }
@@ -254,7 +254,6 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
             mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "必须添加视频标题, 使用 shareVideoTitle(title) ");
             destroy();
         } else {
-            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 120, 120, true);
             WXVideoObject videoObject = new WXVideoObject();
             videoObject.videoUrl = mUrl;                                            // 视频链接
 
@@ -262,7 +261,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
             msg.mediaObject = videoObject;
             msg.title = mTitle;
             msg.description = mDescription;
-            msg.thumbData = Utils.bmpToByteArray(thumbBmp, false);      // 缩略图大小限制为32K
+            msg.thumbData = bmpToByteArray(mBitmap, true);              // 缩略图大小限制为32K
 
             share(msg);
         }
@@ -288,7 +287,6 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
             mCallback.onFailed(String.valueOf(Auth.ErrorParameter), "目前只支持分享到会话 ");
             destroy();
         } else {
-            Bitmap thumbBmp = Bitmap.createScaledBitmap(mBitmap, 120, 120, true);
             WXMiniProgramObject programObject = new WXMiniProgramObject();
             programObject.webpageUrl = mUrl;                                        // 低版本微信打开该 url
             programObject.userName = mID;                                           // 跳转小程序的原始 ID
@@ -298,9 +296,31 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
             msg.mediaObject = programObject;
             msg.title = mTitle;
             msg.description = mDescription;
-            msg.thumbData = Utils.bmpToByteArray(thumbBmp, false);      // 缩略图大小限制为32K
+            msg.thumbData = bmpToByteArray(mBitmap, true);              // 缩略图大小限制为32K
 
             share(msg);
+        }
+    }
+
+    private byte[] bmpToByteArray(Bitmap bitmap, boolean needRecycle) {
+        byte[] bytes;
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        if (height > 100 || width > 100) {
+            int x = width > 100 ? (width - 100) / 2 : 0;
+            int y = height > 100 ? (height - 100) / 2 : 0;
+            Bitmap newBitmap = Bitmap.createBitmap(bitmap, x, y, width > 100 ? 100 : width, height > 100 ? 100 : height);
+            bytes = Utils.bmpToByteArray(newBitmap, needRecycle);
+            if (needRecycle && !bitmap.equals(newBitmap) && !bitmap.isRecycled()) {
+                bitmap.recycle();
+            }
+        } else {
+            bytes = Utils.bmpToByteArray(bitmap, needRecycle);
+        }
+        if (bytes != null && bytes.length > 32 * 1024) {
+            return bmpToByteArray(BitmapFactory.decodeByteArray(bytes, 0, bytes.length), needRecycle);
+        } else {
+            return bytes;
         }
     }
 

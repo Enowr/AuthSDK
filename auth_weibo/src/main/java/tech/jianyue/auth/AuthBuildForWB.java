@@ -72,6 +72,11 @@ public class AuthBuildForWB extends BaseAuthBuildForWB {
     @Override                                               // 清理资源
     void destroy() {
         super.destroy();
+        if (mBitmap != null && !mBitmap.isRecycled()) {
+            mBitmap.recycle();
+        }
+        mBitmap = null;
+
         if (mImagePathList != null) {
             mImagePathList.clear();
             mImagePathList = null;

@@ -32,13 +32,13 @@ public class Utils {
         ByteArrayOutputStream output = null;
         try {
             output = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, output);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 80, output);
             return output.toByteArray();
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         } finally {
-            if (needRecycle) {
+            if (needRecycle && !bmp.isRecycled()) {
                 bmp.recycle();
             }
             if (output != null) {
