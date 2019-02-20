@@ -6,6 +6,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 
@@ -306,11 +307,20 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
         byte[] bytes;
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
+
         if (height > 100 || width > 100) {
-            int x = width > 100 ? (width - 100) / 2 : 0;
-            int y = height > 100 ? (height - 100) / 2 : 0;
-            Bitmap newBitmap = Bitmap.createBitmap(bitmap, x, y, width > 100 ? 100 : width, height > 100 ? 100 : height);
-            bytes = Utils.bmpToByteArray(newBitmap, needRecycle);
+            Bitmap newBitmap;
+            if (width > height) {
+                newBitmap = Bitmap.createScaledBitmap(bitmap, width * 100 / height, 100, true);
+                newBitmap = ThumbnailUtils.extractThumbnail(newBitmap, 100, 100, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+                //            Bitmap.createBitmap(bitmap, (width - height) / 2, height, height, height);
+            } else {
+                newBitmap = Bitmap.createScaledBitmap(bitmap, 100, height * 100 / width, true);
+                newBitmap = ThumbnailUtils.extractThumbnail(newBitmap, 100, 100, ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+                //            Bitmap.createBitmap(bitmap, width, (height - width) / 2, width, width);
+            }
+
+            bytes = Utils.bmpToByteArray(newBitmap, true);
             if (needRecycle && !bitmap.equals(newBitmap) && !bitmap.isRecycled()) {
                 bitmap.recycle();
             }
@@ -318,7 +328,7 @@ public class AuthBuildForWX extends BaseAuthBuildForWX {
             bytes = Utils.bmpToByteArray(bitmap, needRecycle);
         }
         if (bytes != null && bytes.length > 32 * 1024) {
-            return bmpToByteArray(BitmapFactory.decodeByteArray(bytes, 0, bytes.length), needRecycle);
+            return bmpToByteArray(BitmapFactory.decodeByteArray(bytes, 0, bytes.length), true);
         } else {
             return bytes;
         }
